@@ -1,16 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using SeleniumAutomationGenerator.Models;
 using SeleniumAutomationGenerator.Utils;
 
 namespace SeleniumAutomationGenerator.Generator
 {
-    public abstract class BasicClassGenerator : IClassGenerator
+    public abstract class BasicClassGenerator : IComponentFileCreator
     {
         protected IAddinsContainer _container;
         protected IPropertyGenerator _propertiesGenerator;
         protected List<string> baseUsings;
         protected string _namespaceName;
+        protected List<string> ExceptionsTypes;
+        protected List<string> ExtraProperties;
 
         protected BasicClassGenerator(IAddinsContainer container, IPropertyGenerator propertyGenerator, string namespaceName)
         {
@@ -18,16 +21,17 @@ namespace SeleniumAutomationGenerator.Generator
             {
                 "System", "OpenQA.Selenium"
             };
-
+            ExceptionsTypes = new List<string>();
+            ExtraProperties = new List<string>();
             _container = container;
             _namespaceName = namespaceName;
             _propertiesGenerator = propertyGenerator;
         }
 
-        public virtual ComponentGeneratorOutput GenerateComponentClass(string className, ElementSelectorData[] elements)
+        public virtual ComponentGeneratorOutput GenerateComponentClass(string selector, ElementSelectorData[] elements)
         {
             BasicClassBuilder builder = new BasicClassBuilder();
-
+            string className = SelectorUtils.GetClassNameFromSelector(selector);
             string body = builder.AddUsings(GetUsings(elements))
                 .AddCtor(CreateCtor(className))
                 .SetClassName(className)
@@ -39,6 +43,15 @@ namespace SeleniumAutomationGenerator.Generator
                 .Build();
 
             return new ComponentGeneratorOutput() { Body = body, CsFileName = NamespaceFileConverter.ConvertNamespaceToFilePath(_namespaceName, className) };
+        }
+        public void AddExceptionPropertyType(string type)
+        {
+            ExceptionsTypes.Add(type);
+        }
+
+        public void AddProperty(string property)
+        {
+            ExtraProperties.Add(property);
         }
 
         protected abstract string CreateCtor(string className);
@@ -58,6 +71,8 @@ namespace SeleniumAutomationGenerator.Generator
         {
             return elements.Select(elm => _propertiesGenerator.CreateProperty(
                                             _container.GetAddin(elm.Type), elm.Name, elm.FullSelector))
+                           .Concat(ExtraProperties)
+                           .Distinct()
                            .ToArray();
         }
 
@@ -74,6 +89,6 @@ namespace SeleniumAutomationGenerator.Generator
         protected virtual string[] GetFields()
         {
             return new string[] { };
-        }
+        }        
     }
 }

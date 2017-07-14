@@ -160,8 +160,10 @@
     <Compile Include="Generator\Builders\BasicClassBuilder.cs" />
     <Compile Include="Generator\ComponentsGenerators\BasicClassGenerator.cs" />
     <Compile Include="Generator\ComponentsGenerators\BasicComponentGenerator.cs" />
+    <Compile Include="Generator\ComponentsGenerators\BasicListComponentGenerator.cs" />
     <Compile Include="Generator\ComponentsGenerators\BasicModelGenerator.cs" />
     <Compile Include="Generator\ComponentsGenerators\BasicPageGenerator.cs" />
+    <Compile Include="Generator\IComponentClassAppender.cs" />
     <Compile Include="Generator\PropertyGenerators\ParentElementFindElementPropertyGenerator.cs" />
     <Compile Include="Models\AutoElementData.cs" />
     <Compile Include="Models\ElementData.cs" />
@@ -170,7 +172,7 @@
     <Compile Include="Generator\PropertyGenerators\SearchContextFindElementPropertyGenerator.cs" />
     <Compile Include="Generator\PropertyGenerators\DriverFindElementPropertyGenerator.cs" />
     <Compile Include="Generator\Builders\IClassBuilder.cs" />
-    <Compile Include="Generator\IClassGenerator.cs" />
+    <Compile Include="Generator\IComponentFileCreator.cs" />
     <Compile Include="Utils\Modifiers.cs" />
     <Compile Include="IComponentAddin.cs" />
     <Compile Include="IComponentsContainer.cs" />
@@ -180,6 +182,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\NamespaceFileConverter.cs" />
+    <Compile Include="Utils\SelectorUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

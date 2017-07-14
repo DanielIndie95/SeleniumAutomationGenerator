@@ -20,7 +20,7 @@ namespace Tests
             const string KEY = "ccc";
             const string NAME = "bbb";
             const string CLASS_NAME = "DishCreator";
-
+            string selector = "auto-page-" + CLASS_NAME;
             Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
             addin.Setup(add => add.AddinKey).Returns(KEY);
             addin.Setup(add => add.GenerateHelpers(CLASS_NAME, NAME)).Returns(new string[] { "void Main(){}", "public void Main2(){}" });
@@ -28,7 +28,7 @@ namespace Tests
             BasicComponentsContainer basicComponentsContainer = new BasicComponentsContainer();
             basicComponentsContainer.AddAddin(addin.Object);
             BasicPageGenerator generator = new BasicPageGenerator(basicComponentsContainer, new DriverFindElementPropertyGenerator("Driver"), Consts.PAGES_NAMESPACE);
-            var classStr = generator.GenerateComponentClass(CLASS_NAME, new[] { new ElementSelectorData() { FullSelector = "aaa", Name = NAME, Type = KEY } });
+            var classStr = generator.GenerateComponentClass(selector, new[] { new ElementSelectorData() { FullSelector = "aaa", Name = NAME, Type = KEY } });
             Directory.CreateDirectory(Consts.PAGES_NAMESPACE);
             Directory.CreateDirectory(Consts.COMPONENTS_NAMESPACE);
             File.WriteAllText(classStr.CsFileName, classStr.Body);
