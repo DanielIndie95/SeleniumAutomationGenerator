@@ -155,7 +155,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicComponentsContainer.cs" />
     <Compile Include="ComponentsFactory.cs" />
     <Compile Include="Generator\Builders\BasicClassBuilder.cs" />
     <Compile Include="Generator\ClassAppenders\ListClassAppender.cs" />
@@ -168,7 +167,6 @@
     <Compile Include="Models\AutoElementData.cs" />
     <Compile Include="Models\ElementData.cs" />
     <Compile Include="Utils\AutoElementFinder.cs" />
-    <Compile Include="Utils\Consts.cs" />
     <Compile Include="Generator\PropertyGenerators\SearchContextFindElementPropertyGenerator.cs" />
     <Compile Include="Generator\PropertyGenerators\DriverFindElementPropertyGenerator.cs" />
     <Compile Include="Utils\Modifiers.cs" />

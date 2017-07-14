@@ -25,7 +25,7 @@ namespace Tests
             addin.Setup(add => add.AddinKey).Returns(KEY);
             addin.Setup(add => add.GenerateHelpers(CLASS_NAME, NAME)).Returns(new string[] { "void Main(){}", "public void Main2(){}" });
             addin.Setup(add => add.Type).Returns("string");
-            BasicComponentsContainer basicComponentsContainer = new BasicComponentsContainer();
+            ComponentsContainer basicComponentsContainer = ComponentsContainer.Instance;
             basicComponentsContainer.AddAddin(addin.Object);
             BasicPageGenerator generator = new BasicPageGenerator(basicComponentsContainer, new DriverFindElementPropertyGenerator("Driver"), Consts.PAGES_NAMESPACE);
             var classStr = generator.GenerateComponentClass(selector, new[] { new ElementSelectorData() { FullSelector = "aaa", Name = NAME, Type = KEY } });
@@ -46,7 +46,7 @@ namespace Tests
             addin.Setup(add => add.GenerateHelpers(CLASS_NAME, NAME)).Returns(new string[] { $"{CLASS_NAME} With{NAME}(string {NAME.ToLower()}){{}}" });
             addin.Setup(add => add.GenerateHelpers(CLASS_NAME, SECOND_NAME)).Returns(new string[] { $"{CLASS_NAME} {SECOND_NAME}(){{}}" });
             addin.Setup(add => add.Type).Returns(Consts.WEB_ELEMENT_CLASS_NAME);
-            BasicComponentsContainer basicComponentsContainer = new BasicComponentsContainer();
+            ComponentsContainer basicComponentsContainer = ComponentsContainer.Instance;
             basicComponentsContainer.AddAddin(addin.Object);
             ComponentsFactory factory = new ComponentsFactory(basicComponentsContainer);
             var files = factory.CreateCsOutput(file);
@@ -66,7 +66,7 @@ namespace Tests
             Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
             addin.Setup(add => add.AddinKey).Returns(KEY);
             addin.Setup(add => add.Type).Returns("string");
-            BasicComponentsContainer basicComponentsContainer = new BasicComponentsContainer();
+            ComponentsContainer basicComponentsContainer = ComponentsContainer.Instance;
             basicComponentsContainer.AddAddin(addin.Object);
             ComponentsFactory factory = new ComponentsFactory(basicComponentsContainer);
             var files = factory.CreateCsOutput(file);

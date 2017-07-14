@@ -3,15 +3,23 @@ using System.Linq;
 
 namespace SeleniumAutomationGenerator
 {
-    public class BasicComponentsContainer : IAddinsContainer
+    public sealed class ComponentsContainer
     {
+        private static ComponentsContainer _value;
+        public static ComponentsContainer Instance => _value;
+
         private IComponentAddin _defaultAddin;
         private Dictionary<string, IComponentAddin> _addins;
 
         public IComponentAddin[] Addins => _addins.Values.ToArray();
-        public BasicComponentsContainer()
+        private ComponentsContainer()
         {
             _addins = new Dictionary<string, IComponentAddin>();
+        }
+
+        static ComponentsContainer()
+        {
+            _value = new ComponentsContainer();
         }
 
         public void AddAddin(IComponentAddin newAddin, bool setAsDefault = false)

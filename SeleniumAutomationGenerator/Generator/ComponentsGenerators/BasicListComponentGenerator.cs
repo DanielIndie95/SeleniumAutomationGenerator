@@ -8,7 +8,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 {
     public class BasicListComponentGenerator : BasicClassGenerator
     {
-        public BasicListComponentGenerator(IAddinsContainer container, IPropertyGenerator propertyGenerator, string namespaceName) : base(container, propertyGenerator, namespaceName)
+        public BasicListComponentGenerator(ComponentsContainer container, IPropertyGenerator propertyGenerator, string namespaceName) : base(container, propertyGenerator, namespaceName)
         {
         }
 

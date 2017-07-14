@@ -8,7 +8,7 @@ namespace SeleniumAutomationGenerator.Generator
 {
     public abstract class BasicClassGenerator : IComponentFileCreator
     {
-        protected IAddinsContainer _container;
+        protected ComponentsContainer _container;
         protected IPropertyGenerator _propertyGenerator;
         protected List<string> baseUsings;
         protected string _namespaceName;
@@ -18,7 +18,7 @@ namespace SeleniumAutomationGenerator.Generator
 
         public IPropertyGenerator PropertyGenerator => _propertyGenerator;
 
-        protected BasicClassGenerator(IAddinsContainer container, IPropertyGenerator propertyGenerator, string namespaceName)
+        protected BasicClassGenerator(ComponentsContainer container, IPropertyGenerator propertyGenerator, string namespaceName)
         {
             baseUsings = new List<string>
             {

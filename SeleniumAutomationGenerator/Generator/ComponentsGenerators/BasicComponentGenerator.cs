@@ -5,7 +5,7 @@ namespace SeleniumAutomationGenerator.Generator
     public class BasicComponentGenerator : BasicClassGenerator
     {
         private string _parentElementFieldName;
-        public BasicComponentGenerator(IAddinsContainer container, IPropertyGenerator propertyGenerator, string namespaceName, string parentElementFieldName) : base(container, propertyGenerator, namespaceName)
+        public BasicComponentGenerator(ComponentsContainer container, IPropertyGenerator propertyGenerator, string namespaceName, string parentElementFieldName) : base(container, propertyGenerator, namespaceName)
         {
             _parentElementFieldName = parentElementFieldName;
         }

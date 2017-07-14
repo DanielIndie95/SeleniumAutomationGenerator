@@ -40,11 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BasicComponentsContainer.cs" />
+    <Compile Include="Consts.cs" />
     <Compile Include="IClassBuilder.cs" />
     <Compile Include="IComponentAddin.cs" />
     <Compile Include="IComponentClassAppender.cs" />
     <Compile Include="IComponentFileCreator.cs" />
-    <Compile Include="IComponentsContainer.cs" />
     <Compile Include="IPropertyGenerator.cs" />
     <Compile Include="Models\ComponentGeneratorOutput.cs" />
     <Compile Include="Models\ElementSelectorData.cs" />

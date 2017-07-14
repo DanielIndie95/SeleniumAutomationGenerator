@@ -14,7 +14,7 @@ namespace SeleniumAutomationGenerator
         Dictionary<string, IComponentClassAppender> _classAppenders;
 
         IComponentFileCreator _defaultFileCreator;
-        public ComponentsFactory(IAddinsContainer container)
+        public ComponentsFactory(ComponentsContainer container)
         {
             _fileCreators = new Dictionary<string, IComponentFileCreator>();
             _classAppenders = new Dictionary<string, IComponentClassAppender>();
