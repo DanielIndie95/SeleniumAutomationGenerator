@@ -11,7 +11,8 @@ namespace SeleniumAutomationGenerator.Generator
         IPropertyGenerator _propertiesGenerator;
 
         string _namespaceName;
-        public BasicPageGenerator(IComponentsContainer container, string namespaceName, IPropertyGenerator propertyGenerator)
+
+        public BasicPageGenerator(IComponentsContainer container, IPropertyGenerator propertyGenerator, string namespaceName)
         {
             _container = container;
             _namespaceName = namespaceName;
@@ -20,68 +21,42 @@ namespace SeleniumAutomationGenerator.Generator
 
         public string GeneratePageClass(string className, ElementSelectorData[] elements)
         {
-            StringBuilder builder = new StringBuilder();
-            AppendUsings(elements, builder);
-            StringBuilder classBuilder = CreateClassBuilder(className, elements);
-            AppendNamespace(builder, CreateClassBuilder(className, elements));
-            return builder.ToString();
+            BasicClassBuilder builder = new BasicClassBuilder();
+
+            return builder.AddUsings(GetUsings(elements))
+                .AddCtor(CreateCtor(className))
+                .SetClassName(className)
+                .SetNamesapce(_namespaceName)
+                .AddUsings("System", "OpenQA.Selenium")
+                .AddProperties(GetProperties(elements))
+                .AddMethods(GetHelpers(elements))
+                .Build();
         }
 
-        private StringBuilder CreateClassBuilder(string className, ElementSelectorData[] elements)
+        private string CreateCtor(string className)
         {
             StringBuilder builder = new StringBuilder();
-            builder.AppendLine($"public class {className}");
-            builder.AppendLine("{");
-            AppendProperties(builder, elements);
-            AppendCtor(builder, className);
-            AppendHelpers(builder, elements);
-            builder.AppendLine("}");
-            return builder;
-        }
-
-        private void AppendHelpers(StringBuilder builder, ElementSelectorData[] elements)
-        {
-            foreach (var element in elements)
-            {
-                string[] helpers = _container.GetAddin(element.Type).GenerateHelpers(element.Name);
-                foreach (var helper in helpers)
-                {
-                    builder.AppendLine(helper);
-                }
-            }
-        }
-
-        private void AppendCtor(StringBuilder builder, string className)
-        {
             builder.AppendLine($"internal {className}({Consts.WEB_DRIVER_CLASS_NAME} driver)");
             builder.AppendLine("{");
             builder.AppendLine("}");
+            return builder.ToString();
         }
-
-        private void AppendProperties(StringBuilder builder, ElementSelectorData[] elements)
+        private string[] GetHelpers(ElementSelectorData[] elements)
         {
+            IEnumerable<string> helpers = new List<string>();
             foreach (var element in elements)
             {
-                string property = _propertiesGenerator.CreateNode(_container.GetAddin(element.Type), element.Name, element.FullSelector);
-                builder.AppendLine(property);
+                string[] innerHelpers = _container.GetAddin(element.Type).GenerateHelpers(element.Name);
+                helpers.Concat(innerHelpers);
             }
+            return helpers.ToArray();
         }
 
-        private void AppendNamespace(StringBuilder builder, StringBuilder classBody)
+        private string[] GetProperties(ElementSelectorData[] elements)
         {
-            builder.AppendLine($"namespace {_namespaceName}");
-            builder.Append("{");
-            builder.Append(classBody);
-            builder.AppendLine("}");
-        }
-
-        private void AppendUsings(ElementSelectorData[] elements, StringBuilder builder)
-        {
-            string[] usings = GetUsings(elements);
-            foreach (var usingNamespace in usings)
-            {
-                builder.AppendLine($"using {usingNamespace};");
-            }
+            return elements.Select(elm => _propertiesGenerator.CreateNode(
+                                            _container.GetAddin(elm.Type), elm.Name, elm.FullSelector))
+                           .ToArray();
         }
 
         private string[] GetUsings(ElementSelectorData[] elements)

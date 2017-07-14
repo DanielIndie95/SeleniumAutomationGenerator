@@ -3,13 +3,13 @@ using System.Linq;
 
 namespace SeleniumAutomationGenerator
 {
-    public class BasicCompoenentsContainer : IComponentsContainer
+    public class BasicComponentsContainer : IComponentsContainer
     {
         private IComponentAddin _defaultAddin;
         private Dictionary<string, IComponentAddin> _addins;
 
         public IComponentAddin[] Addins => _addins.Values.ToArray();
-        public BasicCompoenentsContainer()
+        public BasicComponentsContainer()
         {
             _addins = new Dictionary<string, IComponentAddin>();
         }
