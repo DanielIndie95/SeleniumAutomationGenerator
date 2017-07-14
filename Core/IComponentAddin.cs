@@ -12,5 +12,6 @@
 
         bool IsPropertyModifierPublic { get; }
         bool IsArrayedAddin { get; }
+        bool CtorContainsDriver { get; }
     }
 }

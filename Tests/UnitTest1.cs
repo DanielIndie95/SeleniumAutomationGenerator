@@ -91,6 +91,7 @@ namespace Tests
             addin.Setup(add => add.AddinKey).Returns(KEY);
             addin.Setup(add => add.Type).Returns(TYPE);
             addin.Setup(add => add.IsPropertyModifierPublic).Returns(true);
+            addin.Setup(add => add.IsArrayedAddin).Returns(false);
             var propertyGen = new DriverFindElementPropertyGenerator(DRIVER_PROP_NAME);
             var property = propertyGen.CreateProperty(addin.Object, NAME, SELECTOR);
             property.Should().Be($"public {TYPE} {NAME} => {DRIVER_PROP_NAME}.FindElement(By.ClassName(\"{SELECTOR}\")).Text;");

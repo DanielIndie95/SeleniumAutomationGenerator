@@ -71,6 +71,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BaseComponentsAddings\BaseComponentsAddins.csproj">
+      <Project>{4060b5db-7ef6-4b54-b50e-17e004125e2b}</Project>
+      <Name>BaseComponentsAddins</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{462c1dc0-34d6-4e2e-b021-b2ea8db61123}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SeleniumAutomationGenerator\SeleniumAutomationGenerator.csproj">
       <Project>{ed0ca818-3282-45cf-b276-90b6e203de58}</Project>
       <Name>SeleniumAutomationGenerator</Name>

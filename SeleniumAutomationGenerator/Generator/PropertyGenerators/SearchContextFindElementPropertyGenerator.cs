@@ -5,15 +5,20 @@ namespace SeleniumAutomationGenerator.Generator
 {
     public abstract class SearchContextFindElementPropertyGenerator : IPropertyGenerator
     {
-        public Dictionary<string, Func<string, string>> _exceptions;
+        public Dictionary<string, Func<string, string>> _singlePropertyExceptions;
+        public Dictionary<string, Func<string, string>> _listPropertyExceptions;
         protected string DriverPropertyName;
         public SearchContextFindElementPropertyGenerator(string driverPropertyName)
         {
             DriverPropertyName = driverPropertyName;
-            _exceptions = new Dictionary<string, Func<string, string>>();
+            _singlePropertyExceptions = new Dictionary<string, Func<string, string>>();
+            _listPropertyExceptions = new Dictionary<string, Func<string, string>>();
             AddException(Consts.WEB_ELEMENT_CLASS_NAME, (selector) => FindElementString(selector, false));
             AddException("string", (selector) => $"{FindElementString(selector, false)}.Text");
             AddException("int", (selector) => $"int.Parse({FindElementString(selector, false)}.Text)");
+
+            AddException("string", (selector) => $"{FindElementString(selector, false)}.Select(elm=> elm.Text)", true);
+            AddException("int", (selector) => $"{FindElementString(selector, false)}.Select(elm=> int.Parse(elm.Text))", true);
         }
 
         /// <summary>
@@ -21,9 +26,12 @@ namespace SeleniumAutomationGenerator.Generator
         /// </summary>
         /// <param name="type"></param>
         /// <param name="exceptionValueGenerator">the first string is the selector(class), the second is the returned value</param>
-        public void AddException(string type, Func<string, string> exceptionValueGenerator)
+        public void AddException(string type, Func<string, string> exceptionValueGenerator, bool asListPropertyException = false)
         {
-            _exceptions[type] = exceptionValueGenerator;
+            if (asListPropertyException)
+                _listPropertyExceptions[type] = exceptionValueGenerator;
+            else
+                _singlePropertyExceptions[type] = exceptionValueGenerator;
         }
 
         public virtual string CreateProperty(IComponentAddin addin, string propName, string selector)
@@ -53,11 +61,13 @@ namespace SeleniumAutomationGenerator.Generator
 
         private bool IsExceptionType(string type)
         {
-            return _exceptions.ContainsKey(type);
+            return _singlePropertyExceptions.ContainsKey(type);
         }
-        private string HandleExcpetions(string type, string selector)
+        private string HandleExcpetions(string type, string selector, bool asList = false)
         {
-            return _exceptions[type](selector);
+            if (asList)
+                return _listPropertyExceptions[type](selector);
+            return _singlePropertyExceptions[type](selector);
         }
 
         private string GetModifier(IComponentAddin addin)

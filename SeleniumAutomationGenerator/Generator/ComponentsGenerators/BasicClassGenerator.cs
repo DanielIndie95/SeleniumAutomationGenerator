@@ -9,11 +9,14 @@ namespace SeleniumAutomationGenerator.Generator
     public abstract class BasicClassGenerator : IComponentFileCreator
     {
         protected IAddinsContainer _container;
-        protected IPropertyGenerator _propertiesGenerator;
+        protected IPropertyGenerator _propertyGenerator;
         protected List<string> baseUsings;
         protected string _namespaceName;
         protected List<string> ExceptionsTypes;
         protected List<string> ExtraProperties;
+        protected List<string> ExtraMethods;
+
+        public IPropertyGenerator PropertyGenerator => _propertyGenerator;
 
         protected BasicClassGenerator(IAddinsContainer container, IPropertyGenerator propertyGenerator, string namespaceName)
         {
@@ -23,9 +26,10 @@ namespace SeleniumAutomationGenerator.Generator
             };
             ExceptionsTypes = new List<string>();
             ExtraProperties = new List<string>();
+            ExtraMethods = new List<string>();
             _container = container;
             _namespaceName = namespaceName;
-            _propertiesGenerator = propertyGenerator;
+            _propertyGenerator = propertyGenerator;
         }
 
         public virtual ComponentGeneratorOutput GenerateComponentClass(string selector, ElementSelectorData[] elements)
@@ -53,23 +57,33 @@ namespace SeleniumAutomationGenerator.Generator
         {
             ExtraProperties.Add(property);
         }
+        public void AddMethod(string method)
+        {
+            ExtraMethods.Add(method);   
+        }
 
         protected abstract string CreateCtor(string className);
 
         private string[] GetHelpers(string className, ElementSelectorData[] elements)
         {
             IEnumerable<string> helpers = new List<string>();
-            foreach (var element in elements)
+            foreach (var element in elements.Where(elm => !ExceptionsTypes.Contains(elm.Type)))
             {
-                string[] innerHelpers = _container.GetAddin(element.Type).GenerateHelpers(className, element.Name);
-                helpers = helpers.Concat(innerHelpers);
+                IComponentAddin componentAddin = _container.GetAddin(element.Type);
+                if (componentAddin != null)
+                {
+                    string[] innerHelpers = componentAddin.GenerateHelpers(className, element.Name);
+                    helpers = helpers.Concat(innerHelpers);
+                }
             }
             return helpers.ToArray();
         }
 
         protected virtual string[] GetProperties(ElementSelectorData[] elements)
         {
-            return elements.Select(elm => _propertiesGenerator.CreateProperty(
+            return elements
+                            .Where(elm => !ExceptionsTypes.Contains(elm.Type))
+                            .Select(elm => _propertyGenerator.CreateProperty(
                                             _container.GetAddin(elm.Type), elm.Name, elm.FullSelector))
                            .Concat(ExtraProperties)
                            .Distinct()
@@ -89,6 +103,6 @@ namespace SeleniumAutomationGenerator.Generator
         protected virtual string[] GetFields()
         {
             return new string[] { };
-        }        
+        }       
     }
 }

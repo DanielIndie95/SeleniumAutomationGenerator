@@ -158,12 +158,12 @@
     <Compile Include="BasicComponentsContainer.cs" />
     <Compile Include="ComponentsFactory.cs" />
     <Compile Include="Generator\Builders\BasicClassBuilder.cs" />
+    <Compile Include="Generator\ClassAppenders\ListClassAppender.cs" />
     <Compile Include="Generator\ComponentsGenerators\BasicClassGenerator.cs" />
     <Compile Include="Generator\ComponentsGenerators\BasicComponentGenerator.cs" />
     <Compile Include="Generator\ComponentsGenerators\BasicListComponentGenerator.cs" />
     <Compile Include="Generator\ComponentsGenerators\BasicModelGenerator.cs" />
     <Compile Include="Generator\ComponentsGenerators\BasicPageGenerator.cs" />
-    <Compile Include="Generator\IComponentClassAppender.cs" />
     <Compile Include="Generator\PropertyGenerators\ParentElementFindElementPropertyGenerator.cs" />
     <Compile Include="Models\AutoElementData.cs" />
     <Compile Include="Models\ElementData.cs" />
@@ -171,14 +171,7 @@
     <Compile Include="Utils\Consts.cs" />
     <Compile Include="Generator\PropertyGenerators\SearchContextFindElementPropertyGenerator.cs" />
     <Compile Include="Generator\PropertyGenerators\DriverFindElementPropertyGenerator.cs" />
-    <Compile Include="Generator\Builders\IClassBuilder.cs" />
-    <Compile Include="Generator\IComponentFileCreator.cs" />
     <Compile Include="Utils\Modifiers.cs" />
-    <Compile Include="IComponentAddin.cs" />
-    <Compile Include="IComponentsContainer.cs" />
-    <Compile Include="Generator\IPropertyGenerator.cs" />
-    <Compile Include="Models\ComponentGeneratorOutput.cs" />
-    <Compile Include="Models\ElementSelectorData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\NamespaceFileConverter.cs" />
@@ -192,7 +185,16 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\BaseComponentsAddings\BaseComponentsAddins.csproj">
+      <Project>{4060b5db-7ef6-4b54-b50e-17e004125e2b}</Project>
+      <Name>BaseComponentsAddins</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{462c1dc0-34d6-4e2e-b021-b2ea8db61123}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

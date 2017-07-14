@@ -1,4 +1,5 @@
 ﻿using SeleniumAutomationGenerator.Generator;
+using SeleniumAutomationGenerator.Generator.ClassAppenders;
 using SeleniumAutomationGenerator.Generator.PropertyGenerators;
 using SeleniumAutomationGenerator.Models;
 using SeleniumAutomationGenerator.Utils;
@@ -21,12 +22,15 @@ namespace SeleniumAutomationGenerator
             AddComponentClassGeneratorKey("model", new BasicModelGenerator(container, new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME, Consts.PARENT_ELEMENT_FIELD_NAME), Consts.PAGES_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME));
 
             _defaultFileCreator = new BasicComponentGenerator(container, new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME, Consts.PARENT_ELEMENT_FIELD_NAME), Consts.PAGES_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME);
+
+            AddComponentTypeAppenders("list", new ListClassAppender());            
         }
 
         public void AddComponentClassGeneratorKey(string key, IComponentFileCreator newComponentFileCreator)
         {
             _fileCreators[key] = newComponentFileCreator;
         }
+
         public void AddComponentTypeAppenders(string type, IComponentClassAppender classAppender)
         {
             _classAppenders[type] = classAppender;
@@ -69,20 +73,12 @@ namespace SeleniumAutomationGenerator
         private IEnumerable<ComponentGeneratorOutput> GetFileCreatorsOutput(string selector, IEnumerable<AutoElementData> children, string keyWord, IEnumerable<ElementSelectorData> childrenData)
         {
             IEnumerable<ComponentGeneratorOutput> outputs = new List<ComponentGeneratorOutput>();
+            IComponentFileCreator parent = _fileCreators.ContainsKey(keyWord) ? _fileCreators[keyWord] : _defaultFileCreator;
             foreach (var child in children)
             {
-                outputs = outputs.Union(CreateCsOutput(child.Selector, child.InnerChildrens.ToList()), new ComponentOutputComparer());
+                outputs = outputs.Union(CreateCsOutput(child.Selector, child.InnerChildrens.ToList(), parent), new ComponentOutputComparer());
             }
-
-            ComponentGeneratorOutput parentOutput;
-            if (_fileCreators.ContainsKey(keyWord))
-            {
-                parentOutput = _fileCreators[keyWord].GenerateComponentClass(selector, childrenData.ToArray());
-            }
-            else
-            {
-                parentOutput = _defaultFileCreator.GenerateComponentClass(selector, childrenData.ToArray());
-            }
+            ComponentGeneratorOutput parentOutput = parent.GenerateComponentClass(selector, childrenData.ToArray());            
             outputs = outputs.Union(new[] { parentOutput }, new ComponentOutputComparer());
             return outputs;
         }
