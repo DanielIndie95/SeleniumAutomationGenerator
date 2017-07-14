@@ -8,8 +8,9 @@
 
         string[] RequiredUsings { get; }
 
-        string[] GenerateHelpers(string propName);
+        string[] GenerateHelpers(string className, string propName);
 
         bool IsPropertyModifierPublic { get; }
+        bool IsArrayedAddin { get; }
     }
 }

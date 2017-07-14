@@ -34,7 +34,7 @@ namespace SeleniumAutomationGenerator.Generator
                 .SetNamesapce(_namespaceName)
                 .AddUsings(GetUsings(elements))
                 .AddProperties(GetProperties(elements))
-                .AddMethods(GetHelpers(elements))
+                .AddMethods(GetHelpers(className, elements))
                 .AddFields(GetFields())
                 .Build();
 
@@ -43,12 +43,12 @@ namespace SeleniumAutomationGenerator.Generator
 
         protected abstract string CreateCtor(string className);
 
-        private string[] GetHelpers(ElementSelectorData[] elements)
+        private string[] GetHelpers(string className, ElementSelectorData[] elements)
         {
             IEnumerable<string> helpers = new List<string>();
             foreach (var element in elements)
             {
-                string[] innerHelpers = _container.GetAddin(element.Type).GenerateHelpers(element.Name);
+                string[] innerHelpers = _container.GetAddin(element.Type).GenerateHelpers(className, element.Name);
                 helpers = helpers.Concat(innerHelpers);
             }
             return helpers.ToArray();
@@ -56,7 +56,7 @@ namespace SeleniumAutomationGenerator.Generator
 
         protected virtual string[] GetProperties(ElementSelectorData[] elements)
         {
-            return elements.Select(elm => _propertiesGenerator.CreateNode(
+            return elements.Select(elm => _propertiesGenerator.CreateProperty(
                                             _container.GetAddin(elm.Type), elm.Name, elm.FullSelector))
                            .ToArray();
         }

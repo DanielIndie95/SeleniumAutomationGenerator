@@ -1,7 +1,10 @@
 ﻿using SeleniumAutomationGenerator.Generator;
+using SeleniumAutomationGenerator.Generator.PropertyGenerators;
 using SeleniumAutomationGenerator.Models;
+using SeleniumAutomationGenerator.Utils;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SeleniumAutomationGenerator
 {
@@ -9,19 +12,19 @@ namespace SeleniumAutomationGenerator
     {
         Dictionary<string, Func<string, ElementSelectorData[], ComponentGeneratorOutput>> fileCreators;
         Func<string, ElementSelectorData[], ComponentGeneratorOutput> _defaultFileCreator;
-        public ComponentsFactory(IAddinsContainer container, IPropertyGenerator propertyGenerator)
+        public ComponentsFactory(IAddinsContainer container)
         {
             fileCreators = new Dictionary<string, Func<string, ElementSelectorData[], ComponentGeneratorOutput>>();
             AddComponentGeneratorKey("page", (selector, elements) =>
-                                            new BasicPageGenerator(container, propertyGenerator, Consts.PAGES_NAMESPACE)
+                                            new BasicPageGenerator(container, new DriverFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME), Consts.PAGES_NAMESPACE)
                                                .GenerateComponentClass(GetClassNameFromSelector(selector), elements));
 
             AddComponentGeneratorKey("model", (selector, elements) =>
-                                            new BasicModelGenerator(container, propertyGenerator, Consts.PAGES_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME)
-                                               .GenerateComponentClass(GetClassNameFromSelector(selector), elements));            
+                                            new BasicModelGenerator(container, new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME, Consts.PARENT_ELEMENT_FIELD_NAME), Consts.PAGES_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME)
+                                               .GenerateComponentClass(GetClassNameFromSelector(selector), elements));
 
             _defaultFileCreator = (selector, elements) =>
-                                           new BasicComponentGenerator(container, propertyGenerator, Consts.PAGES_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME)
+                                           new BasicComponentGenerator(container, new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME, Consts.PARENT_ELEMENT_FIELD_NAME), Consts.PAGES_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME)
                                               .GenerateComponentClass(GetClassNameFromSelector(selector), elements);
         }
 
@@ -34,9 +37,40 @@ namespace SeleniumAutomationGenerator
         {
             fileCreators[key] = componentCreator;
         }
-        public ComponentGeneratorOutput CreateCsOutput(string selector , string innerBody)
+        public IEnumerable<ComponentGeneratorOutput> CreateCsOutput(string body)
         {
-            throw new NotImplementedException();
+            IEnumerable<AutoElementData> children = AutoElementFinder.GetChildren(body);
+            IEnumerable<ComponentGeneratorOutput> totalChildren = new List<ComponentGeneratorOutput>();
+            foreach (var child in children)
+            {
+                totalChildren = totalChildren.Union(CreateCsOutput(child.Selector, child.InnerChildrens) , new ComponentOutputComparer());
+            }
+            return totalChildren;
+        }
+
+        public IEnumerable<ComponentGeneratorOutput> CreateCsOutput(string selector, IEnumerable<AutoElementData> children)
+        {
+            var keyWord = GetKeyWordFromSelector(selector);
+            if (children.Count() == 0) //not a new cs file
+                return new List<ComponentGeneratorOutput>();
+
+            IEnumerable<ElementSelectorData> childrenData = children.Select(ConvertToElementSelectorData);
+            IEnumerable<ComponentGeneratorOutput> outputs = new List<ComponentGeneratorOutput>();
+            foreach (var child in children)
+            {
+                outputs = outputs.Union(CreateCsOutput(child.Selector, child.InnerChildrens.ToList()), new ComponentOutputComparer());
+            }
+            ComponentGeneratorOutput parentOutput;
+            if (fileCreators.ContainsKey(keyWord))
+            {
+                parentOutput = fileCreators[keyWord](selector, childrenData.ToArray());
+            }
+            else
+            {                
+                parentOutput = _defaultFileCreator(selector, childrenData.ToArray());
+            }
+            outputs = outputs.Union(new[] { parentOutput }, new ComponentOutputComparer());
+            return outputs;
         }
 
         private string GetClassNameFromSelector(string selector)
@@ -48,6 +82,15 @@ namespace SeleniumAutomationGenerator
         {
             string[] parts = selector.Split('-');
             return parts[1];
+        }
+        private ElementSelectorData ConvertToElementSelectorData(AutoElementData data)
+        {
+            return new ElementSelectorData()
+            {
+                FullSelector = data.Selector,
+                Name = GetClassNameFromSelector(data.Selector),
+                Type = GetKeyWordFromSelector(data.Selector)
+            };
         }
     }
 }

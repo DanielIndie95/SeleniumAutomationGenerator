@@ -26,15 +26,24 @@ namespace SeleniumAutomationGenerator.Generator
             _exceptions[type] = exceptionValueGenerator;
         }
 
-        public virtual string CreateNode(IComponentAddin addin, string propName, string selector)
+        public virtual string CreateProperty(IComponentAddin addin, string propName, string selector)
+        {
+            if (addin.IsArrayedAddin)
+                return CreateListTypeProperty(addin, propName, selector);
+            return CreateSingleTypeProperty(addin, ref propName, selector);
+        }
+
+        private string CreateSingleTypeProperty(IComponentAddin addin, ref string propName, string selector)
         {
             string modifier = GetModifier(addin);
+            propName = addin.Type == Consts.WEB_ELEMENT_CLASS_NAME ? propName + "Element" : propName;//looks more logical to me
             if (IsExceptionType(addin.Type))
                 return $"{modifier} {addin.Type} {propName} => {HandleExcpetions(addin.Type, selector)};";
+
             return $"{modifier} {addin.Type} {propName} => new {addin.Type}({DriverPropertyName},{FindElementString(selector, false)});";
         }
 
-        public virtual string CreateNodeAsList(IComponentAddin addin, string propName, string selector)
+        public virtual string CreateListTypeProperty(IComponentAddin addin, string propName, string selector)
         {
             string modifier = GetModifier(addin);
             return $"{modifier} ReadOnlyList<{addin.Type}> {propName} => {FindElementString(selector, true)};";

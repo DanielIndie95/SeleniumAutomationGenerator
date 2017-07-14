@@ -6,7 +6,8 @@ namespace SeleniumAutomationGenerator.Utils
     {
         public static string ConvertNamespaceToFilePath(string nameSpace, string className = null)
         {
-            return nameSpace.Replace(".", "\\") + (className != null ? $"\\{className}.cs" : "");
+            string result = nameSpace.Replace(".", "\\") + (className != null ? $"\\{className}.cs" : "");
+            return result;
         }
         public static string ConvertFilePathNamespace(string filePath)
         {
