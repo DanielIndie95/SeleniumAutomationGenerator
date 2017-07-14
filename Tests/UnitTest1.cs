@@ -20,13 +20,15 @@ namespace Tests
             const string NAME = "bbb";
             Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
             addin.Setup(add => add.AddinKey).Returns(KEY);
-            addin.Setup(add => add.GenerateHelpers(NAME)).Returns(new string[] { "void Main(){}" });
+            addin.Setup(add => add.GenerateHelpers(NAME)).Returns(new string[] { "void Main(){}", "public void Main2(){}" });
             addin.Setup(add => add.Type).Returns("string");
             BasicComponentsContainer basicComponentsContainer = new BasicComponentsContainer();
             basicComponentsContainer.AddAddin(addin.Object);
-            BasicPageGenerator generator = new BasicPageGenerator(basicComponentsContainer, new DriverFindElementPropertyGenerator("Driver"), "Infastructure");
-            string classStr = generator.GenerateComponentClass("Foo", new[] { new ElementSelectorData() { FullSelector = "aaa", Name = NAME, Type = KEY } });
-            File.WriteAllText("test01.cs", classStr);
+            BasicPageGenerator generator = new BasicPageGenerator(basicComponentsContainer, new DriverFindElementPropertyGenerator("Driver"), Consts.PAGES_NAMESPACE);
+            var classStr = generator.GenerateComponentClass("Foo", new[] { new ElementSelectorData() { FullSelector = "aaa", Name = NAME, Type = KEY } });
+            Directory.CreateDirectory(Consts.PAGES_NAMESPACE);
+            Directory.CreateDirectory(Consts.COMPONENTS_NAMESPACE);
+            File.WriteAllText(classStr.CsFileName, classStr.Body);
         }
 
         [TestMethod]
@@ -92,7 +94,7 @@ namespace Tests
             Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
             addin.Setup(add => add.AddinKey).Returns(KEY);
             addin.Setup(add => add.Type).Returns(TYPE);
-            
+
             var propertyGen = new ParentElementFindElementPropertyGenerator(DRIVER_PROP_NAME, PARENT_ELEMENT_NAME);
             var property = propertyGen.CreateNode(addin.Object, NAME, SELECTOR);
             property.Should().Be($"protected {TYPE} {NAME} => new {TYPE}({DRIVER_PROP_NAME},{PARENT_ELEMENT_NAME}.FindElement(By.ClassName(\"{SELECTOR}\")));");

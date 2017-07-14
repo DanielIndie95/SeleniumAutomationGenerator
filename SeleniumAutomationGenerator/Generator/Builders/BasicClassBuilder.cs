@@ -113,7 +113,7 @@ namespace SeleniumAutomationGenerator.Generator
         {
             if (_namespaceName != null)
                 builder.AppendLine($"namespace {_namespaceName}");
-            builder.Append("{");
+            builder.AppendLine("{");
             builder.Append(classBody);
             builder.AppendLine("}");
         }
@@ -127,9 +127,9 @@ namespace SeleniumAutomationGenerator.Generator
 
         private void AppendMethods(StringBuilder builder)
         {
-            AppendModifier(builder, _props, Modifiers.Public);
-            AppendModifier(builder, _props, Modifiers.Protected);
-            AppendModifier(builder, _props, Modifiers.Private);
+            AppendModifier(builder, _methods, Modifiers.Public);
+            AppendModifier(builder, _methods, Modifiers.Protected);
+            AppendModifier(builder, _methods, Modifiers.Private);
         }
 
         private void AppendProperties(StringBuilder builder)

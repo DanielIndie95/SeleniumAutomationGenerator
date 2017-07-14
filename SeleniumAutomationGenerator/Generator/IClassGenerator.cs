@@ -4,6 +4,6 @@ namespace SeleniumAutomationGenerator.Generator
 {
     public interface IClassGenerator
     {
-        string GenerateComponentClass(string className, ElementSelectorData[] elements);
+        ComponentGeneratorOutput GenerateComponentClass(string className, ElementSelectorData[] elements);
     }
 }

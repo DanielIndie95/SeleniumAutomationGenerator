@@ -23,7 +23,7 @@ namespace SeleniumAutomationGenerator.Generator
         /// <param name="exceptionValueGenerator">the first string is the selector(class), the second is the returned value</param>
         public void AddException(string type, Func<string, string> exceptionValueGenerator)
         {
-            _exceptions.Add(type, exceptionValueGenerator);
+            _exceptions[type] = exceptionValueGenerator;
         }
 
         public virtual string CreateNode(IComponentAddin addin, string propName, string selector)

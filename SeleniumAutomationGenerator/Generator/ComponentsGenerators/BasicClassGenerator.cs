@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using SeleniumAutomationGenerator.Models;
+using SeleniumAutomationGenerator.Utils;
 
 namespace SeleniumAutomationGenerator.Generator
 {
@@ -23,11 +24,11 @@ namespace SeleniumAutomationGenerator.Generator
             _propertiesGenerator = propertyGenerator;
         }
 
-        public virtual string GenerateComponentClass(string className, ElementSelectorData[] elements)
+        public virtual ComponentGeneratorOutput GenerateComponentClass(string className, ElementSelectorData[] elements)
         {
             BasicClassBuilder builder = new BasicClassBuilder();
 
-            return builder.AddUsings(GetUsings(elements))
+            string body = builder.AddUsings(GetUsings(elements))
                 .AddCtor(CreateCtor(className))
                 .SetClassName(className)
                 .SetNamesapce(_namespaceName)
@@ -36,17 +37,19 @@ namespace SeleniumAutomationGenerator.Generator
                 .AddMethods(GetHelpers(elements))
                 .AddFields(GetFields())
                 .Build();
+
+            return new ComponentGeneratorOutput() { Body = body, CsFileName = NamespaceFileConverter.ConvertNamespaceToFilePath(_namespaceName, className) };
         }
 
         protected abstract string CreateCtor(string className);
-       
+
         private string[] GetHelpers(ElementSelectorData[] elements)
         {
             IEnumerable<string> helpers = new List<string>();
             foreach (var element in elements)
             {
                 string[] innerHelpers = _container.GetAddin(element.Type).GenerateHelpers(element.Name);
-                helpers.Concat(innerHelpers);
+                helpers = helpers.Concat(innerHelpers);
             }
             return helpers.ToArray();
         }
@@ -71,6 +74,6 @@ namespace SeleniumAutomationGenerator.Generator
         protected virtual string[] GetFields()
         {
             return new string[] { };
-        }        
+        }
     }
 }

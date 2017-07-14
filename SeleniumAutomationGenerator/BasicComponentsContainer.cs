@@ -18,8 +18,8 @@ namespace SeleniumAutomationGenerator
         {
             if (setAsDefault)
                 _defaultAddin = newAddin;
-            
-            _addins.Add(newAddin.AddinKey, newAddin);
+
+            _addins[newAddin.AddinKey] = newAddin;
         }
 
         public IComponentAddin GetAddin(string key)
@@ -27,6 +27,6 @@ namespace SeleniumAutomationGenerator
             IComponentAddin addin = _addins.TryGetValue(key, out IComponentAddin tryAddin)
                 ? tryAddin : _defaultAddin;
             return addin;
-        }             
+        }
     }
 }
