@@ -15,7 +15,7 @@ namespace SeleniumAutomationGenerator.Generator
             StringBuilder builder = new StringBuilder();
             builder.AppendLine($"internal {className}({Consts.WEB_ELEMENT_CLASS_NAME} parentElement)");
             builder.AppendLine("{");
-            builder.AppendLine($"{_parentFieldName} = parentElement");
+            builder.AppendLine($"{_parentFieldName} = parentElement;");
             builder.AppendLine("}");
             return builder.ToString();
         }

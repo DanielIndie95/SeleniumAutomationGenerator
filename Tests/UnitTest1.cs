@@ -59,6 +59,26 @@ namespace Tests
         }
 
         [TestMethod]
+        public void TestMethod7()
+        {
+            string file = File.ReadAllText(@"TestFiles\Test1.html");
+            const string KEY = "label";
+            Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
+            addin.Setup(add => add.AddinKey).Returns(KEY);
+            addin.Setup(add => add.Type).Returns("string");
+            BasicComponentsContainer basicComponentsContainer = new BasicComponentsContainer();
+            basicComponentsContainer.AddAddin(addin.Object);
+            ComponentsFactory factory = new ComponentsFactory(basicComponentsContainer);
+            var files = factory.CreateCsOutput(file);
+            Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.PAGES_NAMESPACE));
+            Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.COMPONENTS_NAMESPACE));
+            foreach (var innerFile in files)
+            {
+                File.WriteAllText(innerFile.CsFileName, innerFile.Body);
+            }
+        }
+
+        [TestMethod]
         public void TestMethod2()
         {
             const string KEY = "ccc";
@@ -125,23 +145,6 @@ namespace Tests
             var propertyGen = new ParentElementFindElementPropertyGenerator(DRIVER_PROP_NAME, PARENT_ELEMENT_NAME);
             var property = propertyGen.CreateProperty(addin.Object, NAME, SELECTOR);
             property.Should().Be($"protected {TYPE} {NAME} => new {TYPE}({DRIVER_PROP_NAME},{PARENT_ELEMENT_NAME}.FindElement(By.ClassName(\"{SELECTOR}\")));");
-        }
-        [TestMethod]
-        public void TestMethod7()
-        {
-            const string KEY = "list-item";
-            const string NAME = "bbb";
-            const string TYPE = "CustomClass";
-            const string SELECTOR = "aaa";
-            const string DRIVER_PROP_NAME = "Driver";
-            const string PARENT_ELEMENT_NAME = "_parentElement";
-            Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
-            addin.Setup(add => add.AddinKey).Returns(KEY);
-            addin.Setup(add => add.Type).Returns(TYPE);
-
-            var propertyGen = new ParentElementFindElementPropertyGenerator(DRIVER_PROP_NAME, PARENT_ELEMENT_NAME);
-            var property = propertyGen.CreateProperty(addin.Object, NAME, SELECTOR);
-            property.Should().Be($"protected {TYPE} {NAME} => new {TYPE}({DRIVER_PROP_NAME},{PARENT_ELEMENT_NAME}.FindElement(By.ClassName(\"{SELECTOR}\")));");
-        }
+        }        
     }
 }
