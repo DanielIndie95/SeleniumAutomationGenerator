@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace SeleniumAutomationGenerator
 {
-    public class BasicComponentsContainer : IComponentsContainer
+    public class BasicComponentsContainer : IAddinsContainer
     {
         private IComponentAddin _defaultAddin;
         private Dictionary<string, IComponentAddin> _addins;

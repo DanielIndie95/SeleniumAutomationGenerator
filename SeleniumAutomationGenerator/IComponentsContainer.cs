@@ -1,8 +1,6 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-
-namespace SeleniumAutomationGenerator
+﻿namespace SeleniumAutomationGenerator
 {
-    public interface IComponentsContainer
+    public interface IAddinsContainer
     {        
         void AddAddin(IComponentAddin newAddin, bool setAsDefault = false);
 

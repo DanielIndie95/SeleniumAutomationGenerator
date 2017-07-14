@@ -23,6 +23,11 @@ namespace SeleniumAutomationGenerator.Generator
             _methods = new Dictionary<Modifiers, List<string>>();
         }
 
+        public static string CreateField(string type, string name, Modifiers modifier = Modifiers.Private)
+        {
+            return $"{modifier.ToString().ToLower()} {type} {name};";
+        }
+
         public IClassBuilder AddCtor(string ctor)
         {
             _ctor = ctor;
@@ -35,7 +40,7 @@ namespace SeleniumAutomationGenerator.Generator
             {
                 AddModifierField(_fields, field);
             }
-            
+
             return this;
         }
 
@@ -86,7 +91,7 @@ namespace SeleniumAutomationGenerator.Generator
             StringBuilder classBuilder = CreateClassBuilder();
             AppendNamespace(builder, classBuilder);
             return builder.ToString();
-        }       
+        }
 
         private StringBuilder CreateClassBuilder()
         {
@@ -131,7 +136,7 @@ namespace SeleniumAutomationGenerator.Generator
         {
             AppendModifier(builder, _props, Modifiers.Private);
             AppendModifier(builder, _props, Modifiers.Protected);
-            AppendModifier(builder, _props , Modifiers.Public);
+            AppendModifier(builder, _props, Modifiers.Public);
         }
 
         private void AppendUsings(StringBuilder builder, IEnumerable<string> usings)
@@ -155,13 +160,13 @@ namespace SeleniumAutomationGenerator.Generator
                 container[modifier] = fields = new List<string>();
 
             fields.Add(newField);
-        }       
+        }
 
         private Modifiers FindModifier(string field)
         {
             string firstWord = field.Split(' ').First();
-            Modifiers modifier;
-            return Enum.TryParse(UppercaseFirst(firstWord), out modifier)
+            
+            return Enum.TryParse(UppercaseFirst(firstWord), out Modifiers modifier)
                 ? modifier : Modifiers.Private;
         }
 

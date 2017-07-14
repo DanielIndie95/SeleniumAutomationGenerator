@@ -24,8 +24,7 @@ namespace Tests
             BasicComponentsContainer basicComponentsContainer = new BasicComponentsContainer();
             basicComponentsContainer.AddAddin(addin.Object);
             BasicPageGenerator generator = new BasicPageGenerator(basicComponentsContainer, new DriverFindElementPropertyGenerator(), "Infastructure");
-            string classStr = generator.GeneratePageClass("Foo", new[] { new ElementSelectorData() { FullSelector = "aaa", Name = NAME, Type = KEY } });
-            int a = 5;
+            string classStr = generator.GenerateComponentClass("Foo", new[] { new ElementSelectorData() { FullSelector = "aaa", Name = NAME, Type = KEY } });
             File.WriteAllText("test01.cs",classStr);
         }
 
@@ -43,14 +42,13 @@ namespace Tests
             var propertyGen = new DriverFindElementPropertyGenerator();
             var property = propertyGen.CreateNode(addin.Object, NAME, SELECTOR);
             property.Should().Be($"public {TYPE} {NAME} => Driver.FindElement(By.ClassName(\"{SELECTOR}\")).Text;");
-            int a = 5;
         }
         [TestMethod]
         public void TestMethod3()
         {
             const string KEY = "ccc";
             const string NAME = "bbb";
-            const string TYPE = "IWebDriver";
+            const string TYPE = "IWebElement";
             const string SELECTOR = "aaa";
             Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
             addin.Setup(add => add.AddinKey).Returns(KEY);
@@ -60,7 +58,6 @@ namespace Tests
             var propertyGen = new DriverFindElementPropertyGenerator();
             var property = propertyGen.CreateNode(addin.Object, NAME, SELECTOR);
             property.Should().Be($"public {TYPE} {NAME} => Driver.FindElement(By.ClassName(\"{SELECTOR}\"));");
-            int a = 5;
         }
         [TestMethod]
         public void TestMethod4()
@@ -75,7 +72,6 @@ namespace Tests
             var propertyGen = new DriverFindElementPropertyGenerator();
             var property = propertyGen.CreateNode(addin.Object, NAME, SELECTOR);
             property.Should().Be($"protected {TYPE} {NAME} => new {TYPE}(Driver,Driver.FindElement(By.ClassName(\"{SELECTOR}\")));");
-            int a = 5;
         }
     }
 }

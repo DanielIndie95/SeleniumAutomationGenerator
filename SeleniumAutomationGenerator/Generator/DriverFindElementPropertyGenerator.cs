@@ -9,7 +9,7 @@ namespace SeleniumAutomationGenerator
         public DriverFindElementPropertyGenerator()
         {
             _exceptions = new Dictionary<string, Func<string, string>>();
-            AddException(Consts.WEB_DRIVER_CLASS_NAME, (selector) => FindElementString(selector, false));
+            AddException(Consts.WEB_ELEMENT_CLASS_NAME, (selector) => FindElementString(selector, false));
             AddException("string", (selector) => $"{FindElementString(selector, false)}.Text");
             AddException("int", (selector) => $"int.Parse({FindElementString(selector, false)}.Text)");
         }

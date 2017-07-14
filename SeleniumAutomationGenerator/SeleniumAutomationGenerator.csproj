@@ -153,12 +153,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicComponentsContainer.cs" />
+    <Compile Include="ComponentsFactory.cs" />
     <Compile Include="Generator\BasicClassBuilder.cs" />
+    <Compile Include="Generator\BasicClassGenerator.cs" />
+    <Compile Include="Generator\BasicComponentGenerator.cs" />
+    <Compile Include="Generator\BasicModelGenerator.cs" />
     <Compile Include="Generator\BasicPageGenerator.cs" />
     <Compile Include="Generator\Consts.cs" />
     <Compile Include="Generator\DriverFindElementPropertyGenerator.cs" />
     <Compile Include="Generator\IClassBuilder.cs" />
-    <Compile Include="Generator\IPageGenerator.cs" />
+    <Compile Include="Generator\IClassGenerator.cs" />
     <Compile Include="Generator\Modifiers.cs" />
     <Compile Include="IComponentAddin.cs" />
     <Compile Include="IComponentsContainer.cs" />
