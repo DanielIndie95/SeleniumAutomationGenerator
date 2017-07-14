@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SeleniumAutomationGenerator
+namespace SeleniumAutomationGenerator.Generator
 {
-    public class DriverFindElementPropertyGenerator : IPropertyGenerator
+    public abstract class SearchContextFindElementPropertyGenerator : IPropertyGenerator
     {
         public Dictionary<string, Func<string, string>> _exceptions;
-        public DriverFindElementPropertyGenerator()
+        protected string DriverPropertyName;
+        public SearchContextFindElementPropertyGenerator(string driverPropertyName)
         {
+            DriverPropertyName = driverPropertyName;
             _exceptions = new Dictionary<string, Func<string, string>>();
             AddException(Consts.WEB_ELEMENT_CLASS_NAME, (selector) => FindElementString(selector, false));
             AddException("string", (selector) => $"{FindElementString(selector, false)}.Text");
@@ -19,29 +21,26 @@ namespace SeleniumAutomationGenerator
         /// </summary>
         /// <param name="type"></param>
         /// <param name="exceptionValueGenerator">the first string is the selector(class), the second is the returned value</param>
-        public void AddException(string type , Func<string,string> exceptionValueGenerator)
+        public void AddException(string type, Func<string, string> exceptionValueGenerator)
         {
             _exceptions.Add(type, exceptionValueGenerator);
         }
 
-        public string CreateNode(IComponentAddin addin, string propName, string selector)
+        public virtual string CreateNode(IComponentAddin addin, string propName, string selector)
         {
-            string modifier = addin.IsPropertyModifierPublic ? "public" : "protected";
+            string modifier = GetModifier(addin);
             if (IsExceptionType(addin.Type))
                 return $"{modifier} {addin.Type} {propName} => {HandleExcpetions(addin.Type, selector)};";
-            return $"{modifier} {addin.Type} {propName} => new {addin.Type}(Driver,{FindElementString(selector, false)});";
+            return $"{modifier} {addin.Type} {propName} => new {addin.Type}({DriverPropertyName},{FindElementString(selector, false)});";
         }
 
-        public string CreateNodeAsList(string type, string propName, string selector)
+        public virtual string CreateNodeAsList(IComponentAddin addin, string propName, string selector)
         {
-            return $"public ReadOnlyList<{type}> {propName} => {FindElementString(selector, true)};";
+            string modifier = GetModifier(addin);
+            return $"{modifier} ReadOnlyList<{addin.Type}> {propName} => {FindElementString(selector, true)};";
         }
 
-        private string FindElementString(string selector, bool asList)
-        {
-            string add = asList ? "s" : "";
-            return $"Driver.FindElement{add}(By.ClassName(\"{selector}\"))";
-        }
+        protected abstract string FindElementString(string selector, bool asList);
 
         private bool IsExceptionType(string type)
         {
@@ -50,6 +49,11 @@ namespace SeleniumAutomationGenerator
         private string HandleExcpetions(string type, string selector)
         {
             return _exceptions[type](selector);
+        }
+
+        private string GetModifier(IComponentAddin addin)
+        {
+            return addin.IsPropertyModifierPublic ? "public" : "protected";
         }
     }
 }

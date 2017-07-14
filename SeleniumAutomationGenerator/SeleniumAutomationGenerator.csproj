@@ -154,16 +154,18 @@
   <ItemGroup>
     <Compile Include="BasicComponentsContainer.cs" />
     <Compile Include="ComponentsFactory.cs" />
-    <Compile Include="Generator\BasicClassBuilder.cs" />
-    <Compile Include="Generator\BasicClassGenerator.cs" />
-    <Compile Include="Generator\BasicComponentGenerator.cs" />
-    <Compile Include="Generator\BasicModelGenerator.cs" />
-    <Compile Include="Generator\BasicPageGenerator.cs" />
-    <Compile Include="Generator\Consts.cs" />
-    <Compile Include="Generator\DriverFindElementPropertyGenerator.cs" />
-    <Compile Include="Generator\IClassBuilder.cs" />
+    <Compile Include="Generator\Builders\BasicClassBuilder.cs" />
+    <Compile Include="Generator\ComponentsGenerators\BasicClassGenerator.cs" />
+    <Compile Include="Generator\ComponentsGenerators\BasicComponentGenerator.cs" />
+    <Compile Include="Generator\ComponentsGenerators\BasicModelGenerator.cs" />
+    <Compile Include="Generator\ComponentsGenerators\BasicPageGenerator.cs" />
+    <Compile Include="Generator\PropertyGenerators\ParentElementFindElementPropertyGenerator.cs" />
+    <Compile Include="Generator\Utils\Consts.cs" />
+    <Compile Include="Generator\PropertyGenerators\SearchContextFindElementPropertyGenerator.cs" />
+    <Compile Include="Generator\PropertyGenerators\DriverFindElementPropertyGenerator.cs" />
+    <Compile Include="Generator\Builders\IClassBuilder.cs" />
     <Compile Include="Generator\IClassGenerator.cs" />
-    <Compile Include="Generator\Modifiers.cs" />
+    <Compile Include="Generator\Utils\Modifiers.cs" />
     <Compile Include="IComponentAddin.cs" />
     <Compile Include="IComponentsContainer.cs" />
     <Compile Include="Generator\IPropertyGenerator.cs" />
