@@ -38,17 +38,23 @@ namespace SeleniumAutomationGenerator.Generator
         {
             if (addin.IsArrayedAddin)
                 return CreateListTypeProperty(addin, propName, selector);
-            return CreateSingleTypeProperty(addin, ref propName, selector);
+            return CreateSingleTypeProperty(addin, propName, selector);
         }
 
-        private string CreateSingleTypeProperty(IComponentAddin addin, ref string propName, string selector)
+        private string CreateSingleTypeProperty(IComponentAddin addin, string propName, string selector)
         {
             string modifier = GetModifier(addin);
-            propName = addin.Type == Consts.WEB_ELEMENT_CLASS_NAME ? propName + "Element" : propName;//looks more logical to me
+            propName = GetPropertyName(addin, propName);
             if (IsExceptionType(addin.Type))
                 return $"{modifier} {addin.Type} {propName} => {HandleExcpetions(addin.Type, selector)};";
 
             return $"{modifier} {addin.Type} {propName} => new {addin.Type}({DriverPropertyName},{FindElementString(selector, false)});";
+        }
+
+        public string GetPropertyName(IComponentAddin addin, string propName)
+        {
+            propName = addin.Type == Consts.WEB_ELEMENT_CLASS_NAME ? propName + "Element" : propName;//looks more logical to me
+            return propName;
         }
 
         public virtual string CreateListTypeProperty(IComponentAddin addin, string propName, string selector)

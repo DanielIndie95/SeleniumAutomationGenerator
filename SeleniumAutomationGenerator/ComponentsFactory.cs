@@ -5,6 +5,7 @@ using SeleniumAutomationGenerator.Models;
 using SeleniumAutomationGenerator.Utils;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace SeleniumAutomationGenerator
 {
@@ -23,12 +24,13 @@ namespace SeleniumAutomationGenerator
 
             _defaultFileCreator = new BasicComponentGenerator(container, new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME, Consts.PARENT_ELEMENT_FIELD_NAME), Consts.PAGES_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME);
 
-            AddComponentTypeAppenders("list", new ListClassAppender());            
+            AddComponentTypeAppenders("list", new ListClassAppender());
         }
 
         public void AddComponentClassGeneratorKey(string key, IComponentFileCreator newComponentFileCreator)
         {
             _fileCreators[key] = newComponentFileCreator;
+            
         }
 
         public void AddComponentTypeAppenders(string type, IComponentClassAppender classAppender)
@@ -56,8 +58,9 @@ namespace SeleniumAutomationGenerator
             var keyWord = SelectorUtils.GetKeyWordFromSelector(selector);
             if (children.Count() == 0) //not a new cs file
                 return new List<ComponentGeneratorOutput>();
-
+            
             IEnumerable<ElementSelectorData> childrenData = children.Select(ConvertToElementSelectorData);
+            
             if (_classAppenders.ContainsKey(keyWord) && parentClassCreator != null)
             {
                 HandleClassAppenders(selector, parentClassCreator, keyWord, childrenData);
@@ -78,9 +81,25 @@ namespace SeleniumAutomationGenerator
             {
                 outputs = outputs.Union(CreateCsOutput(child.Selector, child.InnerChildrens.ToList(), parent), new ComponentOutputComparer());
             }
-            ComponentGeneratorOutput parentOutput = parent.GenerateComponentClass(selector, childrenData.ToArray());            
+            AddFileCreatorAddins(childrenData);
+            IEnumerable<ElementSelectorData> filteredChildren = childrenData;
+            ComponentGeneratorOutput parentOutput = parent.GenerateComponentClass(selector, filteredChildren.ToArray());
             outputs = outputs.Union(new[] { parentOutput }, new ComponentOutputComparer());
             return outputs;
+        }
+
+        private void AddFileCreatorAddins(IEnumerable<ElementSelectorData> childrenData)
+        {
+            foreach (var child in childrenData)
+            {
+                if (_fileCreators.TryGetValue(child.Type, out IComponentFileCreator fileCreator))
+                    ComponentsContainer.Instance.AddAddin(fileCreator.MakeAddin(child.FullSelector));
+            }
+        }
+
+        private IEnumerable<ElementSelectorData> FilterNonInlineChidren(IEnumerable<ElementSelectorData> childrenData)
+        {
+            return childrenData.Where(child => !_fileCreators.ContainsKey(child.Type));
         }
 
         private ElementSelectorData ConvertToElementSelectorData(AutoElementData data)
@@ -88,7 +107,7 @@ namespace SeleniumAutomationGenerator
             return new ElementSelectorData()
             {
                 FullSelector = data.Selector,
-                Name = SelectorUtils.GetClassNameFromSelector(data.Selector),
+                Name = SelectorUtils.GetClassOrPropNameFromSelector(data.Selector),
                 Type = SelectorUtils.GetKeyWordFromSelector(data.Selector)
             };
         }

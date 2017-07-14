@@ -2,7 +2,7 @@
 {
     public static class SelectorUtils
     {
-        public static string GetClassNameFromSelector(string selector)
+        public static string GetClassOrPropNameFromSelector(string selector)
         {
             string[] parts = selector.Split('-');
             return parts[2];

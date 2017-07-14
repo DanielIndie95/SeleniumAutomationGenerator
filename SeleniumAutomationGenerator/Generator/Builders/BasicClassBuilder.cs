@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -166,7 +167,7 @@ namespace SeleniumAutomationGenerator.Generator
         {
             string firstWord = field.Split(' ').First();
             
-            return Enum.TryParse(UppercaseFirst(firstWord), out Modifiers modifier)
+            return Enum.TryParse(TextUtils.UppercaseFirst(firstWord), out Modifiers modifier)
                 ? modifier : Modifiers.Private;
         }
 
@@ -176,17 +177,6 @@ namespace SeleniumAutomationGenerator.Generator
             {
                 builder.AppendLine(item.ToString());
             }
-        }
-
-        static string UppercaseFirst(string s)
-        {
-            // Check for empty string.
-            if (string.IsNullOrEmpty(s))
-            {
-                return string.Empty;
-            }
-            // Return char and concat substring.
-            return char.ToUpper(s[0]) + s.Substring(1);
-        }
+        }        
     }
 }

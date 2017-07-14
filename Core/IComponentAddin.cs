@@ -8,7 +8,7 @@
 
         string[] RequiredUsings { get; }
 
-        string[] GenerateHelpers(string className, string selector);
+        string[] GenerateHelpers(string className, string selector , IPropertyGenerator generator);
 
         bool IsPropertyModifierPublic { get; }
         bool IsArrayedAddin { get; }

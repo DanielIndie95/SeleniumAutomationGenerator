@@ -9,5 +9,6 @@ namespace SeleniumAutomationGenerator.Generator
         void AddExceptionPropertyType(string type);
         void AddProperty(string property);
         void AddMethod(string method);
+        IComponentAddin MakeAddin(string selector);
     }
 }

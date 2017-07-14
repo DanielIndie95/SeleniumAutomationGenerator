@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SeleniumAutomationGenerator.Models;
 using SeleniumAutomationGenerator.Utils;
+using SeleniumAutomationGenerator.Generator.ComponentsGenerators;
 
 namespace SeleniumAutomationGenerator.Generator
 {
@@ -32,10 +33,21 @@ namespace SeleniumAutomationGenerator.Generator
             _propertyGenerator = propertyGenerator;
         }
 
+        public IComponentAddin MakeAddin(string selector)
+        {
+            string key = SelectorUtils.GetKeyWordFromSelector(selector);
+            string name = SelectorUtils.GetClassOrPropNameFromSelector(selector);
+            return new FileCreatorAddin()
+            {
+                AddinKey = key,
+                Type = name
+            };
+        }
+
         public virtual ComponentGeneratorOutput GenerateComponentClass(string selector, ElementSelectorData[] elements)
         {
             BasicClassBuilder builder = new BasicClassBuilder();
-            string className = SelectorUtils.GetClassNameFromSelector(selector);
+            string className = SelectorUtils.GetClassOrPropNameFromSelector(selector);
             string body = builder.AddUsings(GetUsings(elements))
                 .AddCtor(CreateCtor(className))
                 .SetClassName(className)
@@ -59,7 +71,7 @@ namespace SeleniumAutomationGenerator.Generator
         }
         public void AddMethod(string method)
         {
-            ExtraMethods.Add(method);   
+            ExtraMethods.Add(method);
         }
 
         protected abstract string CreateCtor(string className);
@@ -67,14 +79,11 @@ namespace SeleniumAutomationGenerator.Generator
         private string[] GetHelpers(string className, ElementSelectorData[] elements)
         {
             IEnumerable<string> helpers = new List<string>();
-            foreach (var element in elements.Where(elm => !ExceptionsTypes.Contains(elm.Type)))
+            foreach (var element in elements.Where(elm => !ExceptionsTypes.Contains(elm.Type))
+                .Where(ExistingTypes))
             {
-                IComponentAddin componentAddin = _container.GetAddin(element.Type);
-                if (componentAddin != null)
-                {
-                    string[] innerHelpers = componentAddin.GenerateHelpers(className, element.Name);
-                    helpers = helpers.Concat(innerHelpers);
-                }
+                string[] innerHelpers = _container.GetAddin(element.Type).GenerateHelpers(className, element.FullSelector, PropertyGenerator);
+                helpers = helpers.Concat(innerHelpers);
             }
             return helpers.ToArray();
         }
@@ -83,6 +92,7 @@ namespace SeleniumAutomationGenerator.Generator
         {
             return elements
                             .Where(elm => !ExceptionsTypes.Contains(elm.Type))
+                            .Where(ExistingTypes)
                             .Select(elm => _propertyGenerator.CreateProperty(
                                             _container.GetAddin(elm.Type), elm.Name, elm.FullSelector))
                            .Concat(ExtraProperties)
@@ -93,7 +103,7 @@ namespace SeleniumAutomationGenerator.Generator
         private string[] GetUsings(ElementSelectorData[] elements)
         {
             IEnumerable<string> usings = baseUsings;
-            foreach (var element in elements)
+            foreach (var element in elements.Where(ExistingTypes))
             {
                 usings = usings.Union(_container.GetAddin(element.Type).RequiredUsings);
             }
@@ -103,6 +113,17 @@ namespace SeleniumAutomationGenerator.Generator
         protected virtual string[] GetFields()
         {
             return new string[] { };
-        }       
+        }
+        private bool ExistingTypes(ElementSelectorData data)
+        {
+            return _container.GetAddin(data.Type) != null;
+        }
+
+        public string[] GenerateHelpers(string className, string selector)
+        {
+            throw new NotImplementedException();
+        }
+
+
     }
 }

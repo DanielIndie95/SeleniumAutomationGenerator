@@ -8,6 +8,7 @@ using System.IO;
 using FluentAssertions;
 using SeleniumAutomationGenerator.Generator.PropertyGenerators;
 using SeleniumAutomationGenerator.Utils;
+using BaseComponentsAddins;
 
 namespace Tests
 {
@@ -21,16 +22,18 @@ namespace Tests
             const string NAME = "bbb";
             const string CLASS_NAME = "DishCreator";
             string selector = "auto-page-" + CLASS_NAME;
+            ComponentsContainer basicComponentsContainer = ComponentsContainer.Instance;
+            BasicPageGenerator generator = new BasicPageGenerator(basicComponentsContainer, new DriverFindElementPropertyGenerator("Driver"), Consts.PAGES_NAMESPACE);
             Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
             addin.Setup(add => add.AddinKey).Returns(KEY);
-            addin.Setup(add => add.GenerateHelpers(CLASS_NAME, NAME)).Returns(new string[] { "void Main(){}", "public void Main2(){}" });
+            addin.Setup(add => add.GenerateHelpers(CLASS_NAME, NAME, generator.PropertyGenerator)).Returns(new string[] { "void Main(){}", "public void Main2(){}" });
             addin.Setup(add => add.Type).Returns("string");
-            ComponentsContainer basicComponentsContainer = ComponentsContainer.Instance;
+            
             basicComponentsContainer.AddAddin(addin.Object);
-            BasicPageGenerator generator = new BasicPageGenerator(basicComponentsContainer, new DriverFindElementPropertyGenerator("Driver"), Consts.PAGES_NAMESPACE);
+            
             var classStr = generator.GenerateComponentClass(selector, new[] { new ElementSelectorData() { FullSelector = "aaa", Name = NAME, Type = KEY } });
-            Directory.CreateDirectory(Consts.PAGES_NAMESPACE);
-            Directory.CreateDirectory(Consts.COMPONENTS_NAMESPACE);
+            Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.PAGES_NAMESPACE));
+            Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.COMPONENTS_NAMESPACE));
             File.WriteAllText(classStr.CsFileName, classStr.Body);
         }
         [TestMethod]
@@ -41,14 +44,16 @@ namespace Tests
             const string NAME = "Dish";
             const string SECOND_NAME = "CompleteDish";
             const string CLASS_NAME = "DishCreator";
+            ComponentsContainer basicComponentsContainer = ComponentsContainer.Instance;
+            ComponentsFactory factory = new ComponentsFactory(basicComponentsContainer);
             Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
             addin.Setup(add => add.AddinKey).Returns(KEY);
-            addin.Setup(add => add.GenerateHelpers(CLASS_NAME, NAME)).Returns(new string[] { $"{CLASS_NAME} With{NAME}(string {NAME.ToLower()}){{}}" });
-            addin.Setup(add => add.GenerateHelpers(CLASS_NAME, SECOND_NAME)).Returns(new string[] { $"{CLASS_NAME} {SECOND_NAME}(){{}}" });
+            addin.Setup(add => add.GenerateHelpers(CLASS_NAME, NAME, It.IsAny<IPropertyGenerator>())).Returns(new string[] { $"{CLASS_NAME} With{NAME}(string {NAME.ToLower()}){{}}" });
+            addin.Setup(add => add.GenerateHelpers(CLASS_NAME, SECOND_NAME, It.IsAny<IPropertyGenerator>())).Returns(new string[] { $"{CLASS_NAME} {SECOND_NAME}(){{}}" });
             addin.Setup(add => add.Type).Returns(Consts.WEB_ELEMENT_CLASS_NAME);
-            ComponentsContainer basicComponentsContainer = ComponentsContainer.Instance;
+            
             basicComponentsContainer.AddAddin(addin.Object);
-            ComponentsFactory factory = new ComponentsFactory(basicComponentsContainer);
+            
             var files = factory.CreateCsOutput(file);
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.PAGES_NAMESPACE));
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.COMPONENTS_NAMESPACE));
@@ -68,6 +73,7 @@ namespace Tests
             addin.Setup(add => add.Type).Returns("string");
             ComponentsContainer basicComponentsContainer = ComponentsContainer.Instance;
             basicComponentsContainer.AddAddin(addin.Object);
+            basicComponentsContainer.AddAddin(new InputAddin());
             ComponentsFactory factory = new ComponentsFactory(basicComponentsContainer);
             var files = factory.CreateCsOutput(file);
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.PAGES_NAMESPACE));

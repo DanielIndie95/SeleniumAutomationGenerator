@@ -18,7 +18,7 @@ namespace BaseComponentsAddings
 
         public bool CtorContainsDriver => false;
 
-        public string[] GenerateHelpers(string className, string propName)
+        public string[] GenerateHelpers(string className, string propName, IPropertyGenerator generator)
         {
             return new string[] { };
         }

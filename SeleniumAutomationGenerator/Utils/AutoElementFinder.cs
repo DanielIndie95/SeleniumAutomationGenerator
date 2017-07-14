@@ -13,10 +13,11 @@ namespace SeleniumAutomationGenerator.Utils
             HtmlNode.ElementsFlags.Remove("form");
             doc.LoadHtml(body);
 
-            HtmlNodeCollection collection = doc.DocumentNode.SelectNodes($"//*[contains(@class, '{Consts.AUTOMATION_ELEMENT_PREFIX}')]");
-            if (collection == null)
+            var nodes = doc.DocumentNode.ChildNodes
+                .Where(node => node.Attributes["class"]?.Value.Contains(Consts.AUTOMATION_ELEMENT_PREFIX) ?? false);
+            if (nodes == null || nodes.Count() == 0)
                 yield break;
-            foreach (var node in collection)
+            foreach (var node in nodes)
             {
                 AutoElementData data = new AutoElementData();
                 data.Selector = FindAutoClassFromFullClass(node.Attributes["class"].Value);

@@ -10,7 +10,7 @@ namespace SeleniumAutomationGenerator.Generator.ClassAppenders
         public void AppendToClass(IComponentFileCreator parentClass, string selector, ElementSelectorData[] elements)
         {
             ListItemAddin addin = new ListItemAddin();
-            string name = SelectorUtils.GetClassNameFromSelector(selector);
+            string name = SelectorUtils.GetClassOrPropNameFromSelector(selector);
             parentClass.AddProperty(parentClass.PropertyGenerator.CreateProperty(addin, name, selector));
         }
     }
