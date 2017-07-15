@@ -17,8 +17,8 @@ namespace SeleniumAutomationGenerator.Generator
             AddException("string", (selector) => $"{FindElementString(selector, false)}.Text");
             AddException("int", (selector) => $"int.Parse({FindElementString(selector, false)}.Text)");
 
-            AddException("string", (selector) => $"{FindElementString(selector, false)}.Select(elm=> elm.Text)", true);
-            AddException("int", (selector) => $"{FindElementString(selector, false)}.Select(elm=> int.Parse(elm.Text))", true);
+            AddException("string", (selector) => $"{FindElementString(selector, true)}.Select(elm=> elm.Text)", true);
+            AddException("int", (selector) => $"{FindElementString(selector, true)}.Select(elm=> int.Parse(elm.Text))", true);
         }
 
         /// <summary>
@@ -36,19 +36,45 @@ namespace SeleniumAutomationGenerator.Generator
 
         public virtual string CreateProperty(IComponentAddin addin, string propName, string selector)
         {
-            if (addin.IsArrayedAddin)
-                return CreateListTypeProperty(addin, propName, selector);
-            return CreateSingleTypeProperty(addin, propName, selector);
+            string declerationStatement = GetDeclarationStatement(addin, propName);
+            string equalsStatement = GetEqualStatement(addin, selector);
+            return $"{declerationStatement} => {equalsStatement};";
         }
 
-        private string CreateSingleTypeProperty(IComponentAddin addin, string propName, string selector)
+        private string GetEqualStatement(IComponentAddin addin, string selector)
+        {
+            if (IsExceptionType(addin))
+                return HandleEqualStatmentExcpetions(addin, selector);
+            string selectStatement = FindElementString(selector, addin.IsArrayedAddin);
+            string modelInitialize = GetModelInitialize(addin, selectStatement);
+            return FormatEqualStatement(addin, selectStatement, modelInitialize);
+        }
+
+        private string FormatEqualStatement(IComponentAddin addin, string selectStatement, string modelInitialize)
+        {
+            return addin.IsArrayedAddin ? $"{selectStatement}.Select(elm=> {modelInitialize})"
+                : modelInitialize;
+        }
+
+        private string GetModelInitialize(IComponentAddin addin, string selectStatement)
+        {
+            string secondArgument = addin.IsArrayedAddin ? "elm" : selectStatement;
+            return addin.CtorContainsDriver ? GetEqualArguments(addin.Type, DriverPropertyName, secondArgument)
+                : GetEqualArguments(addin.Type, secondArgument);
+        }
+
+        private string GetEqualArguments(string type, params string[] typeArguments)
+        {
+            string arguments = string.Join(",", typeArguments);
+            return $"new { type }({arguments})";
+        }
+
+        private string GetDeclarationStatement(IComponentAddin addin, string propName)
         {
             string modifier = GetModifier(addin);
+            string type = GetDeclearationType(addin);
             propName = GetPropertyName(addin, propName);
-            if (IsExceptionType(addin.Type))
-                return $"{modifier} {addin.Type} {propName} => {HandleExcpetions(addin.Type, selector)};";
-
-            return $"{modifier} {addin.Type} {propName} => new {addin.Type}({DriverPropertyName},{FindElementString(selector, false)});";
+            return $"{modifier} {type} {propName}";
         }
 
         public string GetPropertyName(IComponentAddin addin, string propName)
@@ -57,28 +83,30 @@ namespace SeleniumAutomationGenerator.Generator
             return propName;
         }
 
-        public virtual string CreateListTypeProperty(IComponentAddin addin, string propName, string selector)
-        {
-            string modifier = GetModifier(addin);
-            return $"{modifier} ReadOnlyList<{addin.Type}> {propName} => {FindElementString(selector, true)};";
-        }
-
         protected abstract string FindElementString(string selector, bool asList);
 
-        private bool IsExceptionType(string type)
+        private bool IsExceptionType(IComponentAddin addin)
         {
-            return _singlePropertyExceptions.ContainsKey(type);
+            if (addin.IsArrayedAddin)
+                return _listPropertyExceptions.ContainsKey(addin.Type);
+            return _singlePropertyExceptions.ContainsKey(addin.Type);
         }
-        private string HandleExcpetions(string type, string selector, bool asList = false)
+        private string HandleEqualStatmentExcpetions(IComponentAddin addin, string selector)
         {
-            if (asList)
-                return _listPropertyExceptions[type](selector);
-            return _singlePropertyExceptions[type](selector);
+            if (addin.IsArrayedAddin)
+                return _listPropertyExceptions[addin.Type](selector);
+            return _singlePropertyExceptions[addin.Type](selector);
         }
 
         private string GetModifier(IComponentAddin addin)
         {
             return addin.IsPropertyModifierPublic ? "public" : "protected";
         }
+
+        private string GetDeclearationType(IComponentAddin addin)
+        {
+            return addin.IsArrayedAddin ? $"ReadOnlyList<{addin.Type}>" : addin.Type;
+        }
+
     }
 }

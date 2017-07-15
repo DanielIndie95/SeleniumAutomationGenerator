@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using SeleniumAutomationGenerator.Models;
 using SeleniumAutomationGenerator.Utils;
@@ -33,13 +32,12 @@ namespace SeleniumAutomationGenerator.Generator
             _propertyGenerator = propertyGenerator;
         }
 
-        public IComponentAddin MakeAddin(string selector)
+        public virtual IComponentAddin MakeAddin(string selector)
         {
-            string key = SelectorUtils.GetKeyWordFromSelector(selector);
             string name = SelectorUtils.GetClassOrPropNameFromSelector(selector);
             return new FileCreatorAddin()
             {
-                AddinKey = key,
+                AddinKey = name,
                 Type = name
             };
         }
@@ -105,7 +103,7 @@ namespace SeleniumAutomationGenerator.Generator
             IEnumerable<string> usings = baseUsings;
             foreach (var element in elements.Where(ExistingTypes))
             {
-                usings = usings.Union(_container.GetAddin(element.Type).RequiredUsings);
+                usings = usings.Concat(_container.GetAddin(element.Type).RequiredUsings);
             }
             return usings.ToArray();
         }
@@ -116,14 +114,8 @@ namespace SeleniumAutomationGenerator.Generator
         }
         private bool ExistingTypes(ElementSelectorData data)
         {
-            return _container.GetAddin(data.Type) != null;
+            bool result = _container.GetAddin(data.Type) != null;
+            return result;
         }
-
-        public string[] GenerateHelpers(string className, string selector)
-        {
-            throw new NotImplementedException();
-        }
-
-
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using SeleniumAutomationGenerator.Generator.ComponentsGenerators;
+using SeleniumAutomationGenerator.Utils;
+using System.Text;
 
 namespace SeleniumAutomationGenerator.Generator
 {
@@ -9,7 +11,16 @@ namespace SeleniumAutomationGenerator.Generator
         {
             _parentFieldName = parentElementName;
         }
-
+        public override IComponentAddin MakeAddin(string selector)
+        {
+            string name = SelectorUtils.GetClassOrPropNameFromSelector(selector);
+            return new FileCreatorAddin()
+            {
+                AddinKey = name,
+                Type = name,
+                CtorContainsDriver = false
+            };
+        }
         protected override string CreateCtor(string className)
         {
             StringBuilder builder = new StringBuilder();

@@ -5,7 +5,6 @@ using SeleniumAutomationGenerator.Models;
 using SeleniumAutomationGenerator.Utils;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 
 namespace SeleniumAutomationGenerator
 {
@@ -30,7 +29,7 @@ namespace SeleniumAutomationGenerator
         public void AddComponentClassGeneratorKey(string key, IComponentFileCreator newComponentFileCreator)
         {
             _fileCreators[key] = newComponentFileCreator;
-            
+
         }
 
         public void AddComponentTypeAppenders(string type, IComponentClassAppender classAppender)
@@ -58,9 +57,9 @@ namespace SeleniumAutomationGenerator
             var keyWord = SelectorUtils.GetKeyWordFromSelector(selector);
             if (children.Count() == 0) //not a new cs file
                 return new List<ComponentGeneratorOutput>();
-            
+
             IEnumerable<ElementSelectorData> childrenData = children.Select(ConvertToElementSelectorData);
-            
+
             if (_classAppenders.ContainsKey(keyWord) && parentClassCreator != null)
             {
                 HandleClassAppenders(selector, parentClassCreator, keyWord, childrenData);
@@ -81,19 +80,22 @@ namespace SeleniumAutomationGenerator
             {
                 outputs = outputs.Union(CreateCsOutput(child.Selector, child.InnerChildrens.ToList(), parent), new ComponentOutputComparer());
             }
-            AddFileCreatorAddins(childrenData);
-            IEnumerable<ElementSelectorData> filteredChildren = childrenData;
-            ComponentGeneratorOutput parentOutput = parent.GenerateComponentClass(selector, filteredChildren.ToArray());
+            ElementSelectorData[] elements = TransformFileCreatorsToAddinsLike(childrenData).ToArray();
+            ComponentGeneratorOutput parentOutput = parent.GenerateComponentClass(selector, elements);
             outputs = outputs.Union(new[] { parentOutput }, new ComponentOutputComparer());
             return outputs;
         }
 
-        private void AddFileCreatorAddins(IEnumerable<ElementSelectorData> childrenData)
+        private IEnumerable<ElementSelectorData> TransformFileCreatorsToAddinsLike(IEnumerable<ElementSelectorData> childrenData)
         {
             foreach (var child in childrenData)
             {
                 if (_fileCreators.TryGetValue(child.Type, out IComponentFileCreator fileCreator))
+                {
                     ComponentsContainer.Instance.AddAddin(fileCreator.MakeAddin(child.FullSelector));
+                    child.Type = child.Name;
+                }
+                yield return child;
             }
         }
 

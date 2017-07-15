@@ -131,6 +131,7 @@ namespace Tests
             Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
             addin.Setup(add => add.AddinKey).Returns(KEY);
             addin.Setup(add => add.Type).Returns(TYPE);
+            addin.Setup(add => add.CtorContainsDriver).Returns(true);
             var propertyGen = new DriverFindElementPropertyGenerator(DRIVER_PROP_NAME);
             var property = propertyGen.CreateProperty(addin.Object, NAME, SELECTOR);
             property.Should().Be($"protected {TYPE} {NAME} => new {TYPE}({DRIVER_PROP_NAME},{DRIVER_PROP_NAME}.FindElement(By.ClassName(\"{SELECTOR}\")));");
@@ -148,10 +149,87 @@ namespace Tests
             Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
             addin.Setup(add => add.AddinKey).Returns(KEY);
             addin.Setup(add => add.Type).Returns(TYPE);
-
+            addin.Setup(add => add.CtorContainsDriver).Returns(true);
             var propertyGen = new ParentElementFindElementPropertyGenerator(DRIVER_PROP_NAME, PARENT_ELEMENT_NAME);
             var property = propertyGen.CreateProperty(addin.Object, NAME, SELECTOR);
             property.Should().Be($"protected {TYPE} {NAME} => new {TYPE}({DRIVER_PROP_NAME},{PARENT_ELEMENT_NAME}.FindElement(By.ClassName(\"{SELECTOR}\")));");
-        }        
+        }
+
+        [TestMethod]
+        public void TestMethod8()
+        {
+            const string KEY = "ccc";
+            const string NAME = "bbb";
+            const string TYPE = "CustomClass";
+            const string SELECTOR = "aaa";
+            const string DRIVER_PROP_NAME = "Driver";
+            const string PARENT_ELEMENT_NAME = "_parentElement";
+            Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
+            addin.Setup(add => add.AddinKey).Returns(KEY);
+            addin.Setup(add => add.Type).Returns(TYPE);
+            addin.Setup(add => add.CtorContainsDriver).Returns(false);
+
+            var propertyGen = new ParentElementFindElementPropertyGenerator(DRIVER_PROP_NAME, PARENT_ELEMENT_NAME);
+            var property = propertyGen.CreateProperty(addin.Object, NAME, SELECTOR);
+            property.Should().Be($"protected {TYPE} {NAME} => new {TYPE}({PARENT_ELEMENT_NAME}.FindElement(By.ClassName(\"{SELECTOR}\")));");
+        }
+        [TestMethod]
+        public void TestMethod9()
+        {
+            const string KEY = "ccc";
+            const string NAME = "bbb";
+            const string TYPE = "CustomClass";
+            const string SELECTOR = "aaa";
+            const string DRIVER_PROP_NAME = "Driver";
+            const string PARENT_ELEMENT_NAME = "_parentElement";
+            Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
+            addin.Setup(add => add.AddinKey).Returns(KEY);
+            addin.Setup(add => add.Type).Returns(TYPE);
+            addin.Setup(add => add.CtorContainsDriver).Returns(false);
+            addin.Setup(add => add.IsArrayedAddin).Returns(true);
+
+            var propertyGen = new ParentElementFindElementPropertyGenerator(DRIVER_PROP_NAME, PARENT_ELEMENT_NAME);
+            var property = propertyGen.CreateProperty(addin.Object, NAME, SELECTOR);
+            property.Should().Be($"protected ReadOnlyList<{TYPE}> {NAME} => {PARENT_ELEMENT_NAME}.FindElements(By.ClassName(\"{SELECTOR}\")).Select(elm=> new {TYPE}(elm));");
+        }
+        [TestMethod]
+        public void TestMethod10()
+        {
+            const string KEY = "ccc";
+            const string NAME = "bbb";
+            const string TYPE = "CustomClass";
+            const string SELECTOR = "aaa";
+            const string DRIVER_PROP_NAME = "Driver";
+            const string PARENT_ELEMENT_NAME = "_parentElement";
+            Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
+            addin.Setup(add => add.AddinKey).Returns(KEY);
+            addin.Setup(add => add.Type).Returns(TYPE);
+            addin.Setup(add => add.CtorContainsDriver).Returns(true);
+            addin.Setup(add => add.IsArrayedAddin).Returns(true);
+
+            var propertyGen = new ParentElementFindElementPropertyGenerator(DRIVER_PROP_NAME, PARENT_ELEMENT_NAME);
+            var property = propertyGen.CreateProperty(addin.Object, NAME, SELECTOR);
+            property.Should().Be($"protected ReadOnlyList<{TYPE}> {NAME} => {PARENT_ELEMENT_NAME}.FindElements(By.ClassName(\"{SELECTOR}\")).Select(elm=> new {TYPE}({DRIVER_PROP_NAME},elm));");
+        }
+
+        [TestMethod]
+        public void TestMethod11()
+        {
+            const string KEY = "ccc";
+            const string NAME = "bbb";
+            const string TYPE = "string";
+            const string SELECTOR = "aaa";
+            const string DRIVER_PROP_NAME = "Driver";
+            const string PARENT_ELEMENT_NAME = "_parentElement";
+            Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
+            addin.Setup(add => add.AddinKey).Returns(KEY);
+            addin.Setup(add => add.Type).Returns(TYPE);
+            addin.Setup(add => add.CtorContainsDriver).Returns(true);
+            addin.Setup(add => add.IsArrayedAddin).Returns(true);
+
+            var propertyGen = new ParentElementFindElementPropertyGenerator(DRIVER_PROP_NAME, PARENT_ELEMENT_NAME);
+            var property = propertyGen.CreateProperty(addin.Object, NAME, SELECTOR);
+            property.Should().Be($"protected ReadOnlyList<{TYPE}> {NAME} => {PARENT_ELEMENT_NAME}.FindElements(By.ClassName(\"{SELECTOR}\")).Select(elm=> elm.Text);");
+        }
     }
 }

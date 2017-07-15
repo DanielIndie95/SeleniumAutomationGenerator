@@ -67,7 +67,7 @@ namespace SeleniumAutomationGenerator.Generator
 
         public IClassBuilder AddUsings(params string[] usings)
         {
-            _usings.AddRange(usings);
+            _usings = _usings.Union(usings).ToList();
 
             return this;
         }
