@@ -45,7 +45,7 @@ namespace Tests
             const string SECOND_NAME = "CompleteDish";
             const string CLASS_NAME = "DishCreator";
             ComponentsContainer basicComponentsContainer = ComponentsContainer.Instance;
-            ComponentsFactory factory = new ComponentsFactory(basicComponentsContainer);
+            ComponentsFactory factory = ComponentsFactory.Instance;
             Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
             addin.Setup(add => add.AddinKey).Returns(KEY);
             addin.Setup(add => add.GenerateHelpers(CLASS_NAME, NAME, It.IsAny<IPropertyGenerator>())).Returns(new string[] { $"{CLASS_NAME} With{NAME}(string {NAME.ToLower()}){{}}" });
@@ -74,7 +74,7 @@ namespace Tests
             ComponentsContainer basicComponentsContainer = ComponentsContainer.Instance;
             basicComponentsContainer.AddAddin(addin.Object);
             basicComponentsContainer.AddAddin(new InputAddin());
-            ComponentsFactory factory = new ComponentsFactory(basicComponentsContainer);
+            ComponentsFactory factory = ComponentsFactory.Instance;
             var files = factory.CreateCsOutput(file);
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.PAGES_NAMESPACE));
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.COMPONENTS_NAMESPACE));

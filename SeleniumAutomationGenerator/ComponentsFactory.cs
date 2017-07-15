@@ -8,14 +8,19 @@ using System.Linq;
 
 namespace SeleniumAutomationGenerator
 {
-    public class ComponentsFactory
+    public sealed class ComponentsFactory
     {
         Dictionary<string, IComponentFileCreator> _fileCreators;
         Dictionary<string, IComponentClassAppender> _classAppenders;
 
         IComponentFileCreator _defaultFileCreator;
-        public ComponentsFactory(ComponentsContainer container)
+
+        private static ComponentsFactory _instance;
+        public static ComponentsFactory Instance => _instance;
+
+        private ComponentsFactory()
         {
+            ComponentsContainer container = ComponentsContainer.Instance;
             _fileCreators = new Dictionary<string, IComponentFileCreator>();
             _classAppenders = new Dictionary<string, IComponentClassAppender>();
             AddComponentClassGeneratorKey("page", new BasicPageGenerator(container, new DriverFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME), Consts.PAGES_NAMESPACE));
@@ -24,6 +29,11 @@ namespace SeleniumAutomationGenerator
             _defaultFileCreator = new BasicComponentGenerator(container, new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME, Consts.PARENT_ELEMENT_FIELD_NAME), Consts.PAGES_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME);
 
             AddComponentTypeAppenders("list", new ListClassAppender());
+        }
+
+        static ComponentsFactory()
+        {
+            _instance = new ComponentsFactory();
         }
 
         public void AddComponentClassGeneratorKey(string key, IComponentFileCreator newComponentFileCreator)
