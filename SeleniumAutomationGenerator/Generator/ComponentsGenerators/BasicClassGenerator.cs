@@ -22,7 +22,7 @@ namespace SeleniumAutomationGenerator.Generator
         {
             baseUsings = new List<string>
             {
-                "System", "OpenQA.Selenium"
+                "System", "OpenQA.Selenium", "System.Linq"
             };
             ExceptionsTypes = new List<string>();
             ExtraProperties = new List<string>();

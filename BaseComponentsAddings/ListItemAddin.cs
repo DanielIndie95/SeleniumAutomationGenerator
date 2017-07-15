@@ -6,9 +6,9 @@ namespace BaseComponentsAddings
 {
     public class ListItemAddin : IComponentAddin
     {
-        public string AddinKey => "listItem";
+        public string AddinKey => "list";
 
-        public string Type => "string";
+        public string Type { get; set; }
 
         public string[] RequiredUsings => new string[] { };
 
@@ -16,7 +16,7 @@ namespace BaseComponentsAddings
 
         public bool IsArrayedAddin => true;
 
-        public bool CtorContainsDriver => false;
+        public bool CtorContainsDriver { get; set; }
 
         public string[] GenerateHelpers(string className, string propName, IPropertyGenerator generator)
         {
