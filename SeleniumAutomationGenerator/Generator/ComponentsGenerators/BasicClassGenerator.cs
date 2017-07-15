@@ -90,9 +90,9 @@ namespace SeleniumAutomationGenerator.Generator
         {
             return elements
                             .Where(elm => !ExceptionsTypes.Contains(elm.Type))
-                            .Where(ExistingTypes)
+                            //.Where(ExistingTypes)
                             .Select(elm => _propertyGenerator.CreateProperty(
-                                            _container.GetAddin(elm.Type), elm.Name, elm.FullSelector))
+                                            _container.GetAddin(elm.Type) ?? DefaultAddin.Create(elm.Type), elm.Name, elm.FullSelector))
                            .Concat(ExtraProperties)
                            .Distinct()
                            .ToArray();

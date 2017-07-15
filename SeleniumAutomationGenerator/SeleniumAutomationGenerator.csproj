@@ -163,6 +163,7 @@
     <Compile Include="Generator\ComponentsGenerators\BasicListComponentGenerator.cs" />
     <Compile Include="Generator\ComponentsGenerators\BasicModelGenerator.cs" />
     <Compile Include="Generator\ComponentsGenerators\BasicPageGenerator.cs" />
+    <Compile Include="Generator\ComponentsGenerators\DefaultAddin.cs" />
     <Compile Include="Generator\ComponentsGenerators\FileCreatorAddin.cs" />
     <Compile Include="Generator\PropertyGenerators\ParentElementFindElementPropertyGenerator.cs" />
     <Compile Include="Models\AutoElementData.cs" />

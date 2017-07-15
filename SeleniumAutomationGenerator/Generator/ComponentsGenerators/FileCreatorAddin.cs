@@ -31,6 +31,5 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         {
             return _helpers(className, selector);
         }
-
     }
 }

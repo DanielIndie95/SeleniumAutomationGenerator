@@ -39,7 +39,7 @@ namespace Tests
         [TestMethod]
         public void TestMethod6()
         {
-            string file = File.ReadAllText(@"TestFiles\Tests1.html");
+            string file = File.ReadAllText(@"TestFiles\Test1.html");
             const string KEY = "button";
             const string NAME = "Dish";
             const string SECOND_NAME = "CompleteDish";
