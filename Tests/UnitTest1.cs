@@ -255,7 +255,7 @@ namespace Tests
             outputs.Should().BeEquivalentTo(expectedOutpus.SelectMany(a=> a));
         }
         [TestMethod]
-        public void TestMethod12()
+        public void TestMethod13()
         {
             List<ComponentGeneratorOutput>[] expectedOutpus = new List<ComponentGeneratorOutput>[]
             {
