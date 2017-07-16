@@ -26,7 +26,7 @@ namespace BaseComponentsAddins
             string returnedClass = parts.Length == 4 ? parts[3] : className;
             string returnStatement = parts.Length == 4 ? "this" : $"new {returnedClass}({Consts.DRIVER_FIELD_NAME})";
             StringBuilder builder = new StringBuilder();
-            var helper = builder.AppendLine($"public {returnedClass} Click{propName}()")
+            string helper = builder.AppendLine($"public {returnedClass} Click{propName}()")
                 .AppendLine("{")
                 .AppendLine($"{propName}.Click();")
                 .AppendLine($"return {returnStatement}")

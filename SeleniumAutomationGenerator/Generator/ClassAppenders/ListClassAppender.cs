@@ -1,7 +1,6 @@
 ﻿using BaseComponentsAddins;
 using Core;
 using Core.Models;
-using SeleniumAutomationGenerator.Models;
 
 namespace SeleniumAutomationGenerator.Generator.ClassAppenders
 {
@@ -23,7 +22,7 @@ namespace SeleniumAutomationGenerator.Generator.ClassAppenders
                 ctorContainsDriver = false;
             }
             string name = type + "List";
-            ListItemAddin addin = new ListItemAddin()
+            ListItemAddin addin = new ListItemAddin
             {
                 Type = type,
                 CtorContainsDriver = ctorContainsDriver

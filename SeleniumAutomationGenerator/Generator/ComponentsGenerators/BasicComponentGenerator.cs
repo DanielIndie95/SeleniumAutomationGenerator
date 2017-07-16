@@ -26,7 +26,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         protected override string[] GetFields()
         {
             string parentElementField = BasicClassBuilder.CreateField(Consts.WEB_ELEMENT_CLASS_NAME, _parentElementFieldName);
-            return new string[] { parentElementField };
+            return new[] { parentElementField };
         }
     }
 }

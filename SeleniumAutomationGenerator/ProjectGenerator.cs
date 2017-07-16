@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SeleniumAutomationGenerator
+﻿namespace SeleniumAutomationGenerator
 {
     public class ProjectGenerator
     {
-        public ProjectGenerator()
-        {
-
-        }
         public void GenerateProject(string webAppBaseDirectory, string projectName, string distDirectory = null)
         {
             CreateSolution(projectName);

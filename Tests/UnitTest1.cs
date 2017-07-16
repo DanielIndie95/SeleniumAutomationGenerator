@@ -1,8 +1,5 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SeleniumAutomationGenerator.Generator;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SeleniumAutomationGenerator;
-using SeleniumAutomationGenerator.Models;
 using Moq;
 using System.IO;
 using FluentAssertions;
@@ -32,7 +29,7 @@ namespace Tests
             BasicPageGenerator generator = new BasicPageGenerator(basicComponentsContainer, new DriverFindElementPropertyGenerator("Driver"), Consts.PAGES_NAMESPACE);
             Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
             addin.Setup(add => add.AddinKey).Returns(KEY);
-            addin.Setup(add => add.GenerateHelpers(CLASS_NAME, NAME, generator.PropertyGenerator)).Returns(new string[] { "void Main(){}", "public void Main2(){}" });
+            addin.Setup(add => add.GenerateHelpers(CLASS_NAME, NAME, generator.PropertyGenerator)).Returns(new[] { "void Main(){}", "public void Main2(){}" });
             addin.Setup(add => add.Type).Returns("string");
 
             basicComponentsContainer.AddAddin(addin.Object);
@@ -54,8 +51,8 @@ namespace Tests
             ComponentsFactory factory = ComponentsFactory.Instance;
             Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
             addin.Setup(add => add.AddinKey).Returns(KEY);
-            addin.Setup(add => add.GenerateHelpers(CLASS_NAME, NAME, It.IsAny<IPropertyGenerator>())).Returns(new string[] { $"{CLASS_NAME} With{NAME}(string {NAME.ToLower()}){{}}" });
-            addin.Setup(add => add.GenerateHelpers(CLASS_NAME, SECOND_NAME, It.IsAny<IPropertyGenerator>())).Returns(new string[] { $"{CLASS_NAME} {SECOND_NAME}(){{}}" });
+            addin.Setup(add => add.GenerateHelpers(CLASS_NAME, NAME, It.IsAny<IPropertyGenerator>())).Returns(new[] { $"{CLASS_NAME} With{NAME}(string {NAME.ToLower()}){{}}" });
+            addin.Setup(add => add.GenerateHelpers(CLASS_NAME, SECOND_NAME, It.IsAny<IPropertyGenerator>())).Returns(new[] { $"{CLASS_NAME} {SECOND_NAME}(){{}}" });
             addin.Setup(add => add.Type).Returns(Consts.WEB_ELEMENT_CLASS_NAME);
 
             basicComponentsContainer.AddAddin(addin.Object);
@@ -63,7 +60,7 @@ namespace Tests
             var files = factory.CreateCsOutput(file);
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.PAGES_NAMESPACE));
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.COMPONENTS_NAMESPACE));
-            foreach (var innerFile in files)
+            foreach (ComponentGeneratorOutput innerFile in files)
             {
                 File.WriteAllText(innerFile.CsFileName, innerFile.Body);
             }
@@ -241,7 +238,7 @@ namespace Tests
         [TestMethod]
         public void TestMethod12()
         {
-            List<ComponentGeneratorOutput>[] expectedOutpus = new List<ComponentGeneratorOutput>[]
+            List<ComponentGeneratorOutput>[] expectedOutpus = new[]
             {
                 new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="a" ,CsFileName="b"} },
                 new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="c" ,CsFileName="d"} },
@@ -250,7 +247,7 @@ namespace Tests
             const string DIRECTORY = "hello";
             Mock<IHtmlsFinder> finder = new Mock<IHtmlsFinder>();
             Mock<IComponentsFactory> factory = new Mock<IComponentsFactory>();
-            finder.Setup(f => f.GetFilesTexts(DIRECTORY)).Returns(new string[] { "my", "new", "world" });
+            finder.Setup(f => f.GetFilesTexts(DIRECTORY)).Returns(new[] { "my", "new", "world" });
             factory.Setup(f => f.CreateCsOutput("my")).Returns(expectedOutpus[0]);
             factory.Setup(f => f.CreateCsOutput("new")).Returns(expectedOutpus[1]);
             factory.Setup(f => f.CreateCsOutput("world")).Returns(expectedOutpus[2]);
@@ -261,7 +258,7 @@ namespace Tests
         [TestMethod]
         public void TestMethod13()
         {
-            List<ComponentGeneratorOutput>[] expectedOutpus = new List<ComponentGeneratorOutput>[]
+            List<ComponentGeneratorOutput>[] expectedOutpus = new[]
             {
                 new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="a" ,CsFileName="b"} },
                 new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="z" ,CsFileName="b"} },
@@ -272,7 +269,7 @@ namespace Tests
             const string DIRECTORY = "hello";
             Mock<IHtmlsFinder> finder = new Mock<IHtmlsFinder>();
             Mock<IComponentsFactory> factory = new Mock<IComponentsFactory>();
-            finder.Setup(f => f.GetFilesTexts(DIRECTORY)).Returns(new string[] { "my", "new", "world" });
+            finder.Setup(f => f.GetFilesTexts(DIRECTORY)).Returns(new[] { "my", "new", "world" });
             factory.Setup(f => f.CreateCsOutput("my")).Returns(expectedOutpus[0]);
             factory.Setup(f => f.CreateCsOutput("new")).Returns(expectedOutpus[1]);
             factory.Setup(f => f.CreateCsOutput("world")).Returns(expectedOutpus[2]);

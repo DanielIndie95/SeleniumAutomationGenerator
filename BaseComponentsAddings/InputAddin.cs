@@ -1,5 +1,4 @@
 ﻿using Core.Utils;
-using System;
 using System.Text;
 using Core;
 
@@ -23,15 +22,15 @@ namespace BaseComponentsAddins
         {
             string propName = SelectorUtils.GetClassOrPropNameFromSelector(selector);
             string propertyNameFromGenerator = generator.GetPropertyName(this, propName);
-            string MethodPropName = TextUtils.UppercaseFirst(propName);
+            string methodPropName = TextUtils.UppercaseFirst(propName);
             StringBuilder builder = new StringBuilder();
             string helper = builder
-                .AppendLine($"public {className} With{MethodPropName}(string {propName})")
+                .AppendLine($"public {className} With{methodPropName}(string {propName})")
                 .AppendLine("{")
                 .AppendLine($"{propertyNameFromGenerator}.SendKeys({propName});")
                 .AppendLine("}")
                 .ToString();
-            return new string[] { helper };
+            return new [] { helper };
         }
     }
 }

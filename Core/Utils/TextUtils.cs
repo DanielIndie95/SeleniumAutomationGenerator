@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Core.Utils
+﻿namespace Core.Utils
 {
     public class TextUtils
     {
@@ -17,7 +15,7 @@ namespace Core.Utils
 
         public static string ToCamelCase(string s)
         {
-            return Char.ToLowerInvariant(s[0]) + s.Substring(1);
+            return char.ToLowerInvariant(s[0]) + s.Substring(1);
         }
     }
 }

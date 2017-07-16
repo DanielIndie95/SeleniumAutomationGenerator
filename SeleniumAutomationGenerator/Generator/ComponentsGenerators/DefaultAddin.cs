@@ -8,7 +8,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 
         public string Type { get; set; }
 
-        public string[] RequiredUsings { get; set; } = new string[] { };
+        public string[] RequiredUsings { get; set; } = { };
 
         public bool IsPropertyModifierPublic { get; set; } = true;
 
@@ -23,7 +23,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 
         public static DefaultAddin Create(string type)
         {
-            return new DefaultAddin()
+            return new DefaultAddin
             {
                 Type = type
             };

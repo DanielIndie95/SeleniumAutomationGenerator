@@ -1,8 +1,8 @@
-﻿using HtmlAgilityPack;
-using SeleniumAutomationGenerator.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Core.Utils;
+using HtmlAgilityPack;
+using SeleniumAutomationGenerator.Models;
 
 namespace SeleniumAutomationGenerator.Utils
 {
@@ -14,15 +14,19 @@ namespace SeleniumAutomationGenerator.Utils
             HtmlNode.ElementsFlags.Remove("form");
             doc.LoadHtml(body);
 
-            var nodes = doc.DocumentNode.ChildNodes
-                .Where(node => node.Attributes["class"]?.Value.Contains(Consts.AUTOMATION_ELEMENT_PREFIX) ?? false);
-            if (nodes == null || nodes.Count() == 0)
+            HtmlNode[] nodes = doc.DocumentNode.ChildNodes
+                .Where(node => node.Attributes["class"]?.Value.Contains(Consts.AUTOMATION_ELEMENT_PREFIX) ?? false)
+                .ToArray();
+            if (nodes.Length == 0)
                 yield break;
-            foreach (var node in nodes)
+            
+            foreach (HtmlNode node in nodes)
             {
-                AutoElementData data = new AutoElementData();
-                data.Selector = FindAutoClassFromFullClass(node.Attributes["class"].Value);
-                data.InnerChildrens = GetChildren(node.InnerHtml).ToList();
+                AutoElementData data = new AutoElementData
+                {
+                    Selector = FindAutoClassFromFullClass(node.Attributes["class"].Value),
+                    InnerChildrens = GetChildren(node.InnerHtml).ToList()
+                };
                 yield return data;
             }
         }

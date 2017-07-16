@@ -1,5 +1,4 @@
-﻿using SeleniumAutomationGenerator.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Core.Models;
 

@@ -7,33 +7,34 @@ namespace SeleniumAutomationGenerator.Generator.PropertyGenerators
 {
     public abstract class SearchContextFindElementPropertyGenerator : IPropertyGenerator
     {
-        public Dictionary<string, Func<string, string>> _singlePropertyExceptions;
-        public Dictionary<string, Func<string, string>> _listPropertyExceptions;
+        protected Dictionary<string, Func<string, string>> SinglePropertyExceptions;
+        protected Dictionary<string, Func<string, string>> ListPropertyExceptions;
         protected string DriverPropertyName;
-        public SearchContextFindElementPropertyGenerator(string driverPropertyName)
+
+        protected SearchContextFindElementPropertyGenerator(string driverPropertyName)
         {
             DriverPropertyName = driverPropertyName;
-            _singlePropertyExceptions = new Dictionary<string, Func<string, string>>();
-            _listPropertyExceptions = new Dictionary<string, Func<string, string>>();
-            AddException(Consts.WEB_ELEMENT_CLASS_NAME, (selector) => FindElementString(selector, false));
-            AddException("string", (selector) => $"{FindElementString(selector, false)}.Text");
-            AddException("int", (selector) => $"int.Parse({FindElementString(selector, false)}.Text)");
+            SinglePropertyExceptions = new Dictionary<string, Func<string, string>>();
+            ListPropertyExceptions = new Dictionary<string, Func<string, string>>();
+            AddException(Consts.WEB_ELEMENT_CLASS_NAME, selector => FindElementString(selector, false));
+            AddException("string", selector => $"{FindElementString(selector, false)}.Text");
+            AddException("int", selector => $"int.Parse({FindElementString(selector, false)}.Text)");
 
-            AddException("string", (selector) => $"{FindElementString(selector, true)}.Select(elm=> elm.Text)", true);
-            AddException("int", (selector) => $"{FindElementString(selector, true)}.Select(elm=> int.Parse(elm.Text))", true);
+            AddException("string", selector => $"{FindElementString(selector, true)}.Select(elm=> elm.Text)", true);
+            AddException("int", selector => $"{FindElementString(selector, true)}.Select(elm=> int.Parse(elm.Text))", true);
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="type"></param>
         /// <param name="exceptionValueGenerator">the first string is the selector(class), the second is the returned value</param>
+        /// <param name="asListPropertyException">the exception is for the list case</param>
         public void AddException(string type, Func<string, string> exceptionValueGenerator, bool asListPropertyException = false)
         {
             if (asListPropertyException)
-                _listPropertyExceptions[type] = exceptionValueGenerator;
+                ListPropertyExceptions[type] = exceptionValueGenerator;
             else
-                _singlePropertyExceptions[type] = exceptionValueGenerator;
+                SinglePropertyExceptions[type] = exceptionValueGenerator;
         }
 
         public virtual string CreateProperty(IComponentAddin addin, string propName, string selector)
@@ -90,14 +91,14 @@ namespace SeleniumAutomationGenerator.Generator.PropertyGenerators
         private bool IsExceptionType(IComponentAddin addin)
         {
             if (addin.IsArrayedAddin)
-                return _listPropertyExceptions.ContainsKey(addin.Type);
-            return _singlePropertyExceptions.ContainsKey(addin.Type);
+                return ListPropertyExceptions.ContainsKey(addin.Type);
+            return SinglePropertyExceptions.ContainsKey(addin.Type);
         }
         private string HandleEqualStatmentExcpetions(IComponentAddin addin, string selector)
         {
             if (addin.IsArrayedAddin)
-                return _listPropertyExceptions[addin.Type](selector);
-            return _singlePropertyExceptions[addin.Type](selector);
+                return ListPropertyExceptions[addin.Type](selector);
+            return SinglePropertyExceptions[addin.Type](selector);
         }
 
         private string GetModifier(IComponentAddin addin)

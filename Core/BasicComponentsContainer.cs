@@ -5,8 +5,7 @@ namespace Core
 {
     public sealed class ComponentsContainer
     {
-        private static readonly ComponentsContainer _value;
-        public static ComponentsContainer Instance => _value;
+        public static ComponentsContainer Instance { get; }
 
         private IComponentAddin _defaultAddin;
         private readonly Dictionary<string, IComponentAddin> _addins;
@@ -19,7 +18,7 @@ namespace Core
 
         static ComponentsContainer()
         {
-            _value = new ComponentsContainer();
+            Instance = new ComponentsContainer();
         }
 
         public void AddAddin(IComponentAddin newAddin, bool setAsDefault = false)

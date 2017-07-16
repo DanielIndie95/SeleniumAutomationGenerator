@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using Core;
 using Core.Models;
-using SeleniumAutomationGenerator.Generator;
-using SeleniumAutomationGenerator.Models;
 
 namespace SeleniumAutomationGenerator
 {

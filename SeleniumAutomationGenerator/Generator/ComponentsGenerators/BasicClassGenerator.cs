@@ -10,34 +10,33 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 {
     public abstract class BasicClassGenerator : IComponentFileCreator
     {
-        protected ComponentsContainer _container;
-        protected IPropertyGenerator _propertyGenerator;
-        protected List<string> baseUsings;
-        protected string _namespaceName;
+        protected ComponentsContainer Container;
+        protected List<string> BaseUsings;
+        protected string NamespaceName;
         protected List<string> ExceptionsTypes;
         protected List<string> ExtraProperties;
         protected List<string> ExtraMethods;
 
-        public IPropertyGenerator PropertyGenerator => _propertyGenerator;
+        public IPropertyGenerator PropertyGenerator { get; }
 
         protected BasicClassGenerator(ComponentsContainer container, IPropertyGenerator propertyGenerator, string namespaceName)
         {
-            baseUsings = new List<string>
+            BaseUsings = new List<string>
             {
                 "System", "OpenQA.Selenium", "System.Linq"
             };
             ExceptionsTypes = new List<string>();
             ExtraProperties = new List<string>();
             ExtraMethods = new List<string>();
-            _container = container;
-            _namespaceName = namespaceName;
-            _propertyGenerator = propertyGenerator;
+            Container = container;
+            NamespaceName = namespaceName;
+            PropertyGenerator = propertyGenerator;
         }
 
         public virtual IComponentAddin MakeAddin(string selector)
         {
             string name = SelectorUtils.GetClassOrPropNameFromSelector(selector);
-            return new FileCreatorAddin()
+            return new FileCreatorAddin
             {
                 AddinKey = name,
                 Type = name
@@ -51,14 +50,14 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
             string body = builder.AddUsings(GetUsings(elements))
                 .AddCtor(CreateCtor(className))
                 .SetClassName(className)
-                .SetNamesapce(_namespaceName)
+                .SetNamesapce(NamespaceName)
                 .AddUsings(GetUsings(elements))
                 .AddProperties(GetProperties(elements))
                 .AddMethods(GetHelpers(className, elements))
                 .AddFields(GetFields())
                 .Build();
 
-            return new ComponentGeneratorOutput() { Body = body, CsFileName = NamespaceFileConverter.ConvertNamespaceToFilePath(_namespaceName, className) };
+            return new ComponentGeneratorOutput { Body = body, CsFileName = NamespaceFileConverter.ConvertNamespaceToFilePath(NamespaceName, className) };
         }
         public void AddExceptionPropertyType(string type)
         {
@@ -82,7 +81,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
             foreach (var element in elements.Where(elm => !ExceptionsTypes.Contains(elm.Type))
                 .Where(ExistingTypes))
             {
-                string[] innerHelpers = _container.GetAddin(element.Type).GenerateHelpers(className, element.FullSelector, PropertyGenerator);
+                string[] innerHelpers = Container.GetAddin(element.Type).GenerateHelpers(className, element.FullSelector, PropertyGenerator);
                 helpers = helpers.Concat(innerHelpers);
             }
             return helpers.ToArray();
@@ -93,8 +92,8 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
             return elements
                             .Where(elm => !ExceptionsTypes.Contains(elm.Type))
                             //.Where(ExistingTypes)
-                            .Select(elm => _propertyGenerator.CreateProperty(
-                                            _container.GetAddin(elm.Type) ?? DefaultAddin.Create(elm.Type), elm.Name, elm.FullSelector))
+                            .Select(elm => PropertyGenerator.CreateProperty(
+                                            Container.GetAddin(elm.Type) ?? DefaultAddin.Create(elm.Type), elm.Name, elm.FullSelector))
                            .Concat(ExtraProperties)
                            .Distinct()
                            .ToArray();
@@ -102,10 +101,10 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 
         private string[] GetUsings(ElementSelectorData[] elements)
         {
-            IEnumerable<string> usings = baseUsings;
+            IEnumerable<string> usings = BaseUsings;
             foreach (var element in elements.Where(ExistingTypes))
             {
-                usings = usings.Concat(_container.GetAddin(element.Type).RequiredUsings);
+                usings = usings.Concat(Container.GetAddin(element.Type).RequiredUsings);
             }
             return usings.ToArray();
         }
@@ -116,7 +115,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         }
         private bool ExistingTypes(ElementSelectorData data)
         {
-            bool result = _container.GetAddin(data.Type) != null;
+            bool result = Container.GetAddin(data.Type) != null;
             return result;
         }
     }

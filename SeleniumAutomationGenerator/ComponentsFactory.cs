@@ -1,14 +1,13 @@
-﻿using SeleniumAutomationGenerator.Generator;
-using SeleniumAutomationGenerator.Generator.ClassAppenders;
-using SeleniumAutomationGenerator.Generator.PropertyGenerators;
-using SeleniumAutomationGenerator.Models;
-using SeleniumAutomationGenerator.Utils;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Core;
 using Core.Models;
 using Core.Utils;
+using SeleniumAutomationGenerator.Generator.ClassAppenders;
 using SeleniumAutomationGenerator.Generator.ComponentsGenerators;
+using SeleniumAutomationGenerator.Generator.PropertyGenerators;
+using SeleniumAutomationGenerator.Models;
+using SeleniumAutomationGenerator.Utils;
 
 namespace SeleniumAutomationGenerator
 {
@@ -17,10 +16,9 @@ namespace SeleniumAutomationGenerator
         readonly Dictionary<string, IComponentFileCreator> _fileCreators;
         readonly Dictionary<string, IComponentClassAppender> _classAppenders;
 
-        readonly IComponentFileCreator _defaultFileCreator;
+        private readonly IComponentFileCreator _defaultFileCreator;
 
-        private static readonly ComponentsFactory _instance;
-        public static ComponentsFactory Instance => _instance;
+        public static ComponentsFactory Instance { get; }
 
         private ComponentsFactory()
         {
@@ -37,7 +35,7 @@ namespace SeleniumAutomationGenerator
 
         static ComponentsFactory()
         {
-            _instance = new ComponentsFactory();
+            Instance = new ComponentsFactory();
         }
 
         public void AddComponentClassGeneratorKey(string key, IComponentFileCreator newComponentFileCreator)
@@ -69,7 +67,7 @@ namespace SeleniumAutomationGenerator
         private IEnumerable<ComponentGeneratorOutput> CreateCsOutput(string selector, IEnumerable<AutoElementData> children, IComponentFileCreator parentClassCreator = null)
         {
             var keyWord = SelectorUtils.GetKeyWordFromSelector(selector);
-            if (children.Count() == 0) //not a new cs file
+            if (!children.Any()) //not a new cs file
                 return new List<ComponentGeneratorOutput>();
 
             IEnumerable<AutoElementData> filteredChildren = children
@@ -82,8 +80,7 @@ namespace SeleniumAutomationGenerator
                 HandleClassAppenders(selector, parentClassCreator, keyWord, elements);
                 return new List<ComponentGeneratorOutput>();
             }
-            else
-                return GetFileCreatorsOutput(selector, children, keyWord, elements);
+            return GetFileCreatorsOutput(selector, children, keyWord, elements);
         }
 
         private void HandleClassAppenders(string selector, IComponentFileCreator parentClassCreator, string keyWord, IEnumerable<ElementSelectorData> childrenData)
@@ -119,14 +116,14 @@ namespace SeleniumAutomationGenerator
     
         private bool FilterNonInlineChidren(AutoElementData childData)
         {
-            var keyWord = SelectorUtils.GetKeyWordFromSelector(childData.Selector);
+            string keyWord = SelectorUtils.GetKeyWordFromSelector(childData.Selector);
 
             return !_classAppenders.ContainsKey(keyWord);
         }
 
-        private ElementSelectorData ConvertToElementSelectorData(AutoElementData data)
+        private static ElementSelectorData ConvertToElementSelectorData(AutoElementData data)
         {
-            return new ElementSelectorData()
+            return new ElementSelectorData
             {
                 FullSelector = data.Selector,
                 Name = SelectorUtils.GetClassOrPropNameFromSelector(data.Selector),

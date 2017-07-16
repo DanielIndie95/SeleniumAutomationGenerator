@@ -15,7 +15,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         public override IComponentAddin MakeAddin(string selector)
         {
             string name = SelectorUtils.GetClassOrPropNameFromSelector(selector);
-            return new FileCreatorAddin()
+            return new FileCreatorAddin
             {
                 AddinKey = name,
                 Type = name,
@@ -35,7 +35,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         protected override string[] GetFields()
         {
             string parentElementField = BasicClassBuilder.CreateField(Consts.WEB_ELEMENT_CLASS_NAME, _parentFieldName);
-            return new string[] { parentElementField };
+            return new[] { parentElementField };
         }
     }
 }

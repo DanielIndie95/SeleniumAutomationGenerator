@@ -23,7 +23,7 @@ namespace BaseComponentsAddins
             string propertyName = generator.GetPropertyName(this, propName);
             string helper =  builder.AppendLine($"public {className} Select{propName}(string value)")
                 .AppendLine("{")
-                .AppendLine($"{propName}")
+                .AppendLine($"{propertyName}.SelectByValue(value)")
                 .AppendLine("}")
                 .ToString();
             return new[] { helper };

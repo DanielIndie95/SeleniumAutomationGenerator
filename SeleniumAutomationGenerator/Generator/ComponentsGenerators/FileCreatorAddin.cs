@@ -11,7 +11,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 
         public string Type { get; set; }
 
-        public string[] RequiredUsings { get; set; } = new string[] { };
+        public string[] RequiredUsings { get; set; } = { };
 
         public bool IsPropertyModifierPublic { get; set; } = true;
 
