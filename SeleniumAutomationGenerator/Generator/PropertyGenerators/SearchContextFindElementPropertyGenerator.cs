@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Core;
+using Core.Utils;
 
-namespace SeleniumAutomationGenerator.Generator
+namespace SeleniumAutomationGenerator.Generator.PropertyGenerators
 {
     public abstract class SearchContextFindElementPropertyGenerator : IPropertyGenerator
     {

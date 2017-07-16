@@ -11,6 +11,10 @@ using SeleniumAutomationGenerator.Utils;
 using BaseComponentsAddins;
 using System.Collections.Generic;
 using System.Linq;
+using Core;
+using Core.Models;
+using Core.Utils;
+using SeleniumAutomationGenerator.Generator.ComponentsGenerators;
 
 namespace Tests
 {

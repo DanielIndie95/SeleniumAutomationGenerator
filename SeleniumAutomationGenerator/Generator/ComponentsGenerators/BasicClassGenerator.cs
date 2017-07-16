@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using SeleniumAutomationGenerator.Models;
+using Core;
+using Core.Models;
+using Core.Utils;
+using SeleniumAutomationGenerator.Generator.Builders;
 using SeleniumAutomationGenerator.Utils;
-using SeleniumAutomationGenerator.Generator.ComponentsGenerators;
 
-namespace SeleniumAutomationGenerator.Generator
+namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 {
     public abstract class BasicClassGenerator : IComponentFileCreator
     {

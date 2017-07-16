@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace SeleniumAutomationGenerator
+namespace Core
 {
     public sealed class ComponentsContainer
     {
-        private static ComponentsContainer _value;
+        private static readonly ComponentsContainer _value;
         public static ComponentsContainer Instance => _value;
 
         private IComponentAddin _defaultAddin;
-        private Dictionary<string, IComponentAddin> _addins;
+        private readonly Dictionary<string, IComponentAddin> _addins;
 
         public IComponentAddin[] Addins => _addins.Values.ToArray();
         private ComponentsContainer()

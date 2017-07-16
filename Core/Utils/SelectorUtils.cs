@@ -1,4 +1,4 @@
-﻿namespace SeleniumAutomationGenerator.Utils
+﻿namespace Core.Utils
 {
     public static class SelectorUtils
     {

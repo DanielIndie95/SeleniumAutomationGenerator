@@ -1,6 +1,4 @@
-﻿using SeleniumAutomationGenerator.Generator;
-
-namespace SeleniumAutomationGenerator
+﻿namespace SeleniumAutomationGenerator.Generator.PropertyGenerators
 {
     public class DriverFindElementPropertyGenerator : SearchContextFindElementPropertyGenerator
     {

@@ -1,13 +1,14 @@
 ﻿using SeleniumAutomationGenerator.Models;
 using System.Collections.Generic;
 using System.Linq;
+using Core.Models;
 
 namespace SeleniumAutomationGenerator
 {
     public class WebFolderToCsFilesConverter
     {
-        private IComponentsFactory _factory;
-        private IHtmlsFinder _finder;
+        private readonly IComponentsFactory _factory;
+        private readonly IHtmlsFinder _finder;
 
         public WebFolderToCsFilesConverter(IComponentsFactory factory , IHtmlsFinder finder)
         {

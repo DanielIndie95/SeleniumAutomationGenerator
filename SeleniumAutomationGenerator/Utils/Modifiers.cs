@@ -1,4 +1,4 @@
-﻿namespace SeleniumAutomationGenerator.Generator
+﻿namespace SeleniumAutomationGenerator.Utils
 {
     public enum Modifiers
     {

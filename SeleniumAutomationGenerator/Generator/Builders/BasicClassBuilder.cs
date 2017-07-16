@@ -1,18 +1,20 @@
-﻿using Core.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Core;
+using Core.Utils;
+using SeleniumAutomationGenerator.Utils;
 
-namespace SeleniumAutomationGenerator.Generator
+namespace SeleniumAutomationGenerator.Generator.Builders
 {
     public class BasicClassBuilder : IClassBuilder
     {
         private string _ctor;
         private List<string> _usings;
-        private Dictionary<Modifiers, List<string>> _fields;
-        private Dictionary<Modifiers, List<string>> _props;
-        private Dictionary<Modifiers, List<string>> _methods;
+        private readonly Dictionary<Modifiers, List<string>> _fields;
+        private readonly Dictionary<Modifiers, List<string>> _props;
+        private readonly Dictionary<Modifiers, List<string>> _methods;
         private string _namespaceName;
         private string _className;
 
@@ -37,7 +39,7 @@ namespace SeleniumAutomationGenerator.Generator
 
         public IClassBuilder AddFields(params string[] fields)
         {
-            foreach (var field in fields)
+            foreach (string field in fields)
             {
                 AddModifierField(_fields, field);
             }
@@ -47,7 +49,7 @@ namespace SeleniumAutomationGenerator.Generator
 
         public IClassBuilder AddMethods(params string[] methods)
         {
-            foreach (var method in methods)
+            foreach (string method in methods)
             {
                 AddModifierField(_methods, method);
             }
@@ -57,7 +59,7 @@ namespace SeleniumAutomationGenerator.Generator
 
         public IClassBuilder AddProperties(params string[] properties)
         {
-            foreach (var property in properties)
+            foreach (string property in properties)
             {
                 AddModifierField(_props, property);
             }
@@ -142,7 +144,7 @@ namespace SeleniumAutomationGenerator.Generator
 
         private void AppendUsings(StringBuilder builder, IEnumerable<string> usings)
         {
-            foreach (var usingNamespace in usings)
+            foreach (string usingNamespace in usings)
             {
                 builder.AppendLine($"using {usingNamespace};");
             }
@@ -173,7 +175,7 @@ namespace SeleniumAutomationGenerator.Generator
 
         private void AppendList<T>(StringBuilder builder, IEnumerable<T> list)
         {
-            foreach (var item in list)
+            foreach (T item in list)
             {
                 builder.AppendLine(item.ToString());
             }

@@ -1,8 +1,7 @@
 ﻿using Core.Utils;
-using SeleniumAutomationGenerator;
-using SeleniumAutomationGenerator.Utils;
 using System;
 using System.Text;
+using Core;
 
 namespace BaseComponentsAddins
 {

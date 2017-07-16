@@ -1,4 +1,6 @@
-﻿namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
+﻿using Core;
+
+namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 {
     public class DefaultAddin : IComponentAddin
     {

@@ -1,4 +1,4 @@
-﻿using SeleniumAutomationGenerator;
+﻿using Core;
 
 namespace BaseComponentsAddins
 {

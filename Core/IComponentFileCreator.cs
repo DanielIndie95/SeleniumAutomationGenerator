@@ -1,6 +1,6 @@
-﻿using SeleniumAutomationGenerator.Models;
+﻿using Core.Models;
 
-namespace SeleniumAutomationGenerator.Generator
+namespace Core
 {
     public interface IComponentFileCreator
     {

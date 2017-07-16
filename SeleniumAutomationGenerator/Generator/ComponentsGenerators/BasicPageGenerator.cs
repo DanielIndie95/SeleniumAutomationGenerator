@@ -1,6 +1,8 @@
 ﻿using System.Text;
+using Core;
+using Core.Utils;
 
-namespace SeleniumAutomationGenerator.Generator
+namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 {
     public class BasicPageGenerator : BasicClassGenerator
     {        

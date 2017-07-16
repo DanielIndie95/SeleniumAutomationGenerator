@@ -2,7 +2,7 @@
 {
     public class ParentElementFindElementPropertyGenerator : SearchContextFindElementPropertyGenerator
     {
-        private string _parentElementField;
+        private readonly string _parentElementField;
         public ParentElementFindElementPropertyGenerator(string driverElementName, string parentElementName) : base(driverElementName)
         {
             _parentElementField = parentElementName;

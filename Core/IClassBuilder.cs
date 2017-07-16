@@ -1,4 +1,4 @@
-﻿namespace SeleniumAutomationGenerator.Generator
+﻿namespace Core
 {
     public interface IClassBuilder
     {

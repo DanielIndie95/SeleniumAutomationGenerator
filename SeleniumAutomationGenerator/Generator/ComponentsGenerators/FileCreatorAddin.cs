@@ -1,10 +1,11 @@
 ﻿using System;
+using Core;
 
 namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 {
     public class FileCreatorAddin : IComponentAddin
     {
-        private Func<string, string, string[]> _helpers;
+        private readonly Func<string, string, string[]> _helpers;
 
         public string AddinKey { get; set; }
 

@@ -1,4 +1,4 @@
-﻿namespace SeleniumAutomationGenerator
+﻿namespace Core
 {
     public interface IPropertyGenerator
     {

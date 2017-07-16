@@ -1,4 +1,4 @@
-﻿namespace SeleniumAutomationGenerator
+﻿namespace Core.Utils
 {
     public class Consts
     {

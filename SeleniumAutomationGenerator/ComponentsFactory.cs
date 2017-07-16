@@ -5,17 +5,21 @@ using SeleniumAutomationGenerator.Models;
 using SeleniumAutomationGenerator.Utils;
 using System.Collections.Generic;
 using System.Linq;
+using Core;
+using Core.Models;
+using Core.Utils;
+using SeleniumAutomationGenerator.Generator.ComponentsGenerators;
 
 namespace SeleniumAutomationGenerator
 {
     public sealed class ComponentsFactory : IComponentsFactory
     {
-        Dictionary<string, IComponentFileCreator> _fileCreators;
-        Dictionary<string, IComponentClassAppender> _classAppenders;
+        readonly Dictionary<string, IComponentFileCreator> _fileCreators;
+        readonly Dictionary<string, IComponentClassAppender> _classAppenders;
 
-        IComponentFileCreator _defaultFileCreator;
+        readonly IComponentFileCreator _defaultFileCreator;
 
-        private static ComponentsFactory _instance;
+        private static readonly ComponentsFactory _instance;
         public static ComponentsFactory Instance => _instance;
 
         private ComponentsFactory()

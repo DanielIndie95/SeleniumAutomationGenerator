@@ -1,4 +1,6 @@
-﻿using BaseComponentsAddings;
+﻿using BaseComponentsAddins;
+using Core;
+using Core.Models;
 using SeleniumAutomationGenerator.Models;
 
 namespace SeleniumAutomationGenerator.Generator.ClassAppenders

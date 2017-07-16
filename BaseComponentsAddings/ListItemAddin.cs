@@ -1,8 +1,6 @@
-﻿using System;
-using SeleniumAutomationGenerator;
-using System.Text;
+﻿using Core;
 
-namespace BaseComponentsAddings
+namespace BaseComponentsAddins
 {
     public class ListItemAddin : IComponentAddin
     {

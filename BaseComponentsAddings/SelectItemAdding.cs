@@ -1,8 +1,7 @@
-﻿using SeleniumAutomationGenerator;
-using System;
-using System.Text;
+﻿using System.Text;
+using Core;
 
-namespace BaseComponentsAddings
+namespace BaseComponentsAddins
 {
     public class SelectItemAdding : IComponentAddin
     {

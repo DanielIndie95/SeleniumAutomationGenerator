@@ -1,12 +1,13 @@
-﻿using SeleniumAutomationGenerator.Generator.ComponentsGenerators;
-using SeleniumAutomationGenerator.Utils;
-using System.Text;
+﻿using System.Text;
+using Core;
+using Core.Utils;
+using SeleniumAutomationGenerator.Generator.Builders;
 
-namespace SeleniumAutomationGenerator.Generator
+namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 {
     public class BasicModelGenerator : BasicClassGenerator
     {
-        private string _parentFieldName;
+        private readonly string _parentFieldName;
         public BasicModelGenerator(ComponentsContainer container, IPropertyGenerator propertyGenerator, string namespaceName, string parentElementName) : base(container, propertyGenerator, namespaceName)
         {
             _parentFieldName = parentElementName;
