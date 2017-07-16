@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace SeleniumAutomationGenerator
 {
-    public sealed class ComponentsFactory
+    public sealed class ComponentsFactory : IComponentsFactory
     {
         Dictionary<string, IComponentFileCreator> _fileCreators;
         Dictionary<string, IComponentClassAppender> _classAppenders;

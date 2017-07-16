@@ -9,6 +9,8 @@ using FluentAssertions;
 using SeleniumAutomationGenerator.Generator.PropertyGenerators;
 using SeleniumAutomationGenerator.Utils;
 using BaseComponentsAddins;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Tests
 {
@@ -28,9 +30,9 @@ namespace Tests
             addin.Setup(add => add.AddinKey).Returns(KEY);
             addin.Setup(add => add.GenerateHelpers(CLASS_NAME, NAME, generator.PropertyGenerator)).Returns(new string[] { "void Main(){}", "public void Main2(){}" });
             addin.Setup(add => add.Type).Returns("string");
-            
+
             basicComponentsContainer.AddAddin(addin.Object);
-            
+
             var classStr = generator.GenerateComponentClass(selector, new[] { new ElementSelectorData() { FullSelector = "aaa", Name = NAME, Type = KEY } });
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.PAGES_NAMESPACE));
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.COMPONENTS_NAMESPACE));
@@ -51,16 +53,16 @@ namespace Tests
             addin.Setup(add => add.GenerateHelpers(CLASS_NAME, NAME, It.IsAny<IPropertyGenerator>())).Returns(new string[] { $"{CLASS_NAME} With{NAME}(string {NAME.ToLower()}){{}}" });
             addin.Setup(add => add.GenerateHelpers(CLASS_NAME, SECOND_NAME, It.IsAny<IPropertyGenerator>())).Returns(new string[] { $"{CLASS_NAME} {SECOND_NAME}(){{}}" });
             addin.Setup(add => add.Type).Returns(Consts.WEB_ELEMENT_CLASS_NAME);
-            
+
             basicComponentsContainer.AddAddin(addin.Object);
-            
+
             var files = factory.CreateCsOutput(file);
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.PAGES_NAMESPACE));
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.COMPONENTS_NAMESPACE));
             foreach (var innerFile in files)
             {
                 File.WriteAllText(innerFile.CsFileName, innerFile.Body);
-            }            
+            }
         }
 
         [TestMethod]
@@ -230,6 +232,49 @@ namespace Tests
             var propertyGen = new ParentElementFindElementPropertyGenerator(DRIVER_PROP_NAME, PARENT_ELEMENT_NAME);
             var property = propertyGen.CreateProperty(addin.Object, NAME, SELECTOR);
             property.Should().Be($"protected ReadOnlyList<{TYPE}> {NAME} => {PARENT_ELEMENT_NAME}.FindElements(By.ClassName(\"{SELECTOR}\")).Select(elm=> elm.Text);");
+        }
+
+        [TestMethod]
+        public void TestMethod12()
+        {
+            List<ComponentGeneratorOutput>[] expectedOutpus = new List<ComponentGeneratorOutput>[]
+            {
+                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="a" ,CsFileName="b"} },
+                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="c" ,CsFileName="d"} },
+                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="e" ,CsFileName="f"} }
+            };
+            const string DIRECTORY = "hello";
+            Mock<IHtmlsFinder> finder = new Mock<IHtmlsFinder>();
+            Mock<IComponentsFactory> factory = new Mock<IComponentsFactory>();
+            finder.Setup(f => f.GetFilesTexts(DIRECTORY)).Returns(new string[] { "my", "new", "world" });
+            factory.Setup(f => f.CreateCsOutput("my")).Returns(expectedOutpus[0]);
+            factory.Setup(f => f.CreateCsOutput("new")).Returns(expectedOutpus[1]);
+            factory.Setup(f => f.CreateCsOutput("world")).Returns(expectedOutpus[2]);
+            WebFolderToCsFilesConverter converter = new WebFolderToCsFilesConverter(factory.Object, finder.Object);
+            List<ComponentGeneratorOutput> outputs =  converter.GenerateClasses(DIRECTORY);
+            outputs.Should().BeEquivalentTo(expectedOutpus.SelectMany(a=> a));
+        }
+        [TestMethod]
+        public void TestMethod12()
+        {
+            List<ComponentGeneratorOutput>[] expectedOutpus = new List<ComponentGeneratorOutput>[]
+            {
+                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="a" ,CsFileName="b"} },
+                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="z" ,CsFileName="b"} },
+                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="a" ,CsFileName="c"} },
+                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="d" ,CsFileName="e"} },
+                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="f" ,CsFileName="g"} }
+            };
+            const string DIRECTORY = "hello";
+            Mock<IHtmlsFinder> finder = new Mock<IHtmlsFinder>();
+            Mock<IComponentsFactory> factory = new Mock<IComponentsFactory>();
+            finder.Setup(f => f.GetFilesTexts(DIRECTORY)).Returns(new string[] { "my", "new", "world" });
+            factory.Setup(f => f.CreateCsOutput("my")).Returns(expectedOutpus[0]);
+            factory.Setup(f => f.CreateCsOutput("new")).Returns(expectedOutpus[1]);
+            factory.Setup(f => f.CreateCsOutput("world")).Returns(expectedOutpus[2]);
+            WebFolderToCsFilesConverter converter = new WebFolderToCsFilesConverter(factory.Object, finder.Object);
+            List<ComponentGeneratorOutput> outputs = converter.GenerateClasses(DIRECTORY);
+            outputs.Should().HaveCount(expectedOutpus.Length - 1);
         }
     }
 }

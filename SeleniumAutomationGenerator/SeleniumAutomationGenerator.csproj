@@ -166,8 +166,12 @@
     <Compile Include="Generator\ComponentsGenerators\DefaultAddin.cs" />
     <Compile Include="Generator\ComponentsGenerators\FileCreatorAddin.cs" />
     <Compile Include="Generator\PropertyGenerators\ParentElementFindElementPropertyGenerator.cs" />
+    <Compile Include="HtmlFinder.cs" />
+    <Compile Include="IComponentsFactory.cs" />
+    <Compile Include="IHtmlFinder.cs" />
     <Compile Include="Models\AutoElementData.cs" />
     <Compile Include="Models\ElementData.cs" />
+    <Compile Include="ProjectGenerator.cs" />
     <Compile Include="Utils\AutoElementFinder.cs" />
     <Compile Include="Generator\PropertyGenerators\SearchContextFindElementPropertyGenerator.cs" />
     <Compile Include="Generator\PropertyGenerators\DriverFindElementPropertyGenerator.cs" />
@@ -175,6 +179,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\NamespaceFileConverter.cs" />
+    <Compile Include="WebFolderToCsFilesConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
