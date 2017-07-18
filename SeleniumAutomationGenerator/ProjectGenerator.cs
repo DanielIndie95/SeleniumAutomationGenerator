@@ -1,6 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Reflection.Emit;
+using BaseComponentsAddins;
+using Core;
 using Core.Models;
+using SeleniumAutomationGenerator.Generator.CustomClassAttributes;
+using SeleniumAutomationGenerator.Utils;
 
 namespace SeleniumAutomationGenerator
 {
@@ -9,14 +14,18 @@ namespace SeleniumAutomationGenerator
         public void GenerateProject(string webAppBaseDirectory, string projectName, string solutionName = null,
             string distDirectory = null)
         {
+            BuiltInComponentsInserter.InsertBuiltInComponents();
+            
             CreateSolution(projectName);
             WebFolderToCsFilesConverter converter = new WebFolderToCsFilesConverter(ComponentsFactory.Instance , new HtmlFinder());
             List<ComponentGeneratorOutput> results = converter.GenerateClasses(webAppBaseDirectory);
-            foreach (var result in results)
+            foreach (ComponentGeneratorOutput result in results)
             {
                    File.WriteAllText(result.CsFileName , result.Body); 
             }
         }
+
+        
 
         private void CreateSolution(string name)
         {

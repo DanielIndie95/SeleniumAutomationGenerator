@@ -19,16 +19,18 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 
         public IPropertyGenerator PropertyGenerator { get; }
 
-        protected BasicClassGenerator(ComponentsContainer container, IPropertyGenerator propertyGenerator, string namespaceName)
+        protected BasicClassGenerator(IPropertyGenerator propertyGenerator, string namespaceName)
         {
             BaseUsings = new List<string>
             {
-                "System", "OpenQA.Selenium", "System.Linq"
+                "System",
+                "OpenQA.Selenium",
+                "System.Linq"
             };
             ExceptionsTypes = new List<string>();
             ExtraProperties = new List<string>();
             ExtraMethods = new List<string>();
-            Container = container;
+            Container = ComponentsContainer.Instance;
             NamespaceName = namespaceName;
             PropertyGenerator = propertyGenerator;
         }
@@ -57,8 +59,13 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
                 .AddFields(GetFields())
                 .Build();
 
-            return new ComponentGeneratorOutput { Body = body, CsFileName = NamespaceFileConverter.ConvertNamespaceToFilePath(NamespaceName, className) };
+            return new ComponentGeneratorOutput
+            {
+                Body = body,
+                CsFileName = NamespaceFileConverter.ConvertNamespaceToFilePath(NamespaceName, className)
+            };
         }
+
         public void AddExceptionPropertyType(string type)
         {
             ExceptionsTypes.Add(type);
@@ -68,6 +75,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         {
             ExtraProperties.Add(property);
         }
+
         public void AddMethod(string method)
         {
             ExtraMethods.Add(method);
@@ -75,13 +83,13 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 
         protected abstract string CreateCtor(string className);
 
-        private string[] GetHelpers(string className, ElementSelectorData[] elements)
+        private string[] GetHelpers(string className, IEnumerable<ElementSelectorData> elements)
         {
             IEnumerable<string> helpers = new List<string>();
-            foreach (var element in elements.Where(elm => !ExceptionsTypes.Contains(elm.Type))
+            foreach (ElementSelectorData element in elements.Where(elm => !ExceptionsTypes.Contains(elm.Type))
                 .Where(ExistingTypes))
             {
-                string[] innerHelpers = Container.GetAddin(element.Type).GenerateHelpers(className, element.FullSelector, PropertyGenerator);
+                IEnumerable<string> innerHelpers = GetHelpers(className, element);
                 helpers = helpers.Concat(innerHelpers);
             }
             return helpers.ToArray();
@@ -90,22 +98,18 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         protected virtual string[] GetProperties(ElementSelectorData[] elements)
         {
             return elements
-                            .Where(elm => !ExceptionsTypes.Contains(elm.Type))
-                            //.Where(ExistingTypes)
-                            .Select(elm => PropertyGenerator.CreateProperty(
-                                            Container.GetAddin(elm.Type) ?? DefaultAddin.Create(elm.Type), elm.Name, elm.FullSelector))
-                           .Concat(ExtraProperties)
-                           .Distinct()
-                           .ToArray();
+                .Where(elm => !ExceptionsTypes.Contains(elm.Type))
+                .SelectMany(GetProperties)
+                .Concat(ExtraProperties)
+                .Distinct()
+                .ToArray();
         }
 
-        private string[] GetUsings(ElementSelectorData[] elements)
+        private string[] GetUsings(IEnumerable<ElementSelectorData> elements)
         {
-            IEnumerable<string> usings = BaseUsings;
-            foreach (var element in elements.Where(ExistingTypes))
-            {
-                usings = usings.Concat(Container.GetAddin(element.Type).RequiredUsings);
-            }
+            IEnumerable<string> usings = elements.Where(ExistingTypes)
+                .Aggregate<ElementSelectorData, IEnumerable<string>>(BaseUsings,
+                    (current, element) => current.Concat(Container.GetAddin(element.Type).RequiredUsings));
             return usings.ToArray();
         }
 
@@ -113,10 +117,63 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         {
             return new string[] { };
         }
+
         private bool ExistingTypes(ElementSelectorData data)
         {
             bool result = Container.GetAddin(data.Type) != null;
             return result;
+        }
+
+        private IEnumerable<string> GetHelpers(string className,ElementSelectorData element)
+        {
+            if (element.AutomationAttributes.Length > 0)
+            {
+                string webElementName = PropertyGenerator.CreatePropertyWithPrivateWebElement(
+                        Container.GetAddin(element.Type) ?? DefaultAddin.Create(element.Type), element.Name,
+                        element.FullSelector).Key.Name;
+
+                List<string> helpers = new List<string>();
+                    
+                foreach (string attribute in element.AutomationAttributes)
+                {
+                    string[] methods =
+                        Container.GetElementAttribute(attribute)?.GetMethods(webElementName)
+                        ?? new string[0];
+                    helpers.AddRange(methods);
+                }
+                return helpers;
+            }
+            return Container.GetAddin(element.Type).GenerateHelpers(className,element.FullSelector,PropertyGenerator);
+        }
+
+        private IEnumerable<string> GetProperties(ElementSelectorData element)
+        {
+            if (element.AutomationAttributes.Length > 0)
+            {
+                KeyValuePair<Property, Property> propertyWithPrivateWebElement =
+                    PropertyGenerator.CreatePropertyWithPrivateWebElement(
+                        Container.GetAddin(element.Type) ?? DefaultAddin.Create(element.Type), element.Name,
+                        element.FullSelector);
+                List<string> properties = new List<string>
+                {
+                    propertyWithPrivateWebElement.Key,
+                    propertyWithPrivateWebElement.Value                    
+                };
+                foreach (string attribute in element.AutomationAttributes)
+                {
+                    string[] extraProps =
+                        Container.GetElementAttribute(attribute)?.GetProperties(propertyWithPrivateWebElement.Key.Name)
+                        ?? new string[0];
+                    properties.AddRange(extraProps);
+                }
+                return properties;
+            }
+            return new string[]
+            {
+                PropertyGenerator.CreateProperty(
+                    Container.GetAddin(element.Type) ?? DefaultAddin.Create(element.Type), element.Name,
+                    element.FullSelector)
+            };
         }
     }
 }

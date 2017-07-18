@@ -22,13 +22,12 @@ namespace SeleniumAutomationGenerator
 
         private ComponentsFactory()
         {
-            ComponentsContainer container = ComponentsContainer.Instance;
             _fileCreators = new Dictionary<string, IComponentFileCreator>();
             _classAppenders = new Dictionary<string, IComponentClassAppender>();
-            AddComponentClassGeneratorKey("page", new BasicPageGenerator(container, new DriverFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME), Consts.PAGES_NAMESPACE));
-            AddComponentClassGeneratorKey("model", new BasicModelGenerator(container, new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME, Consts.PARENT_ELEMENT_FIELD_NAME), Consts.PAGES_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME));
+            AddComponentClassGeneratorKey("page", new BasicPageGenerator(new DriverFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME), Consts.PAGES_NAMESPACE));
+            AddComponentClassGeneratorKey("model", new BasicModelGenerator(new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME, Consts.PARENT_ELEMENT_FIELD_NAME), Consts.PAGES_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME));
 
-            _defaultFileCreator = new BasicComponentGenerator(container, new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME, Consts.PARENT_ELEMENT_FIELD_NAME), Consts.PAGES_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME);
+            _defaultFileCreator = new BasicComponentGenerator(new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME, Consts.PARENT_ELEMENT_FIELD_NAME), Consts.PAGES_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME);
 
             AddComponentTypeAppenders("list", new ListClassAppender());
         }
@@ -67,10 +66,11 @@ namespace SeleniumAutomationGenerator
         private IEnumerable<ComponentGeneratorOutput> CreateCsOutput(string selector, IEnumerable<AutoElementData> children, IComponentFileCreator parentClassCreator = null)
         {
             var keyWord = SelectorUtils.GetKeyWordFromSelector(selector);
-            if (!children.Any()) //not a new cs file
+            IEnumerable<AutoElementData> autoElementDatas = children as AutoElementData[] ?? children.ToArray();
+            if (!autoElementDatas.Any()) //not a new cs file
                 return new List<ComponentGeneratorOutput>();
 
-            IEnumerable<AutoElementData> filteredChildren = children
+            IEnumerable<AutoElementData> filteredChildren = autoElementDatas
                 .Where(FilterNonInlineChidren);
             IEnumerable<ElementSelectorData> childrenData = filteredChildren
                 .Select(ConvertToElementSelectorData);
@@ -78,9 +78,14 @@ namespace SeleniumAutomationGenerator
             if (_classAppenders.ContainsKey(keyWord) && parentClassCreator != null)
             {
                 HandleClassAppenders(selector, parentClassCreator, keyWord, elements);
-                return new List<ComponentGeneratorOutput>();
+                IEnumerable<ComponentGeneratorOutput> outputs = new List<ComponentGeneratorOutput>();
+                foreach (var child in filteredChildren)
+                {
+                    outputs = outputs.Concat(CreateCsOutput(child.Selector, child.InnerChildrens));
+                }
+                return outputs;
             }
-            return GetFileCreatorsOutput(selector, children, keyWord, elements);
+            return GetFileCreatorsOutput(selector, autoElementDatas, keyWord, elements);
         }
 
         private void HandleClassAppenders(string selector, IComponentFileCreator parentClassCreator, string keyWord, IEnumerable<ElementSelectorData> childrenData)
@@ -127,7 +132,8 @@ namespace SeleniumAutomationGenerator
             {
                 FullSelector = data.Selector,
                 Name = SelectorUtils.GetClassOrPropNameFromSelector(data.Selector),
-                Type = SelectorUtils.GetKeyWordFromSelector(data.Selector)
+                Type = SelectorUtils.GetKeyWordFromSelector(data.Selector),
+                AutomationAttributes = data.AutoAttributes
             };
         }
     }

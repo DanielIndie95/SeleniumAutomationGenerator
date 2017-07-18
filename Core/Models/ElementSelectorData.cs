@@ -7,5 +7,7 @@
         public string Name { get; set; }
 
         public string FullSelector { get; set; }
+        
+        public string[] AutomationAttributes { get; set; }
     }
 }

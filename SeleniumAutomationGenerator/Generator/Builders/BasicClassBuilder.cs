@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Core;
+using Core.Models;
 using Core.Utils;
 using SeleniumAutomationGenerator.Utils;
 

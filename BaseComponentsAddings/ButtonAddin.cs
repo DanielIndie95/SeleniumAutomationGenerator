@@ -22,7 +22,7 @@ namespace BaseComponentsAddins
         {
             string[] parts = selector.Split('-'); //auto-button-name-newComp
             string propName = parts[2];
-            string propertyName = generator.GetPropertyName(this, propName);
+            string propertyName = generator.GetPropertyName(Type, propName);
             string returnedClass = parts.Length == 4 ? parts[3] : className;
             string returnStatement = parts.Length == 4 ? "this" : $"new {returnedClass}({Consts.DRIVER_FIELD_NAME})";
             StringBuilder builder = new StringBuilder();

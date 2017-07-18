@@ -1,8 +1,12 @@
-﻿namespace Core.Utils
+﻿using BaseComponentsAddins;
+using Core;
+using SeleniumAutomationGenerator.Generator.CustomClassAttributes;
+
+namespace SeleniumAutomationGenerator.Utils
 {
     public static class BuiltInComponentsInserter
     {
-        private void InsertBuiltInComponents()
+        public static void InsertBuiltInComponents()
         {
             ComponentsContainer.Instance.AddAddin(new InputAddin());
             ComponentsContainer.Instance.AddAddin(new LabelAddin());

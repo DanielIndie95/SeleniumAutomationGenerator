@@ -9,11 +9,12 @@ namespace Core
 
         private IComponentAddin _defaultAddin;
         private readonly Dictionary<string, IComponentAddin> _addins;
+        private readonly Dictionary<string, IElementAttribute> _attributes;
 
-        public IComponentAddin[] Addins => _addins.Values.ToArray();
         private ComponentsContainer()
         {
             _addins = new Dictionary<string, IComponentAddin>();
+            _attributes = new Dictionary<string, IElementAttribute>();
         }
 
         static ComponentsContainer()
@@ -29,10 +30,21 @@ namespace Core
             _addins[newAddin.AddinKey] = newAddin;
         }
 
+        public void AddCustomAttribute(IElementAttribute attribute)
+        {
+            _attributes[attribute.Name] = attribute;
+        }
+
+        public IElementAttribute GetElementAttribute(string attribute)
+        {
+            return _attributes.TryGetValue(attribute, out IElementAttribute att) ? att : null;
+        }
+
         public IComponentAddin GetAddin(string key)
         {
             IComponentAddin addin = _addins.TryGetValue(key, out IComponentAddin tryAddin)
-                ? tryAddin : _defaultAddin;
+                ? tryAddin
+                : _defaultAddin;
             return addin;
         }
     }

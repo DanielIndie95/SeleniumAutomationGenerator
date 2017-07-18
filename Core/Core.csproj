@@ -40,7 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicComponentsContainer.cs" />
+    <Compile Include="ComponentsContainer.cs" />
+    <Compile Include="IElementAttribute.cs" />
+    <Compile Include="Models\Modifiers.cs" />
+    <Compile Include="Models\Property.cs" />
     <Compile Include="Utils\Consts.cs" />
     <Compile Include="IClassBuilder.cs" />
     <Compile Include="IComponentAddin.cs" />

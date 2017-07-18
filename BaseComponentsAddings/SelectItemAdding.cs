@@ -20,7 +20,7 @@ namespace BaseComponentsAddins
         public string[] GenerateHelpers(string className, string propName, IPropertyGenerator generator)
         {
             StringBuilder builder = new StringBuilder();
-            string propertyName = generator.GetPropertyName(this, propName);
+            string propertyName = generator.GetPropertyName(Type, propName);
             string helper =  builder.AppendLine($"public {className} Select{propName}(string value)")
                 .AppendLine("{")
                 .AppendLine($"{propertyName}.SelectByValue(value)")
