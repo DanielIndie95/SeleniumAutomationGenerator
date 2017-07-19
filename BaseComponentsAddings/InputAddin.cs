@@ -21,7 +21,7 @@ namespace BaseComponentsAddins
         public string[] GenerateHelpers(string className, string selector, IPropertyGenerator generator)
         {
             string propName = SelectorUtils.GetClassOrPropNameFromSelector(selector);
-            string propertyNameFromGenerator = generator.GetPropertyName(this, propName);
+            string propertyNameFromGenerator = generator.GetPropertyName(Type, propName);
             string methodPropName = TextUtils.UppercaseFirst(propName);
             StringBuilder builder = new StringBuilder();
             string helper = builder

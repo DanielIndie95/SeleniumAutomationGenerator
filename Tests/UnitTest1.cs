@@ -26,7 +26,7 @@ namespace Tests
             const string CLASS_NAME = "DishCreator";
             string selector = "auto-page-" + CLASS_NAME;
             ComponentsContainer basicComponentsContainer = ComponentsContainer.Instance;
-            BasicPageGenerator generator = new BasicPageGenerator(basicComponentsContainer, new DriverFindElementPropertyGenerator("Driver"), Consts.PAGES_NAMESPACE);
+            BasicPageGenerator generator = new BasicPageGenerator(new DriverFindElementPropertyGenerator("Driver"), Consts.PAGES_NAMESPACE);
             Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
             addin.Setup(add => add.AddinKey).Returns(KEY);
             addin.Setup(add => add.GenerateHelpers(CLASS_NAME, NAME, generator.PropertyGenerator)).Returns(new[] { "void Main(){}", "public void Main2(){}" });
@@ -75,7 +75,7 @@ namespace Tests
             addin.Setup(add => add.AddinKey).Returns(KEY);
             addin.Setup(add => add.Type).Returns("string");
             ComponentsContainer basicComponentsContainer = ComponentsContainer.Instance;
-            basicComponentsContainer.AddAddin(addin.Object);
+            basicComponentsContainer.AddAddin(new LabelAddin());
             basicComponentsContainer.AddAddin(new InputAddin());
             ComponentsFactory factory = ComponentsFactory.Instance;
             var files = factory.CreateCsOutput(file);
@@ -277,5 +277,20 @@ namespace Tests
             List<ComponentGeneratorOutput> outputs = converter.GenerateClasses(DIRECTORY);
             outputs.Should().HaveCount(expectedOutpus.Length - 1);
         }
+        [TestMethod]
+        public void TestMethod14()
+        {
+            string file = File.ReadAllText(@"TestFiles\Test1.html");
+            BuiltInComponentsInserter.InsertBuiltInComponents();
+            ComponentsFactory factory = ComponentsFactory.Instance;
+            var files = factory.CreateCsOutput(file);
+            Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.PAGES_NAMESPACE));
+            Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.COMPONENTS_NAMESPACE));
+            foreach (var innerFile in files)
+            {
+                File.WriteAllText(innerFile.CsFileName, innerFile.Body);
+            }
+        }
+        
     }
 }

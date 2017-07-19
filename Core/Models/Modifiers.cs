@@ -1,4 +1,4 @@
-﻿namespace SeleniumAutomationGenerator.Utils
+﻿namespace Core.Models
 {
     public enum Modifiers
     {

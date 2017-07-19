@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Core;
 using Core.Models;
@@ -19,16 +20,18 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 
         public IPropertyGenerator PropertyGenerator { get; }
 
-        protected BasicClassGenerator(ComponentsContainer container, IPropertyGenerator propertyGenerator, string namespaceName)
+        protected BasicClassGenerator(IPropertyGenerator propertyGenerator, string namespaceName)
         {
             BaseUsings = new List<string>
             {
-                "System", "OpenQA.Selenium", "System.Linq"
+                "System",
+                "OpenQA.Selenium",
+                "System.Linq"
             };
             ExceptionsTypes = new List<string>();
             ExtraProperties = new List<string>();
             ExtraMethods = new List<string>();
-            Container = container;
+            Container = ComponentsContainer.Instance;
             NamespaceName = namespaceName;
             PropertyGenerator = propertyGenerator;
         }
@@ -57,8 +60,13 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
                 .AddFields(GetFields())
                 .Build();
 
-            return new ComponentGeneratorOutput { Body = body, CsFileName = NamespaceFileConverter.ConvertNamespaceToFilePath(NamespaceName, className) };
+            return new ComponentGeneratorOutput
+            {
+                Body = body,
+                CsFileName = NamespaceFileConverter.ConvertNamespaceToFilePath(NamespaceName, className)
+            };
         }
+
         public void AddExceptionPropertyType(string type)
         {
             ExceptionsTypes.Add(type);
@@ -68,55 +76,86 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         {
             ExtraProperties.Add(property);
         }
+
         public void AddMethod(string method)
         {
             ExtraMethods.Add(method);
         }
 
+        public void InsertToCtor(string bulk)
+        {
+            throw new NotImplementedException();
+        }
+
         protected abstract string CreateCtor(string className);
-
-        private string[] GetHelpers(string className, ElementSelectorData[] elements)
-        {
-            IEnumerable<string> helpers = new List<string>();
-            foreach (var element in elements.Where(elm => !ExceptionsTypes.Contains(elm.Type))
-                .Where(ExistingTypes))
-            {
-                string[] innerHelpers = Container.GetAddin(element.Type).GenerateHelpers(className, element.FullSelector, PropertyGenerator);
-                helpers = helpers.Concat(innerHelpers);
-            }
-            return helpers.ToArray();
-        }
-
-        protected virtual string[] GetProperties(ElementSelectorData[] elements)
-        {
-            return elements
-                            .Where(elm => !ExceptionsTypes.Contains(elm.Type))
-                            //.Where(ExistingTypes)
-                            .Select(elm => PropertyGenerator.CreateProperty(
-                                            Container.GetAddin(elm.Type) ?? DefaultAddin.Create(elm.Type), elm.Name, elm.FullSelector))
-                           .Concat(ExtraProperties)
-                           .Distinct()
-                           .ToArray();
-        }
-
-        private string[] GetUsings(ElementSelectorData[] elements)
-        {
-            IEnumerable<string> usings = BaseUsings;
-            foreach (var element in elements.Where(ExistingTypes))
-            {
-                usings = usings.Concat(Container.GetAddin(element.Type).RequiredUsings);
-            }
-            return usings.ToArray();
-        }
 
         protected virtual string[] GetFields()
         {
             return new string[] { };
         }
+
+        protected virtual string[] GetProperties(ElementSelectorData[] elements)
+        {
+            return elements
+                .Where(elm => !ExceptionsTypes.Contains(elm.Type))
+                .SelectMany(GetProperties)
+                .Concat(ExtraProperties)
+                .Distinct()
+                .ToArray();
+        }
+
+        private string[] GetHelpers(string className, IEnumerable<ElementSelectorData> elements)
+        {
+            IEnumerable<string> helpers = new List<string>();
+            foreach (ElementSelectorData element in elements.Where(elm => !ExceptionsTypes.Contains(elm.Type))
+                .Where(ExistingTypes))
+            {
+                IEnumerable<string> innerHelpers = GetHelpers(className, element);
+                helpers = helpers.Concat(innerHelpers);
+            }
+            return helpers.ToArray();
+        }        
+
+        private string[] GetUsings(IEnumerable<ElementSelectorData> elements)
+        {
+            IEnumerable<string> usings = elements.Where(ExistingTypes)
+                .Aggregate<ElementSelectorData, IEnumerable<string>>(BaseUsings,
+                    (current, element) => current.Concat(Container.GetAddin(element.Type).RequiredUsings));
+            return usings.ToArray();
+        }        
+
         private bool ExistingTypes(ElementSelectorData data)
         {
             bool result = Container.GetAddin(data.Type) != null;
             return result;
         }
+
+        private IEnumerable<string> GetHelpers(string className,ElementSelectorData element)
+        {            
+            return Container.GetAddin(element.Type).GenerateHelpers(className,element.FullSelector,PropertyGenerator);
+        }
+
+        private IEnumerable<string> GetProperties(ElementSelectorData element)
+        {
+            if (element.AutomationAttributes.Length > 0)
+            {
+                KeyValuePair<Property, Property> propertyWithPrivateWebElement =
+                    PropertyGenerator.CreatePropertyWithPrivateWebElement(
+                        Container.GetAddin(element.Type) ?? DefaultAddin.Create(element.Type), element.Name,
+                        element.FullSelector);
+                return new List<string>
+                {
+                    propertyWithPrivateWebElement.Key,
+                    propertyWithPrivateWebElement.Value                    
+                };                
+                
+            }
+            return new string[]
+            {
+                PropertyGenerator.CreateProperty(
+                    Container.GetAddin(element.Type) ?? DefaultAddin.Create(element.Type), element.Name,
+                    element.FullSelector)
+            };
+        }        
     }
 }

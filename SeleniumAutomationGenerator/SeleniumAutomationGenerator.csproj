@@ -56,24 +56,22 @@
     <Compile Include="Generator\ClassAppenders\ListClassAppender.cs" />
     <Compile Include="Generator\ComponentsGenerators\BasicClassGenerator.cs" />
     <Compile Include="Generator\ComponentsGenerators\BasicComponentGenerator.cs" />
-    <Compile Include="Generator\ComponentsGenerators\BasicListComponentGenerator.cs" />
     <Compile Include="Generator\ComponentsGenerators\BasicModelGenerator.cs" />
     <Compile Include="Generator\ComponentsGenerators\BasicPageGenerator.cs" />
     <Compile Include="Generator\ComponentsGenerators\DefaultAddin.cs" />
     <Compile Include="Generator\ComponentsGenerators\FileCreatorAddin.cs" />
+    <Compile Include="Generator\CustomClassAttributes\VisibleElementAttribute.cs" />
     <Compile Include="Generator\PropertyGenerators\ParentElementFindElementPropertyGenerator.cs" />
     <Compile Include="HtmlFinder.cs" />
     <Compile Include="IComponentsFactory.cs" />
     <Compile Include="IHtmlFinder.cs" />
-    <Compile Include="Models\AutoElementData.cs" />
-    <Compile Include="Models\ElementData.cs" />
     <Compile Include="ProjectGenerator.cs" />
     <Compile Include="Utils\AutoElementFinder.cs" />
     <Compile Include="Generator\PropertyGenerators\SearchContextFindElementPropertyGenerator.cs" />
     <Compile Include="Generator\PropertyGenerators\DriverFindElementPropertyGenerator.cs" />
-    <Compile Include="Utils\Modifiers.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\BuiltInComponentsInserter.cs" />
     <Compile Include="Utils\NamespaceFileConverter.cs" />
     <Compile Include="WebFolderToCsFilesConverter.cs" />
   </ItemGroup>
@@ -94,6 +92,9 @@
       <Project>{462c1dc0-34d6-4e2e-b021-b2ea8db61123}</Project>
       <Name>Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

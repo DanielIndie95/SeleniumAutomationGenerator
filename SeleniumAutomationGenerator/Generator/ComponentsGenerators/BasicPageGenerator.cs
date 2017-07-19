@@ -6,7 +6,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 {
     public class BasicPageGenerator : BasicClassGenerator
     {        
-        public BasicPageGenerator(ComponentsContainer container, IPropertyGenerator propertyGenerator, string namespaceName) : base(container , propertyGenerator, namespaceName)
+        public BasicPageGenerator(IPropertyGenerator propertyGenerator, string namespaceName) : base(propertyGenerator, namespaceName)
         {
 
         }       
