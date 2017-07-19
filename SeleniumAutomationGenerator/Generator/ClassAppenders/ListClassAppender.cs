@@ -2,7 +2,6 @@
 using Core;
 using Core.Models;
 using Core.Utils;
-using SeleniumAutomationGenerator.Models;
 using System.Linq;
 
 namespace SeleniumAutomationGenerator.Generator.ClassAppenders

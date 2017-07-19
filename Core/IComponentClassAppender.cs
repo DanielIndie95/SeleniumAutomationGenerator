@@ -1,5 +1,4 @@
 ﻿using Core.Models;
-using SeleniumAutomationGenerator.Models;
 
 namespace Core
 {

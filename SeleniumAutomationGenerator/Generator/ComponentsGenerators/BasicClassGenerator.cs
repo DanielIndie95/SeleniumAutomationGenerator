@@ -6,7 +6,6 @@ using Core.Models;
 using Core.Utils;
 using SeleniumAutomationGenerator.Generator.Builders;
 using SeleniumAutomationGenerator.Utils;
-using SeleniumAutomationGenerator.Models;
 
 namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 {

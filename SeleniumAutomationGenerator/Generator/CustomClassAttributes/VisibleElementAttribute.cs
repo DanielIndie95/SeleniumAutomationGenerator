@@ -1,8 +1,5 @@
-﻿using System;
-using System.Text;
-using Core;
+﻿using Core;
 using Core.Utils;
-using SeleniumAutomationGenerator.Models;
 using Core.Models;
 using SeleniumAutomationGenerator.Generator.ComponentsGenerators;
 using System.Collections.Generic;
@@ -20,7 +17,7 @@ namespace SeleniumAutomationGenerator.Generator.CustomClassAttributes
 
         public void AppendToClass(IComponentFileCreator parentClass, AutoElementData appenderElement)
         {
-            var element = ConversionsUtils.ConvertToElementSelectorData(appenderElement);
+            ElementSelectorData element = ConversionsUtils.ConvertToElementSelectorData(appenderElement);
             KeyValuePair<Property, Property> propertyWithPrivateWebElement =
                     parentClass.PropertyGenerator.CreatePropertyWithPrivateWebElement(
                         ComponentsContainer.Instance.GetAddin(element.Type) ?? DefaultAddin.Create(element.Type), element.Name,

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Core.Models;
 using Core.Utils;
 using HtmlAgilityPack;
-using SeleniumAutomationGenerator.Models;
 
 namespace SeleniumAutomationGenerator.Utils
 {

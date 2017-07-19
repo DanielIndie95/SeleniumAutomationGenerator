@@ -1,10 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Reflection.Emit;
-using BaseComponentsAddins;
-using Core;
 using Core.Models;
-using SeleniumAutomationGenerator.Generator.CustomClassAttributes;
 using SeleniumAutomationGenerator.Utils;
 
 namespace SeleniumAutomationGenerator

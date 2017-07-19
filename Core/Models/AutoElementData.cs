@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SeleniumAutomationGenerator.Models
+namespace Core.Models
 {
     public class AutoElementData
     {

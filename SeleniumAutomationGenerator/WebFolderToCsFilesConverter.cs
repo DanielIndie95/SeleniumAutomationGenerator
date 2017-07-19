@@ -18,7 +18,7 @@ namespace SeleniumAutomationGenerator
         public List<ComponentGeneratorOutput> GenerateClasses(string baseDirectory)
         {
             List<ComponentGeneratorOutput> outputs = new List<ComponentGeneratorOutput>();
-            foreach (var fileText in _finder.GetFilesTexts(baseDirectory))
+            foreach (string fileText in _finder.GetFilesTexts(baseDirectory))
             {
                 outputs.AddRange(_factory.CreateCsOutput(fileText));
             }

@@ -8,7 +8,6 @@ using SeleniumAutomationGenerator.Utils;
 using BaseComponentsAddins;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Emit;
 using Core;
 using Core.Models;
 using Core.Utils;
