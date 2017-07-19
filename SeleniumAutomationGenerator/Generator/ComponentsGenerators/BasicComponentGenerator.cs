@@ -19,6 +19,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
             builder.AppendLine($"internal {className}({Consts.WEB_DRIVER_CLASS_NAME} driver,{Consts.WEB_ELEMENT_CLASS_NAME} parentElement)");
             builder.AppendLine("{");
             builder.AppendLine($"{_parentElementFieldName} = parentElement;");
+            builder.Append(CtorBulk);
             builder.AppendLine("}");
             return builder.ToString();
         }

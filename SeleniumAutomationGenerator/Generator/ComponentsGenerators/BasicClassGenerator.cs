@@ -6,11 +6,13 @@ using Core.Models;
 using Core.Utils;
 using SeleniumAutomationGenerator.Generator.Builders;
 using SeleniumAutomationGenerator.Utils;
+using System.Text;
 
 namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 {
     public abstract class BasicClassGenerator : IComponentFileCreator
     {
+        protected StringBuilder CtorBulk { get; private set; }
         protected ComponentsContainer Container;
         protected List<string> BaseUsings;
         protected string NamespaceName;
@@ -84,7 +86,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 
         public void InsertToCtor(string bulk)
         {
-            throw new NotImplementedException();
+            CtorBulk.AppendLine(bulk);
         }
 
         protected abstract string CreateCtor(string className);

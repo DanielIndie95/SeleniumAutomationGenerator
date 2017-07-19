@@ -16,6 +16,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
             StringBuilder builder = new StringBuilder();
             builder.AppendLine($"internal {className}({Consts.WEB_DRIVER_CLASS_NAME} driver)");
             builder.AppendLine("{");
+            builder.Append(CtorBulk);
             builder.AppendLine("}");
             return builder.ToString();
         }       
