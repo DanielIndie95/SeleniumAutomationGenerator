@@ -1,9 +1,7 @@
 ﻿namespace Core
 {
-    public interface IElementAttribute
-    {
-        string[] GetProperties(string webElementPropertyName);
-        string[] GetMethods(string webElementPropertyName);
+    public interface IElementAttribute : IComponentClassAppender
+    {        
         string Name { get; }
     }
 }

@@ -1,21 +1,32 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using Core;
 using Core.Utils;
+using SeleniumAutomationGenerator.Models;
+using Core.Models;
+using SeleniumAutomationGenerator.Generator.ComponentsGenerators;
+using System.Collections.Generic;
 
 namespace SeleniumAutomationGenerator.Generator.CustomClassAttributes
 {
     public class VisibleElementAttribute : IElementAttribute
     {
-        public string[] GetProperties(string webElementPropertyName)
+        public string GetProperty(string webElementPropertyName)
         {
             string propertyName = TextUtils.UppercaseFirst(webElementPropertyName.Trim('_'));
             string property = $"public bool {propertyName}Visible => {webElementPropertyName}.Displayed;";
-            return new string[] {property};
-        }
+            return property;
+        }        
 
-        public string[] GetMethods(string webElementPropertyName)
+        public void AppendToClass(IComponentFileCreator parentClass, AutoElementData appenderElement)
         {
-            return new string[0];
+            var element = ConversionsUtils.ConvertToElementSelectorData(appenderElement);
+            KeyValuePair<Property, Property> propertyWithPrivateWebElement =
+                    parentClass.PropertyGenerator.CreatePropertyWithPrivateWebElement(
+                        ComponentsContainer.Instance.GetAddin(element.Type) ?? DefaultAddin.Create(element.Type), element.Name,
+                        element.FullSelector);
+            string privateWebElement = propertyWithPrivateWebElement.Key.Name;
+            parentClass.AddProperty(GetProperty(privateWebElement));            
         }
 
         public string Name => "auto-visibility";

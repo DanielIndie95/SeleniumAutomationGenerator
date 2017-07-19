@@ -9,6 +9,7 @@ namespace Core
         void AddExceptionPropertyType(string type);
         void AddProperty(string property);
         void AddMethod(string method);
+        void InsertToCtor(string bulk);
         IComponentAddin MakeAddin(string selector);
     }
 }

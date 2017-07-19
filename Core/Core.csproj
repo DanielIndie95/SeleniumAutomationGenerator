@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="ComponentsContainer.cs" />
     <Compile Include="IElementAttribute.cs" />
+    <Compile Include="Models\AutoElementData.cs" />
     <Compile Include="Models\Modifiers.cs" />
     <Compile Include="Models\Property.cs" />
     <Compile Include="Utils\Consts.cs" />
@@ -53,6 +54,7 @@
     <Compile Include="Models\ComponentGeneratorOutput.cs" />
     <Compile Include="Models\ElementSelectorData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\ConversionsUtils.cs" />
     <Compile Include="Utils\SelectorUtils.cs" />
     <Compile Include="Utils\TextUtils.cs" />
   </ItemGroup>

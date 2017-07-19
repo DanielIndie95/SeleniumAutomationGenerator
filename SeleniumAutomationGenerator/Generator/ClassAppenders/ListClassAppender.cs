@@ -1,15 +1,21 @@
 ﻿using BaseComponentsAddins;
 using Core;
 using Core.Models;
+using Core.Utils;
+using SeleniumAutomationGenerator.Models;
+using System.Linq;
 
 namespace SeleniumAutomationGenerator.Generator.ClassAppenders
 {
     public class ListClassAppender : IComponentClassAppender
     {
-        public void AppendToClass(IComponentFileCreator parentClass, string selector, ElementSelectorData[] elements)
+        public void AppendToClass(IComponentFileCreator parentClass, AutoElementData appenderElement)
         {
+            ElementSelectorData[] elements = appenderElement.InnerChildrens.Select(ConversionsUtils.ConvertToElementSelectorData)
+                .ToArray();
             bool ctorContainsDriver;
             string type;
+            string selector = appenderElement.Selector;
             if (elements.Length > 0)
             {
                 type = elements[0].Type;
