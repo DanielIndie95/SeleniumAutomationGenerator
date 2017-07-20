@@ -1,12 +1,7 @@
 ﻿using Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Core.Models;
 using Core.Utils;
-using SeleniumAutomationGenerator.Generator.ComponentsGenerators;
 
 namespace SeleniumAutomationGenerator.Generator.CustomClassAttributes
 {

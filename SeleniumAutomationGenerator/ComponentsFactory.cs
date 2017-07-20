@@ -81,8 +81,9 @@ namespace SeleniumAutomationGenerator
             if (!autoElementDatas.Any()) //not a new cs file
                 return new List<ComponentGeneratorOutput>();
 
-            IEnumerable<AutoElementData> filteredChildren = autoElementDatas
-                .Where(FilterNonInlineChidren);
+            AutoElementData[] filteredChildren = autoElementDatas
+                .Where(FilterNonInlineChidren)
+                .ToArray();
             IEnumerable<ElementSelectorData> childrenData = filteredChildren
                 .Select(ConversionsUtils.ConvertToElementSelectorData);
             ElementSelectorData[] elements = TransformFileCreatorsToAddinsLike(childrenData).ToArray();

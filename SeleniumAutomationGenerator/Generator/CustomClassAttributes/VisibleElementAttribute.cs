@@ -1,7 +1,6 @@
 ﻿using Core;
 using Core.Utils;
 using Core.Models;
-using SeleniumAutomationGenerator.Generator.ComponentsGenerators;
 using System.Collections.Generic;
 
 namespace SeleniumAutomationGenerator.Generator.CustomClassAttributes

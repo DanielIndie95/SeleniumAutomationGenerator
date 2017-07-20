@@ -9,13 +9,13 @@ namespace SeleniumAutomationGenerator
         public string[] GetFilesTexts(string baseDirectory)
         {
             return FindHtmlFiles(baseDirectory)
-                .Select(file => File.ReadAllText(file)).ToArray();
+                .Select(File.ReadAllText).ToArray();
         }
 
         private IEnumerable<string> FindHtmlFiles(string baseDirectory)
         {
             return Directory.EnumerateFiles(
-                baseDirectory, "*.*", SearchOption.AllDirectories);            
+                baseDirectory, "*.htm*", SearchOption.AllDirectories);            
         }
     }
 }
