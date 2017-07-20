@@ -58,7 +58,6 @@
     <Compile Include="Generator\ComponentsGenerators\BasicComponentGenerator.cs" />
     <Compile Include="Generator\ComponentsGenerators\BasicModelGenerator.cs" />
     <Compile Include="Generator\ComponentsGenerators\BasicPageGenerator.cs" />
-    <Compile Include="Generator\ComponentsGenerators\DefaultAddin.cs" />
     <Compile Include="Generator\ComponentsGenerators\FileCreatorAddin.cs" />
     <Compile Include="Generator\CustomClassAttributes\VisibleElementAttribute.cs" />
     <Compile Include="Generator\CustomClassAttributes\WaitUntilDisplayedElementAttribute.cs" />
