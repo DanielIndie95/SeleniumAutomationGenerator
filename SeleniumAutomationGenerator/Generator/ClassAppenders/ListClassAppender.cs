@@ -17,7 +17,7 @@ namespace SeleniumAutomationGenerator.Generator.ClassAppenders
             string selector = appenderElement.Selector;
             if (elements.Length > 0)
             {
-                type = elements[0].Type;
+                type = elements[0].Name;
                 selector = elements[0].FullSelector;
                 ctorContainsDriver = ComponentsContainer.Instance.GetAddin(type)?.CtorContainsDriver ?? false;
             }

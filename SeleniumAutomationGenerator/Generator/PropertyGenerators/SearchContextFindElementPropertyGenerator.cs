@@ -54,7 +54,7 @@ namespace SeleniumAutomationGenerator.Generator.PropertyGenerators
         {
             string modifier = GetModifier(addin);
 
-            var privateProperty = CreateProperty(modifier, Consts.WEB_ELEMENT_CLASS_NAME, addin.IsArrayedAddin, false,
+            var privateProperty = CreateProperty("private", Consts.WEB_ELEMENT_CLASS_NAME, addin.IsArrayedAddin, false,
                 "_" + propName, selector); //_ string is for private naming
 
             string declerationStatement = GetDeclarationStatement(modifier, addin.Type, propName);
