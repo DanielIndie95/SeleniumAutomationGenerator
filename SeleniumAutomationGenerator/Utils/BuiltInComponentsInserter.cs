@@ -14,6 +14,7 @@ namespace SeleniumAutomationGenerator.Utils
             ComponentsContainer.Instance.AddAddin(new ListItemAddin());
             ComponentsContainer.Instance.AddAddin(new SelectItemAdding());
             ComponentsContainer.Instance.AddCustomAttribute(new VisibleElementAttribute());
+            ComponentsContainer.Instance.AddCustomAttribute(new WaitUntilDisplayedElementAttribute());
         }
     }
 }

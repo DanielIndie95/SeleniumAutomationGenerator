@@ -36,6 +36,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
             Container = ComponentsContainer.Instance;
             NamespaceName = namespaceName;
             PropertyGenerator = propertyGenerator;
+            CtorBulk = new StringBuilder();
         }
 
         public virtual IComponentAddin MakeAddin(string selector)

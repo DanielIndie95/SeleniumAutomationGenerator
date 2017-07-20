@@ -269,10 +269,12 @@ namespace Tests
             const string DIRECTORY = "hello";
             Mock<IHtmlsFinder> finder = new Mock<IHtmlsFinder>();
             Mock<IComponentsFactory> factory = new Mock<IComponentsFactory>();
-            finder.Setup(f => f.GetFilesTexts(DIRECTORY)).Returns(new[] { "my", "new", "world" });
+            finder.Setup(f => f.GetFilesTexts(DIRECTORY)).Returns(new[] { "my", "new", "world" ,"was", "spinning"});
             factory.Setup(f => f.CreateCsOutput("my")).Returns(expectedOutpus[0]);
             factory.Setup(f => f.CreateCsOutput("new")).Returns(expectedOutpus[1]);
             factory.Setup(f => f.CreateCsOutput("world")).Returns(expectedOutpus[2]);
+            factory.Setup(f => f.CreateCsOutput("was")).Returns(expectedOutpus[3]);
+            factory.Setup(f => f.CreateCsOutput("spinning")).Returns(expectedOutpus[3]);
             WebFolderToCsFilesConverter converter = new WebFolderToCsFilesConverter(factory.Object, finder.Object);
             List<ComponentGeneratorOutput> outputs = converter.GenerateClasses(DIRECTORY);
             outputs.Should().HaveCount(expectedOutpus.Length - 1);
