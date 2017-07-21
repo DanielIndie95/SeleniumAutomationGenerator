@@ -26,13 +26,13 @@ namespace SeleniumAutomationGenerator.Generator.ClassAppenders
                 type = "string";
                 ctorContainsDriver = false;
             }
-            string name = type + "List";
+            string name = SelectorUtils.TryGetClassOrPropNameFromSelector(appenderElement.Selector, out name) ? name : type + "List";
             ListItemAddin addin = new ListItemAddin
             {
                 Type = type,
                 CtorContainsDriver = ctorContainsDriver
             };
-            
+
             parentClass.AddProperty(parentClass.PropertyGenerator.CreateProperty(addin, name, selector));
         }
     }
