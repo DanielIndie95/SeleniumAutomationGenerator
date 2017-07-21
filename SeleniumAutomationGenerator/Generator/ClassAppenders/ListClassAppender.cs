@@ -3,11 +3,14 @@ using Core;
 using Core.Models;
 using Core.Utils;
 using System.Linq;
+using System;
 
 namespace SeleniumAutomationGenerator.Generator.ClassAppenders
 {
     public class ListClassAppender : IComponentClassAppender
     {
+        public string Identifier => "list";
+
         public void AppendToClass(IComponentFileCreator parentClass, AutoElementData appenderElement)
         {
             ElementSelectorData[] elements = appenderElement.InnerChildrens.Select(ConversionsUtils.ConvertToElementSelectorData)

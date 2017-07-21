@@ -31,7 +31,7 @@ namespace Core
 
         public void AddCustomAttribute(IElementAttribute attribute)
         {
-            _attributes[attribute.Name] = attribute;
+            _attributes[attribute.Identifier] = attribute;
         }
 
         public IElementAttribute GetElementAttribute(string attribute)

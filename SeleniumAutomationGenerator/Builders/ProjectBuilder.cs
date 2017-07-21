@@ -24,7 +24,7 @@ namespace SeleniumAutomationGenerator.Builders
             task.SetParameter("Sources", "@(Compile)");
             task.SetParameter("OutputAssembly", $"{projectName}.dll");
             AddImports(root);
-
+            
             root.Save($"{csprojDir}\\{projectName}.csproj");
             var s = File.ReadAllText($"{csprojDir}\\{projectName}.csproj");
         }

@@ -5,7 +5,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 {
     public class FileCreatorAddin : IComponentAddin
     {
-        private readonly Func<string, string, string[]> _helpers;
+        private readonly Func<string, string, IPropertyGenerator, string[]> _helpers;
 
         public string AddinKey { get; set; }
 
@@ -19,18 +19,18 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 
         public bool CtorContainsDriver { get; set; } = true;
 
-        public FileCreatorAddin(Func<string, string, string[]> helpers)
+        public FileCreatorAddin(Func<string, string, IPropertyGenerator, string[]> helpers)
         {
             _helpers = helpers;
         }
         public FileCreatorAddin()
         {
-            _helpers = (a, b) => new string[] { };
+            _helpers = (a, b, c) => new string[] { };
         }
 
         public string[] GenerateHelpers(string className, string selector, IPropertyGenerator generator)
         {
-            return _helpers(className, selector);
+            return _helpers(className, selector, generator);
         }
     }
 }

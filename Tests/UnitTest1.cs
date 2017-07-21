@@ -13,6 +13,7 @@ using Core.Models;
 using Core.Utils;
 using SeleniumAutomationGenerator.Generator.ComponentsGenerators;
 using System;
+using SeleniumAutomationGenerator.Builders;
 
 namespace Tests
 {
@@ -27,7 +28,7 @@ namespace Tests
             const string CLASS_NAME = "DishCreator";
             string selector = "auto-page-" + CLASS_NAME;
             ComponentsContainer basicComponentsContainer = ComponentsContainer.Instance;
-            BasicPageGenerator generator = new BasicPageGenerator(new DriverFindElementPropertyGenerator("Driver"), Consts.PAGES_NAMESPACE);
+            PageGenerator generator = new PageGenerator(new BasicClassBuilder(), new DriverFindElementPropertyGenerator("Driver"), Consts.PAGES_NAMESPACE);
             Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
             addin.Setup(add => add.AddinKey).Returns(KEY);
             addin.Setup(add => add.GenerateHelpers(CLASS_NAME, NAME, generator.PropertyGenerator)).Returns(new[] { "void Main(){}", "public void Main2(){}" });
@@ -284,7 +285,7 @@ namespace Tests
         public void TestMethod14()
         {
             string file = File.ReadAllText(@"TestFiles\Test1.html");
-            BuiltInComponentsInserter.InsertBuiltInComponents();
+            BuiltInComponentsInserter.InsertBuiltInComponents(new BasicClassBuilder());
             ComponentsFactory factory = ComponentsFactory.Instance;
             var files = factory.CreateCsOutput(file);
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.PAGES_NAMESPACE));

@@ -7,12 +7,7 @@ namespace SeleniumAutomationGenerator.Generator.CustomClassAttributes
 {
     public class VisibleElementAttribute : IElementAttribute
     {
-        public string GetProperty(string webElementPropertyName)
-        {
-            string propertyName = TextUtils.UppercaseFirst(webElementPropertyName.Trim('_'));
-            string property = $"public bool {propertyName}Visible => {webElementPropertyName}.Displayed;";
-            return property;
-        }        
+        public string Identifier => "auto-visibility";
 
         public void AppendToClass(IComponentFileCreator parentClass, AutoElementData appenderElement)
         {
@@ -25,6 +20,11 @@ namespace SeleniumAutomationGenerator.Generator.CustomClassAttributes
             parentClass.AddProperty(GetProperty(privateWebElement));            
         }
 
-        public string Name => "auto-visibility";
+        private string GetProperty(string webElementPropertyName)
+        {
+            string propertyName = TextUtils.UppercaseFirst(webElementPropertyName.Trim('_'));
+            string property = $"public bool {propertyName}Visible => {webElementPropertyName}.Displayed;";
+            return property;
+        }
     }
 }

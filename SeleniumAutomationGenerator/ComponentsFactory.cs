@@ -3,9 +3,6 @@ using System.Linq;
 using Core;
 using Core.Models;
 using Core.Utils;
-using SeleniumAutomationGenerator.Generator.ClassAppenders;
-using SeleniumAutomationGenerator.Generator.ComponentsGenerators;
-using SeleniumAutomationGenerator.Generator.PropertyGenerators;
 using SeleniumAutomationGenerator.Utils;
 
 namespace SeleniumAutomationGenerator
@@ -15,7 +12,7 @@ namespace SeleniumAutomationGenerator
         private readonly Dictionary<string, IComponentFileCreator> _fileCreators;
         private readonly Dictionary<string, IComponentClassAppender> _classAppenders;
 
-        private readonly IComponentFileCreator _defaultFileCreator;
+        private IComponentFileCreator _defaultFileCreator;
 
         public static ComponentsFactory Instance { get; }
 
@@ -23,22 +20,6 @@ namespace SeleniumAutomationGenerator
         {
             _fileCreators = new Dictionary<string, IComponentFileCreator>();
             _classAppenders = new Dictionary<string, IComponentClassAppender>();
-            AddComponentClassGeneratorKey("page",
-                new BasicPageGenerator(new DriverFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME),
-                    Consts.PAGES_NAMESPACE));
-            AddComponentClassGeneratorKey("model",
-                new BasicModelGenerator(
-                    new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME,
-                        Consts.PARENT_ELEMENT_FIELD_NAME), Consts.COMPONENTS_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME));
-            AddComponentClassGeneratorKey("comp",
-            new BasicComponentGenerator(
-                new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME,
-                Consts.PARENT_ELEMENT_FIELD_NAME), Consts.COMPONENTS_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME));
-            _defaultFileCreator = new BasicComponentGenerator(
-                new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME,
-                    Consts.PARENT_ELEMENT_FIELD_NAME), Consts.COMPONENTS_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME);
-
-            AddComponentTypeAppenders("list", new ListClassAppender());
         }
 
         static ComponentsFactory()
@@ -46,15 +27,18 @@ namespace SeleniumAutomationGenerator
             Instance = new ComponentsFactory();
         }
 
-        public void AddComponentClassGeneratorKey(string key, IComponentFileCreator newComponentFileCreator)
+        public void AddComponentClassGeneratorKey(string key, IComponentFileCreator newComponentFileCreator, bool setAsDefault = false)
         {
             _fileCreators[key] = newComponentFileCreator;
+            if (setAsDefault)
+                _defaultFileCreator = newComponentFileCreator;
         }
 
-        public void AddComponentTypeAppenders(string type, IComponentClassAppender classAppender)
+        public void AddComponentTypeAppenders(IComponentClassAppender classAppender)
         {
+            string type = classAppender.Identifier;
             _classAppenders[type] = classAppender;
-            _defaultFileCreator.AddExceptionPropertyType(type);
+            _defaultFileCreator?.AddExceptionPropertyType(type);
             foreach (KeyValuePair<string, IComponentFileCreator> fileCreator in _fileCreators)
             {
                 fileCreator.Value.AddExceptionPropertyType(type);

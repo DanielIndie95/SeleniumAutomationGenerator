@@ -9,8 +9,9 @@ using SeleniumAutomationGenerator.Builders;
 
 namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 {
-    public abstract class BasicClassGenerator : IComponentFileCreator
+    public abstract class ClassGenerator : IComponentFileCreator
     {
+        private IClassBuilder _classBuilder;
         protected StringBuilder CtorBulk { get; private set; }
         protected ComponentsContainer Container;
         protected List<string> BaseUsings;
@@ -22,13 +23,14 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         public IPropertyGenerator PropertyGenerator { get; }
         protected virtual bool InheritFromBaseClass => true;
 
-        protected BasicClassGenerator(IPropertyGenerator propertyGenerator, string namespaceName)
+        protected ClassGenerator(IClassBuilder classBuilder, IPropertyGenerator propertyGenerator, string namespaceName)
         {
+            _classBuilder = classBuilder;
             BaseUsings = new List<string>
             {
                 "System",
                 "OpenQA.Selenium",
-                "System.Linq"                
+                "System.Linq"
             };
             ExceptionsTypes = new List<string>();
             ExtraProperties = new List<string>();
@@ -52,9 +54,10 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 
         public virtual ComponentGeneratorOutput GenerateComponentClass(string selector, ElementSelectorData[] elements)
         {
-            BasicClassBuilder builder = new BasicClassBuilder();
             string className = SelectorUtils.GetClassOrPropNameFromSelector(selector);
-            builder
+            if (InheritFromBaseClass)
+                _classBuilder.AddInheritance(Consts.DRIVER_CONTAINER_CLASS_NAME);
+            string body = _classBuilder
                 .AddUsings(GetUsings(elements))
                 .AddCtor(CreateCtor(className))
                 .SetClassName(className)
@@ -62,10 +65,8 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
                 .AddUsings(GetUsings(elements))
                 .AddProperties(GetProperties(elements))
                 .AddMethods(GetHelpers(className, elements))
-                .AddFields(GetFields());
-            if (InheritFromBaseClass)
-                builder.AddInheritance(Consts.DRIVER_CONTAINER_CLASS_NAME);
-            string body = builder.Build();
+                .AddFields(GetFields())
+                .Build();
 
             return new ComponentGeneratorOutput
             {
@@ -119,14 +120,15 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         private string[] GetHelpers(string className, IEnumerable<ElementSelectorData> elements)
         {
             IEnumerable<string> helpers = new List<string>();
-            foreach (ElementSelectorData element in elements.Where(elm => !ExceptionsTypes.Contains(elm.Type))
+            foreach (ElementSelectorData element in elements
+                .Where(elm => !ExceptionsTypes.Contains(elm.Type))
                 .Where(ExistingTypes))
             {
                 IEnumerable<string> innerHelpers = GetHelpers(className, element);
                 helpers = helpers.Concat(innerHelpers);
             }
             return helpers.ToArray();
-        }        
+        }
 
         private string[] GetUsings(IEnumerable<ElementSelectorData> elements)
         {
@@ -134,17 +136,16 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
                 .Aggregate<ElementSelectorData, IEnumerable<string>>(BaseUsings,
                     (current, element) => current.Concat(Container.GetAddin(element.Type).RequiredUsings));
             return usings.ToArray();
-        }        
+        }
 
         private bool ExistingTypes(ElementSelectorData data)
         {
-            bool result = Container.GetAddin(data.Type) != null;
-            return result;
+            return Container.GetAddin(data.Type) != null;
         }
 
-        private IEnumerable<string> GetHelpers(string className,ElementSelectorData element)
-        {            
-            return Container.GetAddin(element.Type).GenerateHelpers(className,element.FullSelector,PropertyGenerator);
+        private IEnumerable<string> GetHelpers(string className, ElementSelectorData element)
+        {
+            return Container.GetAddin(element.Type).GenerateHelpers(className, element.FullSelector, PropertyGenerator);
         }
 
         private IEnumerable<string> GetProperties(ElementSelectorData element)
@@ -155,12 +156,12 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
                     PropertyGenerator.CreatePropertyWithPrivateWebElement(
                         Container.GetAddin(element.Type) ?? DefaultAddin.Create(element.Type), element.Name,
                         element.FullSelector);
-                return new List<string>
+                return new string[]
                 {
                     propertyWithPrivateWebElement.Key,
-                    propertyWithPrivateWebElement.Value                    
-                };                
-                
+                    propertyWithPrivateWebElement.Value
+                };
+
             }
             return new string[]
             {
@@ -168,6 +169,6 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
                     Container.GetAddin(element.Type) ?? DefaultAddin.Create(element.Type), element.Name,
                     element.FullSelector)
             };
-        }       
+        }
     }
 }

@@ -7,7 +7,7 @@ namespace SeleniumAutomationGenerator.Generator.CustomClassAttributes
 {
     public class WaitUntilDisplayedElementAttribute : IElementAttribute
     {
-        public string Name => "auto-wait-displayed";
+        public string Identifier => "auto-wait-displayed";
         private string GetWaiterBulk(string selector)
         {
             string waiterFieldName = "wait" + SelectorUtils.GetClassOrPropNameFromSelector(selector);

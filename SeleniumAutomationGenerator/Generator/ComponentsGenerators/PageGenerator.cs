@@ -4,9 +4,9 @@ using Core.Utils;
 
 namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 {
-    public class BasicPageGenerator : BasicClassGenerator
+    public class PageGenerator : ClassGenerator
     {        
-        public BasicPageGenerator(IPropertyGenerator propertyGenerator, string namespaceName) : base(propertyGenerator, namespaceName)
+        public PageGenerator(IClassBuilder builder,IPropertyGenerator propertyGenerator, string namespaceName) : base(builder,propertyGenerator, namespaceName)
         {
 
         }       

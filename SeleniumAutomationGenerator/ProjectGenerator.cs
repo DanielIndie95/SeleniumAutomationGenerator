@@ -14,7 +14,7 @@ namespace SeleniumAutomationGenerator
         public void GenerateProject(string webAppBaseDirectory, string projectName, string solutionName = null,
             string distDirectory = null)
         {
-            BuiltInComponentsInserter.InsertBuiltInComponents();
+            BuiltInComponentsInserter.InsertBuiltInComponents(new BasicClassBuilder());
             distDirectory = distDirectory ?? Environment.CurrentDirectory + "\\test";
             CreateSolution(projectName);
             WebFolderToCsFilesConverter converter = new WebFolderToCsFilesConverter(ComponentsFactory.Instance, new HtmlFinder());

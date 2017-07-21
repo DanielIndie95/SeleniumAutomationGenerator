@@ -73,10 +73,10 @@
     <Compile Include="Builders\ProjectBuilder.cs" />
     <Compile Include="ComponentsFactory.cs" />
     <Compile Include="Generator\ClassAppenders\ListClassAppender.cs" />
-    <Compile Include="Generator\ComponentsGenerators\BasicClassGenerator.cs" />
-    <Compile Include="Generator\ComponentsGenerators\BasicComponentGenerator.cs" />
-    <Compile Include="Generator\ComponentsGenerators\BasicModelGenerator.cs" />
-    <Compile Include="Generator\ComponentsGenerators\BasicPageGenerator.cs" />
+    <Compile Include="Generator\ComponentsGenerators\ClassGenerator.cs" />
+    <Compile Include="Generator\ComponentsGenerators\ComponentGenerator.cs" />
+    <Compile Include="Generator\ComponentsGenerators\ModelGenerator.cs" />
+    <Compile Include="Generator\ComponentsGenerators\PageGenerator.cs" />
     <Compile Include="Generator\ComponentsGenerators\FileCreatorAddin.cs" />
     <Compile Include="Generator\CustomClassAttributes\VisibleElementAttribute.cs" />
     <Compile Include="Generator\CustomClassAttributes\WaitUntilDisplayedElementAttribute.cs" />

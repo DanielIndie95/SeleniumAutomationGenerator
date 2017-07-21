@@ -5,12 +5,12 @@ using SeleniumAutomationGenerator.Builders;
 
 namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 {
-    public class BasicModelGenerator : BasicClassGenerator
+    public class ModelGenerator : ClassGenerator
     {
         private readonly string _parentFieldName;
         protected override bool InheritFromBaseClass => false;
 
-        public BasicModelGenerator(IPropertyGenerator propertyGenerator, string namespaceName, string parentElementName) : base(propertyGenerator, namespaceName)
+        public ModelGenerator(IClassBuilder builder, IPropertyGenerator propertyGenerator, string namespaceName, string parentElementName) : base(builder, propertyGenerator, namespaceName)
         {
             _parentFieldName = parentElementName;
         }
