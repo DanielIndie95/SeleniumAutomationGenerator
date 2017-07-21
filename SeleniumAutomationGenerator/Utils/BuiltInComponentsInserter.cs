@@ -30,7 +30,7 @@ namespace SeleniumAutomationGenerator.Utils
             new ComponentGenerator(classBuilder,
                 new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME,
                 Consts.PARENT_ELEMENT_FIELD_NAME), Consts.COMPONENTS_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME), true);
-            ComponentsFactory.Instance.AddComponentTypeAppenders("list", new ListClassAppender());
+            ComponentsFactory.Instance.AddComponentTypeAppenders(new ListClassAppender());
         }
     }
 }
