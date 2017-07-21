@@ -28,7 +28,7 @@ namespace BaseComponentsAddins
             StringBuilder builder = new StringBuilder();
             string helper = builder.AppendLine($"public {returnedClass} Click{propName}()")
                 .AppendLine("{")
-                .AppendLine($"{propName}.Click();")
+                .AppendLine($"{propertyName}.Click();")
                 .AppendLine($"return {returnStatement}")
                 .AppendLine("}")
                 .ToString();

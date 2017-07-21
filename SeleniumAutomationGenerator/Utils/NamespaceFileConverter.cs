@@ -7,8 +7,8 @@ namespace SeleniumAutomationGenerator.Utils
     {
         public static string ConvertNamespaceToFilePath(string nameSpace, string className = null)
         {
-            const int projectNamespaceSize = 1;
-            string directory = String.Join("\\", nameSpace.Split('.').Skip(projectNamespaceSize));
+            const int PROJECT_NAMESPACE_SIZE = 1;
+            string directory = String.Join("\\", nameSpace.Split('.').Skip(PROJECT_NAMESPACE_SIZE));
             string result = directory + (className != null ? $"\\{className}.cs" : "");
             return result;
         }

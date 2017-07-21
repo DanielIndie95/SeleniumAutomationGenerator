@@ -3,7 +3,6 @@ using Core;
 using Core.Models;
 using Core.Utils;
 using System.Linq;
-using System;
 
 namespace SeleniumAutomationGenerator.Generator.ClassAppenders
 {

@@ -26,7 +26,7 @@ namespace Tests
             const string KEY = "ccc";
             const string NAME = "bbb";
             const string CLASS_NAME = "DishCreator";
-            string selector = "auto-page-" + CLASS_NAME;
+            const string SELECTOR = "auto-page-" + CLASS_NAME;
             ComponentsContainer basicComponentsContainer = ComponentsContainer.Instance;
             PageGenerator generator = new PageGenerator(new BasicClassBuilder(), new DriverFindElementPropertyGenerator("Driver"), Consts.PAGES_NAMESPACE);
             Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
@@ -36,7 +36,7 @@ namespace Tests
 
             basicComponentsContainer.AddAddin(addin.Object);
 
-            var classStr = generator.GenerateComponentClass(selector, new[] { new ElementSelectorData() { FullSelector = "aaa", Name = NAME, Type = KEY, AutomationAttributes = new string[0] } });
+            var classStr = generator.GenerateComponentClass(SELECTOR, new[] { new ElementSelectorData { FullSelector = "aaa", Name = NAME, Type = KEY, AutomationAttributes = new string[0] } });
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.PAGES_NAMESPACE));
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.COMPONENTS_NAMESPACE));
             File.WriteAllText(classStr.CsFilePath, classStr.Body);
@@ -240,11 +240,10 @@ namespace Tests
         [TestMethod]
         public void TestMethod12()
         {
-            List<ComponentGeneratorOutput>[] expectedOutpus = new[]
-            {
-                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="a" ,CsFilePath="b"} },
-                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="c" ,CsFilePath="d"} },
-                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="e" ,CsFilePath="f"} }
+            List<ComponentGeneratorOutput>[] expectedOutpus = {
+                new List<ComponentGeneratorOutput> {new ComponentGeneratorOutput { Body="a" ,CsFilePath="b"} },
+                new List<ComponentGeneratorOutput> {new ComponentGeneratorOutput { Body="c" ,CsFilePath="d"} },
+                new List<ComponentGeneratorOutput> {new ComponentGeneratorOutput { Body="e" ,CsFilePath="f"} }
             };
             const string DIRECTORY = "hello";
             Mock<IHtmlsFinder> finder = new Mock<IHtmlsFinder>();
@@ -260,13 +259,12 @@ namespace Tests
         [TestMethod]
         public void TestMethod13()
         {
-            List<ComponentGeneratorOutput>[] expectedOutpus = new[]
-            {
-                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="a" ,CsFilePath="b"} },
-                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="z" ,CsFilePath="b"} },
-                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="a" ,CsFilePath="c"} },
-                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="d" ,CsFilePath="e"} },
-                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="f" ,CsFilePath="g"} }
+            List<ComponentGeneratorOutput>[] expectedOutpus = {
+                new List<ComponentGeneratorOutput> {new ComponentGeneratorOutput { Body="a" ,CsFilePath="b"} },
+                new List<ComponentGeneratorOutput> {new ComponentGeneratorOutput { Body="z" ,CsFilePath="b"} },
+                new List<ComponentGeneratorOutput> {new ComponentGeneratorOutput { Body="a" ,CsFilePath="c"} },
+                new List<ComponentGeneratorOutput> {new ComponentGeneratorOutput { Body="d" ,CsFilePath="e"} },
+                new List<ComponentGeneratorOutput> {new ComponentGeneratorOutput { Body="f" ,CsFilePath="g"} }
             };
             const string DIRECTORY = "hello";
             Mock<IHtmlsFinder> finder = new Mock<IHtmlsFinder>();

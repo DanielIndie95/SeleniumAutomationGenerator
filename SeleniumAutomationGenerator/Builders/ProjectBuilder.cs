@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Core.Models;
+﻿using Core.Models;
 using Microsoft.Build.Construction;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +9,7 @@ namespace SeleniumAutomationGenerator.Builders
     {
         public void BuildProject(string projectName, IEnumerable<ComponentGeneratorOutput> files , string csprojDir , string packageConfigFilename)
         {
-            var root = ProjectRootElement.Create();
+            ProjectRootElement root = ProjectRootElement.Create();
             AddProperties(projectName, root);
 
             // references           
@@ -19,19 +18,18 @@ namespace SeleniumAutomationGenerator.Builders
             AddItems(root, "Compile", files.Select(file => file.CsFilePath).ToArray());
 
             AddItems(root, "None", packageConfigFilename);
-            var target = root.AddTarget("Build");
-            var task = target.AddTask("Csc");
+            ProjectTargetElement target = root.AddTarget("Build");
+            ProjectTaskElement task = target.AddTask("Csc");
             task.SetParameter("Sources", "@(Compile)");
             task.SetParameter("OutputAssembly", $"{projectName}.dll");
             AddImports(root);
             
             root.Save($"{csprojDir}\\{projectName}.csproj");
-            var s = File.ReadAllText($"{csprojDir}\\{projectName}.csproj");
         }
 
         private static void AddProperties(string projectName, ProjectRootElement root)
         {
-            var group = root.AddPropertyGroup();
+            ProjectPropertyGroupElement group = root.AddPropertyGroup();
             group.AddProperty("Configuration", "Debug");
             group.AddProperty("Platform", "AnyCPU");
             group.AddProperty("OutputType", "Library");
@@ -40,7 +38,7 @@ namespace SeleniumAutomationGenerator.Builders
             group.AddProperty("AssemblyName", projectName);
             group.AddProperty("TargetFrameworkVersion", "4.5.2");
 
-            var conditionedGroup = root.AddPropertyGroup();
+            ProjectPropertyGroupElement conditionedGroup = root.AddPropertyGroup();
             conditionedGroup.AddProperty("DebugSymbols", "true");
             conditionedGroup.AddProperty("DebugType", "full");
             conditionedGroup.AddProperty("Optimize", "false");
@@ -54,18 +52,17 @@ namespace SeleniumAutomationGenerator.Builders
         private static void AddImports(ProjectRootElement root)
         {
             root.AddImport("$(MSBuildToolsPath)\\Microsoft.CSharp.targets");
-            var import = root.AddImport("$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft.Common.props");
+            ProjectImportElement import = root.AddImport("$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft.Common.props");
             import.Condition = "Exists('$(MSBuildExtensionsPath)\\$(MSBuildToolsVersion)\\Microsoft.Common.props')";
         }
 
-        private static ProjectItemGroupElement AddItems(ProjectRootElement elem, string groupName, params string[] items)
+        private static void AddItems(ProjectRootElement elem, string groupName, params string[] items)
         {                   
-            var group = elem.AddItemGroup();
-            foreach(var item in items)
+            ProjectItemGroupElement group = elem.AddItemGroup();
+            foreach(string item in items)
             {
                 group.AddItem(groupName, item);                    
             }
-            return group;
         }
     }
 }

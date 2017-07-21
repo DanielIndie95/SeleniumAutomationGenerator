@@ -22,7 +22,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
                 AddinKey = name,
                 Type = name,
                 CtorContainsDriver = false,
-                RequiredUsings = new string[] { NamespaceName }
+                RequiredUsings = new[] { NamespaceName }
             };
         }
         protected override string CreateCtor(string className)

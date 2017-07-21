@@ -12,7 +12,7 @@ namespace SeleniumAutomationGenerator
                 .Select(File.ReadAllText).ToArray();
         }
 
-        private IEnumerable<string> FindHtmlFiles(string baseDirectory)
+        private static IEnumerable<string> FindHtmlFiles(string baseDirectory)
         {
             return Directory.EnumerateFiles(
                 baseDirectory, "*.htm*", SearchOption.AllDirectories);            

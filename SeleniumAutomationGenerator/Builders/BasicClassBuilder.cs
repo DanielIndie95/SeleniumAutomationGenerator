@@ -17,12 +17,11 @@ namespace SeleniumAutomationGenerator.Builders
         private readonly Dictionary<Modifiers, List<string>> _methods;
         private string _namespaceName;
         private string _className;
-        private List<string> _inheritance;
+        private readonly List<string> _inheritance;
 
         public BasicClassBuilder()
         {
-            _usings = new List<string>()
-            { Consts.BASE_NAMESPACE};
+            _usings = new List<string> { Consts.BASE_NAMESPACE};
             _inheritance = new List<string>();
             _fields = new Dictionary<Modifiers, List<string>>();
             _props = new Dictionary<Modifiers, List<string>>();
@@ -159,21 +158,13 @@ namespace SeleniumAutomationGenerator.Builders
             AppendModifier(builder, _props, Modifiers.Public);
         }
 
-        private void AppendUsings(StringBuilder builder, IEnumerable<string> usings)
-        {
-            foreach (string usingNamespace in usings)
-            {
-                builder.AppendLine($"using {usingNamespace};");
-            }
-        }
-
-        private void AppendModifier(StringBuilder builder, Dictionary<Modifiers, List<string>> fields, Modifiers modifier)
+        private static void AppendModifier(StringBuilder builder, IReadOnlyDictionary<Modifiers, List<string>> fields, Modifiers modifier)
         {
             if (fields.ContainsKey(modifier))
                 AppendList(builder, fields[modifier]);
         }
 
-        private void AddModifierField(Dictionary<Modifiers, List<string>> container, string newField)
+        private static void AddModifierField(IDictionary<Modifiers, List<string>> container, string newField)
         {
             Modifiers modifier = FindModifier(newField);
             if (!container.TryGetValue(modifier, out List<string> fields))
@@ -182,7 +173,7 @@ namespace SeleniumAutomationGenerator.Builders
             fields.Add(newField);
         }
 
-        private Modifiers FindModifier(string field)
+        private static Modifiers FindModifier(string field)
         {
             string firstWord = field.Split(' ').First();
 
@@ -190,11 +181,19 @@ namespace SeleniumAutomationGenerator.Builders
                 ? modifier : Modifiers.Private;
         }
 
-        private void AppendList<T>(StringBuilder builder, IEnumerable<T> list)
+        private static void AppendList<T>(StringBuilder builder, IEnumerable<T> list)
         {
             foreach (T item in list)
             {
                 builder.AppendLine(item.ToString());
+            }
+        }
+        
+        private static void AppendUsings(StringBuilder builder, IEnumerable<string> usings)
+        {
+            foreach (string usingNamespace in usings)
+            {
+                builder.AppendLine($"using {usingNamespace};");
             }
         }
 

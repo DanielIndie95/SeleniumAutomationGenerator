@@ -20,7 +20,7 @@ namespace SeleniumAutomationGenerator.Generator.CustomClassAttributes
             parentClass.AddProperty(GetProperty(privateWebElement));            
         }
 
-        private string GetProperty(string webElementPropertyName)
+        private static string GetProperty(string webElementPropertyName)
         {
             string propertyName = TextUtils.UppercaseFirst(webElementPropertyName.Trim('_'));
             string property = $"public bool {propertyName}Visible => {webElementPropertyName}.Displayed;";

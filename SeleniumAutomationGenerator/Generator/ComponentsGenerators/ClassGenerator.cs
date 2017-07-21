@@ -10,8 +10,8 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 {
     public abstract class ClassGenerator : IComponentFileCreator
     {
-        private IClassBuilder _classBuilder;
-        protected StringBuilder CtorBulk { get; private set; }
+        private readonly IClassBuilder _classBuilder;
+        protected StringBuilder CtorBulk { get; }
         protected ComponentsContainer Container;
         protected List<string> BaseUsings;
         protected string NamespaceName;
@@ -47,7 +47,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
             {
                 AddinKey = name,
                 Type = name,
-                RequiredUsings = new string[] { NamespaceName }
+                RequiredUsings = new[] { NamespaceName }
             };
         }
 

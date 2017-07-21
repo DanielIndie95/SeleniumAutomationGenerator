@@ -36,7 +36,7 @@ namespace {Consts.BASE_NAMESPACE}
         private static ComponentGeneratorOutput CreateBasicClass(string body,string className)
         {
             string fileName = NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.BASE_NAMESPACE, $"{className}.cs");
-            return new ComponentGeneratorOutput()
+            return new ComponentGeneratorOutput
             {
                 Body = body,
                 CsFilePath = fileName

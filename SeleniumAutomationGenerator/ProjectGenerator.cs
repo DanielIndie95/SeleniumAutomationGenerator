@@ -26,7 +26,7 @@ namespace SeleniumAutomationGenerator
             builder.BuildProject(projectName, results, distDirectory, packageConfigName);
         }
 
-        private static void CreateFiles(string distDirectory, List<ComponentGeneratorOutput> results)
+        private static void CreateFiles(string distDirectory, IEnumerable<ComponentGeneratorOutput> results)
         {
             Directory.CreateDirectory(distDirectory);
             Directory.CreateDirectory(distDirectory + "\\" + NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.PAGES_NAMESPACE));
@@ -38,28 +38,29 @@ namespace SeleniumAutomationGenerator
             }
         }
 
-        private void AddBaseClassesToResults(List<ComponentGeneratorOutput> results)
+        private static void AddBaseClassesToResults(ICollection<ComponentGeneratorOutput> results)
         {
             results.Add(BasicGeneratedClasses.DriverContainer);
         }
 
+        // ReSharper disable once UnusedParameter.Local
         private void CreateSolution(string name)
         {
         }
 
-        private string CreatePackagesConfig(string distDirectory)
+        private static string CreatePackagesConfig(string distDirectory)
         {
-            string packagesConfigBody = @"<?xml version=""1.0"" encoding=""utf-8""?>
+            const string PACKAGES_CONFIG_BODY = @"<?xml version=""1.0"" encoding=""utf-8""?>
   <packages>
         
          <package id = ""Selenium.Support"" version = ""2.48.0"" targetFramework = ""net452"" />
             
               <package id = ""Selenium.WebDriver"" version = ""2.48.0"" targetFramework = ""net452"" />
                  </packages> ";
-            string packageConfigFilename = "packages.config";
-            string fullPath = $"{distDirectory}\\{packageConfigFilename}";
-            File.WriteAllText(fullPath , packagesConfigBody);
-            return packageConfigFilename;
+            const string PACKAGE_CONFIG_FILENAME = "packages.config";
+            string fullPath = $"{distDirectory}\\{PACKAGE_CONFIG_FILENAME}";
+            File.WriteAllText(fullPath , PACKAGES_CONFIG_BODY);
+            return PACKAGE_CONFIG_FILENAME;
         }
     }
 }

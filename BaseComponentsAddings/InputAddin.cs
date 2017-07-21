@@ -28,7 +28,7 @@ namespace BaseComponentsAddins
                 .AppendLine($"public {className} With{methodPropName}(string {propName})")
                 .AppendLine("{")
                 .AppendLine($"{propertyNameFromGenerator}.SendKeys({propName});")
-                .AppendLine($"return this;")
+                .AppendLine("return this;")
                 .AppendLine("}")
                 .ToString();
             return new [] { helper };
