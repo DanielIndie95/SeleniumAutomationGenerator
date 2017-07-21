@@ -3,9 +3,9 @@ using System.Linq;
 using Core;
 using Core.Models;
 using Core.Utils;
-using SeleniumAutomationGenerator.Generator.Builders;
 using SeleniumAutomationGenerator.Utils;
 using System.Text;
+using SeleniumAutomationGenerator.Builders;
 
 namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 {
@@ -20,6 +20,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         protected List<string> ExtraMethods;
 
         public IPropertyGenerator PropertyGenerator { get; }
+        protected virtual bool InheritFromBaseClass => true;
 
         protected BasicClassGenerator(IPropertyGenerator propertyGenerator, string namespaceName)
         {
@@ -27,7 +28,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
             {
                 "System",
                 "OpenQA.Selenium",
-                "System.Linq"
+                "System.Linq"                
             };
             ExceptionsTypes = new List<string>();
             ExtraProperties = new List<string>();
@@ -44,7 +45,8 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
             return new FileCreatorAddin
             {
                 AddinKey = name,
-                Type = name
+                Type = name,
+                RequiredUsings = new string[] { NamespaceName }
             };
         }
 
@@ -52,20 +54,23 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         {
             BasicClassBuilder builder = new BasicClassBuilder();
             string className = SelectorUtils.GetClassOrPropNameFromSelector(selector);
-            string body = builder.AddUsings(GetUsings(elements))
+            builder
+                .AddUsings(GetUsings(elements))
                 .AddCtor(CreateCtor(className))
                 .SetClassName(className)
                 .SetNamesapce(NamespaceName)
                 .AddUsings(GetUsings(elements))
                 .AddProperties(GetProperties(elements))
                 .AddMethods(GetHelpers(className, elements))
-                .AddFields(GetFields())
-                .Build();
+                .AddFields(GetFields());
+            if (InheritFromBaseClass)
+                builder.AddInheritance(Consts.DRIVER_CONTAINER_CLASS_NAME);
+            string body = builder.Build();
 
             return new ComponentGeneratorOutput
             {
                 Body = body,
-                CsFileName = NamespaceFileConverter.ConvertNamespaceToFilePath(NamespaceName, className)
+                CsFilePath = NamespaceFileConverter.ConvertNamespaceToFilePath(NamespaceName, className)
             };
         }
 
@@ -87,6 +92,11 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         public void InsertToCtor(string bulk)
         {
             CtorBulk.AppendLine(bulk);
+        }
+
+        public void AddUsing(string usingName)
+        {
+            BaseUsings.Add(usingName);
         }
 
         protected abstract string CreateCtor(string className);
@@ -158,6 +168,6 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
                     Container.GetAddin(element.Type) ?? DefaultAddin.Create(element.Type), element.Name,
                     element.FullSelector)
             };
-        }        
+        }       
     }
 }

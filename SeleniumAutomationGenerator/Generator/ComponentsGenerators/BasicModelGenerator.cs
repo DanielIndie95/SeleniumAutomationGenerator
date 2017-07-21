@@ -1,13 +1,15 @@
 ﻿using System.Text;
 using Core;
 using Core.Utils;
-using SeleniumAutomationGenerator.Generator.Builders;
+using SeleniumAutomationGenerator.Builders;
 
 namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 {
     public class BasicModelGenerator : BasicClassGenerator
     {
         private readonly string _parentFieldName;
+        protected override bool InheritFromBaseClass => false;
+
         public BasicModelGenerator(IPropertyGenerator propertyGenerator, string namespaceName, string parentElementName) : base(propertyGenerator, namespaceName)
         {
             _parentFieldName = parentElementName;
@@ -19,7 +21,8 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
             {
                 AddinKey = name,
                 Type = name,
-                CtorContainsDriver = false
+                CtorContainsDriver = false,
+                RequiredUsings = new string[] { NamespaceName }
             };
         }
         protected override string CreateCtor(string className)

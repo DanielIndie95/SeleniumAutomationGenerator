@@ -9,7 +9,7 @@
         IClassBuilder AddCtor(string ctor);
         IClassBuilder SetNamesapce(string namespaceName);
         IClassBuilder SetClassName(string className);
-
+        IClassBuilder AddInheritance(params string[] types);
         string Build();
     }
 }

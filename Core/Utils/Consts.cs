@@ -10,5 +10,9 @@
         public const string PAGES_NAMESPACE = INFASTRUCTURE_NAMESPACE + ".Pages";
         public const string COMPONENTS_NAMESPACE = INFASTRUCTURE_NAMESPACE + ".Components";
         public const string AUTOMATION_ELEMENT_PREFIX = "auto-";
+
+        public const string DRIVER_CONTAINER_CLASS_NAME = "DriverContainer";
+
+        public const string BASE_NAMESPACE = INFASTRUCTURE_NAMESPACE+ ".Base";
     }
 }

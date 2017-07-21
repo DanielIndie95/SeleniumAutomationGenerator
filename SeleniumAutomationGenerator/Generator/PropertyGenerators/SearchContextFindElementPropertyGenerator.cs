@@ -21,8 +21,8 @@ namespace SeleniumAutomationGenerator.Generator.PropertyGenerators
             AddException("string", selectElement => $"{selectElement}.Text");
             AddException("int", selectElement => $"int.Parse({selectElement}.Text)");
 
-            AddException("string", selectElement => $"{selectElement}.Select(elm=> elm.Text)", true);
-            AddException("int", selectElement => $"{selectElement}.Select(elm=> int.Parse(elm.Text))",
+            AddException("string", selectElement => $"{selectElement}.Select(elm=> elm.Text).ToArray()", true);
+            AddException("int", selectElement => $"{selectElement}.Select(elm=> int.Parse(elm.Text)).ToArray()",
                 true);
         }
 
@@ -135,7 +135,7 @@ namespace SeleniumAutomationGenerator.Generator.PropertyGenerators
 
         private static string GetDeclearationType(string type, bool isArray)
         {
-            return isArray ? $"ReadOnlyList<{type}>" : type;
+            return isArray ? $"{type}[]" : type;
         }
 
 
@@ -148,7 +148,7 @@ namespace SeleniumAutomationGenerator.Generator.PropertyGenerators
         private static string FormatEqualStatement(bool isArray, string selectStatement, string modelInitialize)
         {
             return isArray
-                ? $"{selectStatement}.Select(elm=> {modelInitialize})"
+                ? $"{selectStatement}.Select(elm=> {modelInitialize}).ToArray()"
                 : modelInitialize;
         }
     }

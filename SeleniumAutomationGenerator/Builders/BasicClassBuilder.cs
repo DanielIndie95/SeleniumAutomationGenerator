@@ -6,7 +6,7 @@ using Core;
 using Core.Models;
 using Core.Utils;
 
-namespace SeleniumAutomationGenerator.Generator.Builders
+namespace SeleniumAutomationGenerator.Builders
 {
     public class BasicClassBuilder : IClassBuilder
     {
@@ -17,10 +17,13 @@ namespace SeleniumAutomationGenerator.Generator.Builders
         private readonly Dictionary<Modifiers, List<string>> _methods;
         private string _namespaceName;
         private string _className;
+        private List<string> _inheritance;
 
         public BasicClassBuilder()
         {
-            _usings = new List<string>();
+            _usings = new List<string>()
+            { Consts.BASE_NAMESPACE};
+            _inheritance = new List<string>();
             _fields = new Dictionary<Modifiers, List<string>>();
             _props = new Dictionary<Modifiers, List<string>>();
             _methods = new Dictionary<Modifiers, List<string>>();
@@ -74,7 +77,6 @@ namespace SeleniumAutomationGenerator.Generator.Builders
             return this;
         }
 
-
         public IClassBuilder SetNamesapce(string namespaceName)
         {
             _namespaceName = namespaceName;
@@ -87,7 +89,21 @@ namespace SeleniumAutomationGenerator.Generator.Builders
             return this;
         }
 
+        public IClassBuilder AddInheritance(params string[] types)
+        {
+            _inheritance.AddRange(types.OrderBy(type => !type.StartsWith("I"))); //I - interfaces
+            return this;
+        }
+
         public string Build()
+        {
+            StringBuilder builder = new StringBuilder();
+            AppendUsings(builder, _usings);
+            StringBuilder classBuilder = CreateClassBuilder();
+            AppendNamespace(builder, classBuilder);
+            return builder.ToString();
+        }
+        public string Build(bool inheritBaseClass)
         {
             StringBuilder builder = new StringBuilder();
             AppendUsings(builder, _usings);
@@ -102,7 +118,8 @@ namespace SeleniumAutomationGenerator.Generator.Builders
             if (_className == null)
                 throw new InvalidOperationException("class name not found");
 
-            builder.AppendLine($"public class {_className}");
+            string inheritance = _inheritance.Any() ? ":" + string.Join(",", _inheritance) : "";
+            builder.AppendLine($"public class {_className} {inheritance}");
             builder.AppendLine("{");
             AppendFields(builder);
             AppendProperties(builder);
@@ -168,7 +185,7 @@ namespace SeleniumAutomationGenerator.Generator.Builders
         private Modifiers FindModifier(string field)
         {
             string firstWord = field.Split(' ').First();
-            
+
             return Enum.TryParse(TextUtils.UppercaseFirst(firstWord), out Modifiers modifier)
                 ? modifier : Modifiers.Private;
         }
@@ -179,6 +196,7 @@ namespace SeleniumAutomationGenerator.Generator.Builders
             {
                 builder.AppendLine(item.ToString());
             }
-        }        
+        }
+
     }
 }

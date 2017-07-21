@@ -11,8 +11,8 @@ namespace SeleniumAutomationGenerator.Generator.CustomClassAttributes
         private string GetWaiterBulk(string selector)
         {
             string waiterFieldName = "wait" + SelectorUtils.GetClassOrPropNameFromSelector(selector);
-            string waiter = $"var {waiterFieldName} = new WebDriverWait({Consts.DRIVER_FIELD_NAME});";
-            string waiting = $"{waiterFieldName}.Until(ExpectedConditions.ElementIsVisible({selector}))";
+            string waiter = $"var {waiterFieldName} = new WebDriverWait({Consts.DRIVER_FIELD_NAME},TimeSpan.FromSeconds(5));";
+            string waiting = $"{waiterFieldName}.Until(ExpectedConditions.ElementIsVisible(By.ClassName(\"{selector}'\")));";
             return new StringBuilder()
                 .AppendLine(waiter)
                 .AppendLine(waiting)
@@ -22,6 +22,7 @@ namespace SeleniumAutomationGenerator.Generator.CustomClassAttributes
         {
             string ctorBulk =  GetWaiterBulk(appenderElement.Selector);
             parentClass.InsertToCtor(ctorBulk);
+            parentClass.AddUsing("OpenQA.Selenium.Support.UI");
         }
     }
 }

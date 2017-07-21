@@ -12,6 +12,7 @@ using Core;
 using Core.Models;
 using Core.Utils;
 using SeleniumAutomationGenerator.Generator.ComponentsGenerators;
+using System;
 
 namespace Tests
 {
@@ -34,10 +35,10 @@ namespace Tests
 
             basicComponentsContainer.AddAddin(addin.Object);
 
-            var classStr = generator.GenerateComponentClass(selector, new[] { new ElementSelectorData() { FullSelector = "aaa", Name = NAME, Type = KEY , AutomationAttributes = new string[0] } });
+            var classStr = generator.GenerateComponentClass(selector, new[] { new ElementSelectorData() { FullSelector = "aaa", Name = NAME, Type = KEY, AutomationAttributes = new string[0] } });
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.PAGES_NAMESPACE));
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.COMPONENTS_NAMESPACE));
-            File.WriteAllText(classStr.CsFileName, classStr.Body);
+            File.WriteAllText(classStr.CsFilePath, classStr.Body);
         }
         [TestMethod]
         public void TestMethod6()
@@ -62,7 +63,7 @@ namespace Tests
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.COMPONENTS_NAMESPACE));
             foreach (ComponentGeneratorOutput innerFile in files)
             {
-                File.WriteAllText(innerFile.CsFileName, innerFile.Body);
+                File.WriteAllText(innerFile.CsFilePath, innerFile.Body);
             }
         }
 
@@ -83,7 +84,7 @@ namespace Tests
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.COMPONENTS_NAMESPACE));
             foreach (var innerFile in files)
             {
-                File.WriteAllText(innerFile.CsFileName, innerFile.Body);
+                File.WriteAllText(innerFile.CsFilePath, innerFile.Body);
             }
         }
 
@@ -240,9 +241,9 @@ namespace Tests
         {
             List<ComponentGeneratorOutput>[] expectedOutpus = new[]
             {
-                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="a" ,CsFileName="b"} },
-                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="c" ,CsFileName="d"} },
-                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="e" ,CsFileName="f"} }
+                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="a" ,CsFilePath="b"} },
+                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="c" ,CsFilePath="d"} },
+                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="e" ,CsFilePath="f"} }
             };
             const string DIRECTORY = "hello";
             Mock<IHtmlsFinder> finder = new Mock<IHtmlsFinder>();
@@ -252,24 +253,24 @@ namespace Tests
             factory.Setup(f => f.CreateCsOutput("new")).Returns(expectedOutpus[1]);
             factory.Setup(f => f.CreateCsOutput("world")).Returns(expectedOutpus[2]);
             WebFolderToCsFilesConverter converter = new WebFolderToCsFilesConverter(factory.Object, finder.Object);
-            List<ComponentGeneratorOutput> outputs =  converter.GenerateClasses(DIRECTORY);
-            outputs.Should().BeEquivalentTo(expectedOutpus.SelectMany(a=> a));
+            List<ComponentGeneratorOutput> outputs = converter.GenerateClasses(DIRECTORY);
+            outputs.Should().BeEquivalentTo(expectedOutpus.SelectMany(a => a));
         }
         [TestMethod]
         public void TestMethod13()
         {
             List<ComponentGeneratorOutput>[] expectedOutpus = new[]
             {
-                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="a" ,CsFileName="b"} },
-                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="z" ,CsFileName="b"} },
-                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="a" ,CsFileName="c"} },
-                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="d" ,CsFileName="e"} },
-                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="f" ,CsFileName="g"} }
+                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="a" ,CsFilePath="b"} },
+                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="z" ,CsFilePath="b"} },
+                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="a" ,CsFilePath="c"} },
+                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="d" ,CsFilePath="e"} },
+                new List<ComponentGeneratorOutput>(){new ComponentGeneratorOutput() { Body="f" ,CsFilePath="g"} }
             };
             const string DIRECTORY = "hello";
             Mock<IHtmlsFinder> finder = new Mock<IHtmlsFinder>();
             Mock<IComponentsFactory> factory = new Mock<IComponentsFactory>();
-            finder.Setup(f => f.GetFilesTexts(DIRECTORY)).Returns(new[] { "my", "new", "world" ,"was", "spinning"});
+            finder.Setup(f => f.GetFilesTexts(DIRECTORY)).Returns(new[] { "my", "new", "world", "was", "spinning" });
             factory.Setup(f => f.CreateCsOutput("my")).Returns(expectedOutpus[0]);
             factory.Setup(f => f.CreateCsOutput("new")).Returns(expectedOutpus[1]);
             factory.Setup(f => f.CreateCsOutput("world")).Returns(expectedOutpus[2]);
@@ -290,9 +291,14 @@ namespace Tests
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.COMPONENTS_NAMESPACE));
             foreach (var innerFile in files)
             {
-                File.WriteAllText(innerFile.CsFileName, innerFile.Body);
+                File.WriteAllText(innerFile.CsFilePath, innerFile.Body);
             }
         }
-        
+        [TestMethod]
+        public void TestMethod15()
+        {
+            ProjectGenerator generator = new ProjectGenerator();
+            generator.GenerateProject(Environment.CurrentDirectory, Consts.INFASTRUCTURE_NAMESPACE, "Automation");
+        }
     }
 }

@@ -10,6 +10,7 @@ namespace Core
         void AddProperty(string property);
         void AddMethod(string method);
         void InsertToCtor(string bulk);
+        void AddUsing(string usingName);
         IComponentAddin MakeAddin(string selector);
     }
 }

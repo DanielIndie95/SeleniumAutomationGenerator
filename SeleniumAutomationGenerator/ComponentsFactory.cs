@@ -29,11 +29,14 @@ namespace SeleniumAutomationGenerator
             AddComponentClassGeneratorKey("model",
                 new BasicModelGenerator(
                     new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME,
-                        Consts.PARENT_ELEMENT_FIELD_NAME), Consts.PAGES_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME));
-
+                        Consts.PARENT_ELEMENT_FIELD_NAME), Consts.COMPONENTS_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME));
+            AddComponentClassGeneratorKey("comp",
+            new BasicComponentGenerator(
+                new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME,
+                Consts.PARENT_ELEMENT_FIELD_NAME), Consts.COMPONENTS_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME));
             _defaultFileCreator = new BasicComponentGenerator(
                 new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME,
-                    Consts.PARENT_ELEMENT_FIELD_NAME), Consts.PAGES_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME);
+                    Consts.PARENT_ELEMENT_FIELD_NAME), Consts.COMPONENTS_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME);
 
             AddComponentTypeAppenders("list", new ListClassAppender());
         }
@@ -94,14 +97,14 @@ namespace SeleniumAutomationGenerator
 
             return GetFileCreatorsOutput(selector, autoElementDatas, keyWord, elements);
         }
-      
+
         private static void RunAppendsOnParent(AutoElementData current, IComponentFileCreator parentClassCreator)
         {
             IEnumerable<IElementAttribute> customAttributes = current.AutoAttributes
-                .Select(att => ComponentsContainer.Instance.GetElementAttribute(att)).Where(att=> att!= null);
+                .Select(att => ComponentsContainer.Instance.GetElementAttribute(att)).Where(att => att != null);
             foreach (IElementAttribute attribute in customAttributes)
             {
-                attribute.AppendToClass(parentClassCreator , current);
+                attribute.AppendToClass(parentClassCreator, current);
             }
         }
 
@@ -117,7 +120,7 @@ namespace SeleniumAutomationGenerator
             IEnumerable<ComponentGeneratorOutput> outputs = new List<ComponentGeneratorOutput>();
             foreach (AutoElementData child in filteredChildren)
             {
-                outputs = outputs.Concat(CreateCsOutput(child.Selector, child,parentClassCreator));
+                outputs = outputs.Concat(CreateCsOutput(child.Selector, child, parentClassCreator));
             }
             return outputs;
         }
@@ -144,7 +147,7 @@ namespace SeleniumAutomationGenerator
                 outputs = outputs.Union(CreateCsOutput(child.Selector, child, parent), new ComponentOutputComparer());
             }
             ComponentGeneratorOutput parentOutput = parent.GenerateComponentClass(selector, childrenData);
-            outputs = outputs.Union(new[] {parentOutput}, new ComponentOutputComparer());
+            outputs = outputs.Union(new[] { parentOutput }, new ComponentOutputComparer());
             return outputs;
         }
 

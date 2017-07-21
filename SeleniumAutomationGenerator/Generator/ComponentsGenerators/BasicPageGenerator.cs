@@ -14,7 +14,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         protected override string CreateCtor(string className)
         {
             StringBuilder builder = new StringBuilder();
-            builder.AppendLine($"internal {className}({Consts.WEB_DRIVER_CLASS_NAME} driver)");
+            builder.AppendLine($"internal {className}({Consts.WEB_DRIVER_CLASS_NAME} driver):base(driver)");
             builder.AppendLine("{");
             builder.Append(CtorBulk);
             builder.AppendLine("}");

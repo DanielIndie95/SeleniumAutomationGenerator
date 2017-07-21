@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using Core;
 using Core.Utils;
-using SeleniumAutomationGenerator.Generator.Builders;
+using SeleniumAutomationGenerator.Builders;
 
 namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 {
@@ -16,7 +16,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         protected override string CreateCtor(string className)
         {
             StringBuilder builder = new StringBuilder();
-            builder.AppendLine($"internal {className}({Consts.WEB_DRIVER_CLASS_NAME} driver,{Consts.WEB_ELEMENT_CLASS_NAME} parentElement)");
+            builder.AppendLine($"internal {className}({Consts.WEB_DRIVER_CLASS_NAME} driver,{Consts.WEB_ELEMENT_CLASS_NAME} parentElement):base(driver)");
             builder.AppendLine("{");
             builder.AppendLine($"{_parentElementFieldName} = parentElement;");
             builder.Append(CtorBulk);

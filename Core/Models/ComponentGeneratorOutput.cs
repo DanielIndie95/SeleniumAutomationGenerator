@@ -6,13 +6,13 @@ namespace Core.Models
     {
         public string Body { get; set; }
 
-        public string CsFileName { get; set; }
+        public string CsFilePath { get; set; }
     }
     public class ComponentOutputComparer : IEqualityComparer<ComponentGeneratorOutput>
     {
         public bool Equals(ComponentGeneratorOutput x, ComponentGeneratorOutput y)
         {
-            return x.CsFileName == y.CsFileName;
+            return x.CsFilePath == y.CsFilePath;
         }
 
         public int GetHashCode(ComponentGeneratorOutput obj)
