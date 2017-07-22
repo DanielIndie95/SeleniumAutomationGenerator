@@ -15,7 +15,6 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         protected IAddinContainer Container;
         protected List<string> BaseUsings;
         protected string NamespaceName;
-        protected List<string> ExceptionsTypes;
         protected List<string> ExtraProperties;
         protected List<string> ExtraMethods;
 
@@ -31,7 +30,6 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
                 "OpenQA.Selenium",
                 "System.Linq"
             };
-            ExceptionsTypes = new List<string>();
             ExtraProperties = new List<string>();
             ExtraMethods = new List<string>();
             Container = container;
@@ -73,12 +71,6 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
                 CsFilePath = NamespaceFileConverter.ConvertNamespaceToFilePath(NamespaceName, className)
             };
         }
-
-        public void AddExceptionPropertyType(string type)
-        {
-            ExceptionsTypes.Add(type);
-        }
-
         public void AddProperty(string property)
         {
             ExtraProperties.Add(property);
@@ -109,7 +101,6 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         protected virtual string[] GetProperties(ElementSelectorData[] elements)
         {
             return elements
-                .Where(elm => !ExceptionsTypes.Contains(elm.Type))
                 .SelectMany(GetProperties)
                 .Concat(ExtraProperties)
                 .Distinct()
@@ -120,7 +111,6 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         {
             IEnumerable<string> helpers = new List<string>();
             foreach (ElementSelectorData element in elements
-                .Where(elm => !ExceptionsTypes.Contains(elm.Type))
                 .Where(ExistingTypes))
             {
                 IEnumerable<string> innerHelpers = GetHelpers(className, element);

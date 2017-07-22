@@ -65,13 +65,7 @@ namespace Core
 
         public void AddComponentTypeAppenders(IComponentClassAppender classAppender)
         {
-            string type = classAppender.Identifier;
-            _classAppenders[type] = classAppender;
-            _defaultFileCreator?.AddExceptionPropertyType(type);
-            foreach (KeyValuePair<string, IComponentFileCreator> fileCreator in _fileCreators)
-            {
-                fileCreator.Value.AddExceptionPropertyType(type);
-            }
+            _classAppenders[classAppender.Identifier] = classAppender;            
         }
 
         public IComponentClassAppender GetAppender(string appenderIdentifier)
