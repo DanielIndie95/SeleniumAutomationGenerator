@@ -283,7 +283,7 @@ namespace Tests
         public void TestMethod14()
         {
             string file = File.ReadAllText(@"TestFiles\Test1.html");
-            BuiltInComponentsInserter.InsertBuiltInComponents(new BasicClassBuilder());
+            BuiltInComponentsInserter.InsertBuiltInComponents();
             var basicComponentsContainer = ComponentsContainer.Instance;
             ComponentsFactory factory = new ComponentsFactory(basicComponentsContainer, basicComponentsContainer, basicComponentsContainer, basicComponentsContainer);
             var files = factory.CreateCsOutput(file);

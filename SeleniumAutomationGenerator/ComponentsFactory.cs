@@ -14,7 +14,7 @@ namespace SeleniumAutomationGenerator
         private readonly IAddinContainer _addinContainer;
         private readonly IElementAttributeContainer _attributesContainer;
 
-        public ComponentsFactory(IFileCreatorContainer fileCreatorContainer, IClassAppenderContainer classAppenderContainer, IAddinContainer addinContainer , IElementAttributeContainer attributesContainer)
+        public ComponentsFactory(IFileCreatorContainer fileCreatorContainer, IClassAppenderContainer classAppenderContainer, IAddinContainer addinContainer, IElementAttributeContainer attributesContainer)
         {
             _fileCreatorContainer = fileCreatorContainer;
             _classAppenderContainer = classAppenderContainer;
@@ -37,26 +37,43 @@ namespace SeleniumAutomationGenerator
         private IEnumerable<ComponentGeneratorOutput> CreateCsOutput(string selector, AutoElementData current,
             IComponentFileCreator parentClassCreator = null)
         {
-            if (ContainsCustomAttributes(current) && parentClassCreator != null)
-                RunAppendsOnParent(current, parentClassCreator);
-            IEnumerable<AutoElementData> children = current.InnerChildrens;
+            HandleCustomAttributesBehavior(current, parentClassCreator);
             string keyWord = SelectorUtils.GetKeyWordFromSelector(selector);
-            IEnumerable<AutoElementData> autoElementDatas = children as AutoElementData[] ?? children.ToArray();
-            if (!autoElementDatas.Any()) //not a new cs file
+
+            AutoElementData[] autoElementDatas = current.InnerChildrens as AutoElementData[] ?? current.InnerChildrens.ToArray();
+
+            if (IsBasicElement(autoElementDatas))
                 return new List<ComponentGeneratorOutput>();
 
             AutoElementData[] filteredChildren = autoElementDatas
-                .Where(FilterNonInlineChidren)
+                .Where(IsAppenderElement)
                 .ToArray();
-            IEnumerable<ElementSelectorData> childrenData = filteredChildren
-                .Select(ConversionsUtils.ConvertToElementSelectorData);
-            ElementSelectorData[] elements = TransformFileCreatorsToAddinsLike(childrenData).ToArray();
+
             if (IsAppenderSuitable(parentClassCreator, keyWord))
             {
                 return GenerateAppenderOutputs(current, parentClassCreator, keyWord, filteredChildren);
             }
+            return GenerateFileCreatorOutputs(selector, keyWord, autoElementDatas, filteredChildren);
+        }
+
+        private IEnumerable<ComponentGeneratorOutput> GenerateFileCreatorOutputs(string selector, string keyWord, AutoElementData[] autoElementDatas, AutoElementData[] filteredChildren)
+        {
+            IEnumerable<ElementSelectorData> childrenData = filteredChildren
+                            .Select(ConversionsUtils.ConvertToElementSelectorData);
+            ElementSelectorData[] elements = TransformFileCreatorsToAddinsLike(childrenData).ToArray();
 
             return GetFileCreatorsOutput(selector, autoElementDatas, keyWord, elements);
+        }
+
+        private static bool IsBasicElement(IEnumerable<AutoElementData> autoElementDatas)
+        {
+            return !autoElementDatas.Any();
+        }
+
+        private void HandleCustomAttributesBehavior(AutoElementData current, IComponentFileCreator parentClassCreator)
+        {
+            if (ContainsCustomAttributes(current) && parentClassCreator != null)
+                RunAppendsOnParent(current, parentClassCreator);
         }
 
         private void RunAppendsOnParent(AutoElementData current, IComponentFileCreator parentClassCreator)
@@ -83,7 +100,7 @@ namespace SeleniumAutomationGenerator
             IEnumerable<ComponentGeneratorOutput> outputs = new List<ComponentGeneratorOutput>();
             foreach (AutoElementData child in filteredChildren)
             {
-                outputs = outputs.Concat(CreateCsOutput(child.Selector, child, parentClassCreator));
+                outputs = outputs.Concat(CreateCsOutput(child.Selector, child));
             }
             return outputs;
         }
@@ -122,17 +139,26 @@ namespace SeleniumAutomationGenerator
         {
             foreach (var child in childrenData)
             {
-                IComponentFileCreator fileCreator = _fileCreatorContainer.GetFileCreator(child.Type);
-                if (fileCreator != null)
+                if (IsAddinElement(child))
+                    yield return child;
+                else
                 {
-                    _addinContainer.AddAddin(fileCreator.MakeAddin(child.FullSelector));
-                    child.Type = child.Name;
+                    IComponentFileCreator fileCreator = _fileCreatorContainer.GetFileCreator(child.Type);
+                    if (fileCreator != null)
+                    {
+                        _addinContainer.AddAddin(fileCreator.MakeAddin(child.FullSelector));
+                        child.Type = child.Name;
+                    }
+                    yield return child;
                 }
-                yield return child;
             }
         }
 
-        private bool FilterNonInlineChidren(AutoElementData childData)
+        private bool IsAddinElement(ElementSelectorData childData)
+        {
+            return _addinContainer.ContainsAddin(childData.Type);
+        }
+        private bool IsAppenderElement(AutoElementData childData)
         {
             string keyWord = SelectorUtils.GetKeyWordFromSelector(childData.Selector);
 

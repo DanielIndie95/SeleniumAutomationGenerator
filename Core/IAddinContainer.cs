@@ -2,7 +2,8 @@
 {
     public interface IAddinContainer
     {
-        void AddAddin(IComponentAddin newAddin, bool setAsDefault = false);
+        void AddAddin(IComponentAddin newAddin);
         IComponentAddin GetAddin(string key);
+        bool ContainsAddin(string key);
     }
 }

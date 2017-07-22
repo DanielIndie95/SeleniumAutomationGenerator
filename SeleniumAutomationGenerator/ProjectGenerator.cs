@@ -15,7 +15,7 @@ namespace SeleniumAutomationGenerator
         public void GenerateProject(string webAppBaseDirectory, string projectName, string solutionName = null,
             string distDirectory = null)
         {
-            BuiltInComponentsInserter.InsertBuiltInComponents(new BasicClassBuilder());
+            BuiltInComponentsInserter.InsertBuiltInComponents();
             distDirectory = distDirectory ?? Environment.CurrentDirectory + "\\test";
             CreateSolution(projectName);
             ComponentsContainer container = ComponentsContainer.Instance;

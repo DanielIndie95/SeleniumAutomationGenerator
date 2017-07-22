@@ -7,7 +7,6 @@ namespace Core
     {
         public static ComponentsContainer Instance { get; }
 
-        private IComponentAddin _defaultAddin;
         private IComponentFileCreator _defaultFileCreator;
 
         private readonly Dictionary<string, IComponentAddin> _addins;
@@ -28,11 +27,8 @@ namespace Core
             Instance = new ComponentsContainer();
         }
 
-        public void AddAddin(IComponentAddin newAddin, bool setAsDefault = false)
+        public void AddAddin(IComponentAddin newAddin)
         {
-            if (setAsDefault)
-                _defaultAddin = newAddin;
-
             _addins[newAddin.AddinKey] = newAddin;
         }
 
@@ -40,7 +36,7 @@ namespace Core
         {
             IComponentAddin addin = _addins.TryGetValue(key, out IComponentAddin tryAddin)
                 ? tryAddin
-                : _defaultAddin;
+                : null;
             return addin;
         }
 
@@ -92,6 +88,11 @@ namespace Core
         public bool ContainsCustomAttribute(string attribute)
         {
             return GetElementAttribute(attribute) != null;
+        }
+
+        public bool ContainsAddin(string key)
+        {
+            return GetAddin(key) != null;
         }
     }
 }

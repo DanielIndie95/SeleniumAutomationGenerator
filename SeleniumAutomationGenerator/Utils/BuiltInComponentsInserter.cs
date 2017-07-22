@@ -1,6 +1,7 @@
 ﻿using BaseComponentsAddins;
 using Core;
 using Core.Utils;
+using SeleniumAutomationGenerator.Builders;
 using SeleniumAutomationGenerator.Generator.ClassAppenders;
 using SeleniumAutomationGenerator.Generator.ComponentsGenerators;
 using SeleniumAutomationGenerator.Generator.CustomClassAttributes;
@@ -10,7 +11,7 @@ namespace SeleniumAutomationGenerator.Utils
 {
     public static class BuiltInComponentsInserter
     {
-        public static void InsertBuiltInComponents(IClassBuilder classBuilder)
+        public static void InsertBuiltInComponents()
         {
             var container = ComponentsContainer.Instance;
             container.AddAddin(new InputAddin());
@@ -21,17 +22,17 @@ namespace SeleniumAutomationGenerator.Utils
             container.AddCustomAttribute(new VisibleElementAttribute(container));
             container.AddCustomAttribute(new WaitUntilDisplayedElementAttribute());
             container.AddFileCreatorComponent("page",
-                new PageGenerator(classBuilder, new DriverFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME),
+                new PageGenerator(new BasicClassBuilder(), new DriverFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME),
                     container,
                     Consts.PAGES_NAMESPACE));
             container.AddFileCreatorComponent("model",
-                new ModelGenerator(classBuilder,
+                new ModelGenerator(new BasicClassBuilder(),
                     new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME,
                         Consts.PARENT_ELEMENT_FIELD_NAME),
                     container,
                     Consts.COMPONENTS_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME));
             container.AddFileCreatorComponent("comp",
-            new ComponentGenerator(classBuilder,
+            new ComponentGenerator(new BasicClassBuilder(),
                 new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME,
                 Consts.PARENT_ELEMENT_FIELD_NAME),
                 container,
