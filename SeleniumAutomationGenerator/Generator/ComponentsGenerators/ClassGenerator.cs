@@ -12,7 +12,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
     {
         private readonly IClassBuilder _classBuilder;
         protected StringBuilder CtorBulk { get; }
-        protected ComponentsContainer Container;
+        protected IAddinContainer Container;
         protected List<string> BaseUsings;
         protected string NamespaceName;
         protected List<string> ExceptionsTypes;
@@ -22,7 +22,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         public IPropertyGenerator PropertyGenerator { get; }
         protected virtual bool InheritFromBaseClass => true;
 
-        protected ClassGenerator(IClassBuilder classBuilder, IPropertyGenerator propertyGenerator, string namespaceName)
+        protected ClassGenerator(IClassBuilder classBuilder, IPropertyGenerator propertyGenerator,IAddinContainer container, string namespaceName)
         {
             _classBuilder = classBuilder;
             BaseUsings = new List<string>
@@ -34,7 +34,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
             ExceptionsTypes = new List<string>();
             ExtraProperties = new List<string>();
             ExtraMethods = new List<string>();
-            Container = ComponentsContainer.Instance;
+            Container = container;
             NamespaceName = namespaceName;
             PropertyGenerator = propertyGenerator;
             CtorBulk = new StringBuilder();

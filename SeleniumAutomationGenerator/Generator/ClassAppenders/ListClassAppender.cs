@@ -8,6 +8,11 @@ namespace SeleniumAutomationGenerator.Generator.ClassAppenders
 {
     public class ListClassAppender : IComponentClassAppender
     {
+        private readonly IAddinContainer _addinContainer;
+        public ListClassAppender(IAddinContainer addinContainer)
+        {
+            _addinContainer = addinContainer;
+        }
         public string Identifier => "list";
 
         public void AppendToClass(IComponentFileCreator parentClass, AutoElementData appenderElement)
@@ -21,7 +26,7 @@ namespace SeleniumAutomationGenerator.Generator.ClassAppenders
             {
                 type = elements[0].Name;
                 selector = elements[0].FullSelector;
-                ctorContainsDriver = ComponentsContainer.Instance.GetAddin(type)?.CtorContainsDriver ?? false;
+                ctorContainsDriver = _addinContainer.GetAddin(type)?.CtorContainsDriver ?? false;
             }
             else
             {

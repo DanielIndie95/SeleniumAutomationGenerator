@@ -6,6 +6,7 @@ using SeleniumAutomationGenerator.Builders;
 using System;
 using Core.Utils;
 using SeleniumAutomationGenerator.BaseGeneratedClasses;
+using Core;
 
 namespace SeleniumAutomationGenerator
 {
@@ -17,7 +18,9 @@ namespace SeleniumAutomationGenerator
             BuiltInComponentsInserter.InsertBuiltInComponents(new BasicClassBuilder());
             distDirectory = distDirectory ?? Environment.CurrentDirectory + "\\test";
             CreateSolution(projectName);
-            WebFolderToCsFilesConverter converter = new WebFolderToCsFilesConverter(ComponentsFactory.Instance, new HtmlFinder());
+            ComponentsContainer container = ComponentsContainer.Instance;
+            ComponentsFactory componentsFactory = new ComponentsFactory(container, container, container, container);
+            WebFolderToCsFilesConverter converter = new WebFolderToCsFilesConverter(componentsFactory, new HtmlFinder());
             List<ComponentGeneratorOutput> results = converter.GenerateClasses(webAppBaseDirectory);
             AddBaseClassesToResults(results);
             CreateFiles(distDirectory, results);
@@ -59,7 +62,7 @@ namespace SeleniumAutomationGenerator
                  </packages> ";
             const string PACKAGE_CONFIG_FILENAME = "packages.config";
             string fullPath = $"{distDirectory}\\{PACKAGE_CONFIG_FILENAME}";
-            File.WriteAllText(fullPath , PACKAGES_CONFIG_BODY);
+            File.WriteAllText(fullPath, PACKAGES_CONFIG_BODY);
             return PACKAGE_CONFIG_FILENAME;
         }
     }

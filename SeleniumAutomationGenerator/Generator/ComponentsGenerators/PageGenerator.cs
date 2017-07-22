@@ -5,11 +5,11 @@ using Core.Utils;
 namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 {
     public class PageGenerator : ClassGenerator
-    {        
-        public PageGenerator(IClassBuilder builder,IPropertyGenerator propertyGenerator, string namespaceName) : base(builder,propertyGenerator, namespaceName)
+    {
+        public PageGenerator(IClassBuilder builder, IPropertyGenerator propertyGenerator, IAddinContainer container, string namespaceName) : base(builder, propertyGenerator, container, namespaceName)
         {
 
-        }       
+        }
 
         protected override string CreateCtor(string className)
         {
@@ -19,6 +19,6 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
             builder.Append(CtorBulk);
             builder.AppendLine("}");
             return builder.ToString();
-        }       
+        }
     }
 }

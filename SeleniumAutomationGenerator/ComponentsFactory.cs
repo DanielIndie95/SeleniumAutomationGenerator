@@ -7,42 +7,19 @@ using SeleniumAutomationGenerator.Utils;
 
 namespace SeleniumAutomationGenerator
 {
-    public sealed class ComponentsFactory : IComponentsFactory
+    public class ComponentsFactory : IComponentsFactory
     {
-        private readonly Dictionary<string, IComponentFileCreator> _fileCreators;
-        private readonly Dictionary<string, IComponentClassAppender> _classAppenders;
+        private readonly IFileCreatorContainer _fileCreatorContainer;
+        private readonly IClassAppenderContainer _classAppenderContainer;
+        private readonly IAddinContainer _addinContainer;
+        private readonly IElementAttributeContainer _attributesContainer;
 
-        private IComponentFileCreator _defaultFileCreator;
-
-        public static ComponentsFactory Instance { get; }
-
-        private ComponentsFactory()
+        public ComponentsFactory(IFileCreatorContainer fileCreatorContainer, IClassAppenderContainer classAppenderContainer, IAddinContainer addinContainer , IElementAttributeContainer attributesContainer)
         {
-            _fileCreators = new Dictionary<string, IComponentFileCreator>();
-            _classAppenders = new Dictionary<string, IComponentClassAppender>();
-        }
-
-        static ComponentsFactory()
-        {
-            Instance = new ComponentsFactory();
-        }
-
-        public void AddComponentClassGeneratorKey(string key, IComponentFileCreator newComponentFileCreator, bool setAsDefault = false)
-        {
-            _fileCreators[key] = newComponentFileCreator;
-            if (setAsDefault)
-                _defaultFileCreator = newComponentFileCreator;
-        }
-
-        public void AddComponentTypeAppenders(IComponentClassAppender classAppender)
-        {
-            string type = classAppender.Identifier;
-            _classAppenders[type] = classAppender;
-            _defaultFileCreator?.AddExceptionPropertyType(type);
-            foreach (KeyValuePair<string, IComponentFileCreator> fileCreator in _fileCreators)
-            {
-                fileCreator.Value.AddExceptionPropertyType(type);
-            }
+            _fileCreatorContainer = fileCreatorContainer;
+            _classAppenderContainer = classAppenderContainer;
+            _addinContainer = addinContainer;
+            _attributesContainer = attributesContainer;
         }
 
         public IEnumerable<ComponentGeneratorOutput> CreateCsOutput(string body)
@@ -82,19 +59,21 @@ namespace SeleniumAutomationGenerator
             return GetFileCreatorsOutput(selector, autoElementDatas, keyWord, elements);
         }
 
-        private static void RunAppendsOnParent(AutoElementData current, IComponentFileCreator parentClassCreator)
+        private void RunAppendsOnParent(AutoElementData current, IComponentFileCreator parentClassCreator)
         {
             IEnumerable<IElementAttribute> customAttributes = current.AutoAttributes
-                .Select(att => ComponentsContainer.Instance.GetElementAttribute(att)).Where(att => att != null);
+                .Where(_attributesContainer.ContainsCustomAttribute)
+                .Select(att => _attributesContainer.GetElementAttribute(att));
+
             foreach (IElementAttribute attribute in customAttributes)
             {
                 attribute.AppendToClass(parentClassCreator, current);
             }
         }
 
-        private static bool ContainsCustomAttributes(AutoElementData current)
+        private bool ContainsCustomAttributes(AutoElementData current)
         {
-            return current.AutoAttributes.Any(att => ComponentsContainer.Instance.GetElementAttribute(att) != null);
+            return current.AutoAttributes.Any(_attributesContainer.ContainsCustomAttribute);
         }
 
         private IEnumerable<ComponentGeneratorOutput> GenerateAppenderOutputs(AutoElementData current,
@@ -111,21 +90,21 @@ namespace SeleniumAutomationGenerator
 
         private bool IsAppenderSuitable(IComponentFileCreator parentClassCreator, string keyWord)
         {
-            return _classAppenders.ContainsKey(keyWord) && parentClassCreator != null;
+            return _classAppenderContainer.ContainsAppender(keyWord)
+                && parentClassCreator != null;
         }
 
         private void HandleClassAppenders(IComponentFileCreator parentClassCreator, string keyWord,
             AutoElementData element)
         {
-            _classAppenders[keyWord].AppendToClass(parentClassCreator, element);
+            _classAppenderContainer.GetAppender(keyWord).AppendToClass(parentClassCreator, element);
         }
 
         private IEnumerable<ComponentGeneratorOutput> GetFileCreatorsOutput(string selector,
             IEnumerable<AutoElementData> children, string keyWord, ElementSelectorData[] childrenData)
         {
             IEnumerable<ComponentGeneratorOutput> outputs = new List<ComponentGeneratorOutput>();
-            IComponentFileCreator parent =
-                _fileCreators.ContainsKey(keyWord) ? _fileCreators[keyWord] : _defaultFileCreator;
+            IComponentFileCreator parent = _fileCreatorContainer.GetFileCreator(keyWord);
             foreach (AutoElementData child in children)
             {
                 outputs = outputs.Union(CreateCsOutput(child.Selector, child, parent), new ComponentOutputComparer());
@@ -143,9 +122,10 @@ namespace SeleniumAutomationGenerator
         {
             foreach (var child in childrenData)
             {
-                if (_fileCreators.TryGetValue(child.Type, out IComponentFileCreator fileCreator))
+                IComponentFileCreator fileCreator = _fileCreatorContainer.GetFileCreator(child.Type);
+                if (fileCreator != null)
                 {
-                    ComponentsContainer.Instance.AddAddin(fileCreator.MakeAddin(child.FullSelector));
+                    _addinContainer.AddAddin(fileCreator.MakeAddin(child.FullSelector));
                     child.Type = child.Name;
                 }
                 yield return child;
@@ -156,7 +136,7 @@ namespace SeleniumAutomationGenerator
         {
             string keyWord = SelectorUtils.GetKeyWordFromSelector(childData.Selector);
 
-            return !_classAppenders.ContainsKey(keyWord);
+            return !_classAppenderContainer.ContainsAppender(keyWord);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
     public class ComponentGenerator : ClassGenerator
     {
         private readonly string _parentElementFieldName;
-        public ComponentGenerator(IClassBuilder builder, IPropertyGenerator propertyGenerator, string namespaceName, string parentElementFieldName) : base(builder, propertyGenerator, namespaceName)
+        public ComponentGenerator(IClassBuilder builder, IPropertyGenerator propertyGenerator, IAddinContainer container, string namespaceName, string parentElementFieldName) : base(builder, propertyGenerator,container, namespaceName)
         {
             _parentElementFieldName = parentElementFieldName;
         }

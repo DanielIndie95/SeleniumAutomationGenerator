@@ -7,6 +7,12 @@ namespace SeleniumAutomationGenerator.Generator.CustomClassAttributes
 {
     public class VisibleElementAttribute : IElementAttribute
     {
+        private readonly IAddinContainer _addinContainer;
+        public VisibleElementAttribute(IAddinContainer addinContainer)
+        {
+            _addinContainer = addinContainer;
+        }
+
         public string Identifier => "auto-visibility";
 
         public void AppendToClass(IComponentFileCreator parentClass, AutoElementData appenderElement)
@@ -14,7 +20,7 @@ namespace SeleniumAutomationGenerator.Generator.CustomClassAttributes
             ElementSelectorData element = ConversionsUtils.ConvertToElementSelectorData(appenderElement);
             KeyValuePair<Property, Property> propertyWithPrivateWebElement =
                     parentClass.PropertyGenerator.CreatePropertyWithPrivateWebElement(
-                        ComponentsContainer.Instance.GetAddin(element.Type) ?? DefaultAddin.Create(element.Type), element.Name,
+                        _addinContainer.GetAddin(element.Type) ?? DefaultAddin.Create(element.Type), element.Name,
                         element.FullSelector);
             string privateWebElement = propertyWithPrivateWebElement.Key.Name;
             parentClass.AddProperty(GetProperty(privateWebElement));            

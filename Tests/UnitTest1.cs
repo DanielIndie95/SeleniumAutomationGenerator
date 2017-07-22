@@ -28,7 +28,7 @@ namespace Tests
             const string CLASS_NAME = "DishCreator";
             const string SELECTOR = "auto-page-" + CLASS_NAME;
             ComponentsContainer basicComponentsContainer = ComponentsContainer.Instance;
-            PageGenerator generator = new PageGenerator(new BasicClassBuilder(), new DriverFindElementPropertyGenerator("Driver"), Consts.PAGES_NAMESPACE);
+            PageGenerator generator = new PageGenerator(new BasicClassBuilder(), new DriverFindElementPropertyGenerator("Driver"), basicComponentsContainer, Consts.PAGES_NAMESPACE);
             Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
             addin.Setup(add => add.AddinKey).Returns(KEY);
             addin.Setup(add => add.GenerateHelpers(CLASS_NAME, NAME, generator.PropertyGenerator)).Returns(new[] { "void Main(){}", "public void Main2(){}" });
@@ -50,7 +50,7 @@ namespace Tests
             const string SECOND_NAME = "CompleteDish";
             const string CLASS_NAME = "DishCreator";
             ComponentsContainer basicComponentsContainer = ComponentsContainer.Instance;
-            ComponentsFactory factory = ComponentsFactory.Instance;
+            ComponentsFactory factory = new ComponentsFactory(basicComponentsContainer, basicComponentsContainer, basicComponentsContainer, basicComponentsContainer);
             Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
             addin.Setup(add => add.AddinKey).Returns(KEY);
             addin.Setup(add => add.GenerateHelpers(CLASS_NAME, NAME, It.IsAny<IPropertyGenerator>())).Returns(new[] { $"{CLASS_NAME} With{NAME}(string {NAME.ToLower()}){{}}" });
@@ -79,7 +79,7 @@ namespace Tests
             ComponentsContainer basicComponentsContainer = ComponentsContainer.Instance;
             basicComponentsContainer.AddAddin(new LabelAddin());
             basicComponentsContainer.AddAddin(new InputAddin());
-            ComponentsFactory factory = ComponentsFactory.Instance;
+            ComponentsFactory factory = new ComponentsFactory(basicComponentsContainer, basicComponentsContainer, basicComponentsContainer, basicComponentsContainer);
             var files = factory.CreateCsOutput(file);
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.PAGES_NAMESPACE));
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.COMPONENTS_NAMESPACE));
@@ -284,7 +284,8 @@ namespace Tests
         {
             string file = File.ReadAllText(@"TestFiles\Test1.html");
             BuiltInComponentsInserter.InsertBuiltInComponents(new BasicClassBuilder());
-            ComponentsFactory factory = ComponentsFactory.Instance;
+            var basicComponentsContainer = ComponentsContainer.Instance;
+            ComponentsFactory factory = new ComponentsFactory(basicComponentsContainer, basicComponentsContainer, basicComponentsContainer, basicComponentsContainer);
             var files = factory.CreateCsOutput(file);
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.PAGES_NAMESPACE));
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.COMPONENTS_NAMESPACE));

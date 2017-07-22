@@ -10,7 +10,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
         private readonly string _parentFieldName;
         protected override bool InheritFromBaseClass => false;
 
-        public ModelGenerator(IClassBuilder builder, IPropertyGenerator propertyGenerator, string namespaceName, string parentElementName) : base(builder, propertyGenerator, namespaceName)
+        public ModelGenerator(IClassBuilder builder, IPropertyGenerator propertyGenerator, IAddinContainer container, string namespaceName, string parentElementName) : base(builder, propertyGenerator, container, namespaceName)
         {
             _parentFieldName = parentElementName;
         }

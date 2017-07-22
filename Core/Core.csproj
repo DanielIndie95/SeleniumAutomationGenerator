@@ -43,7 +43,11 @@
   <ItemGroup>
     <Compile Include="ComponentsContainer.cs" />
     <Compile Include="DefaultAddin.cs" />
+    <Compile Include="IAddinContainer.cs" />
+    <Compile Include="IClassAppenderContainer.cs" />
     <Compile Include="IElementAttribute.cs" />
+    <Compile Include="IElementAttributeContainer.cs" />
+    <Compile Include="IFileCreatorContainer.cs" />
     <Compile Include="Models\AutoElementData.cs" />
     <Compile Include="Models\Modifiers.cs" />
     <Compile Include="Models\Property.cs" />

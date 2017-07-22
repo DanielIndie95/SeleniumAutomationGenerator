@@ -12,25 +12,31 @@ namespace SeleniumAutomationGenerator.Utils
     {
         public static void InsertBuiltInComponents(IClassBuilder classBuilder)
         {
-            ComponentsContainer.Instance.AddAddin(new InputAddin());
-            ComponentsContainer.Instance.AddAddin(new LabelAddin());
-            ComponentsContainer.Instance.AddAddin(new ButtonAddin());
-            ComponentsContainer.Instance.AddAddin(new ListItemAddin());
-            ComponentsContainer.Instance.AddAddin(new SelectItemAdding());
-            ComponentsContainer.Instance.AddCustomAttribute(new VisibleElementAttribute());
-            ComponentsContainer.Instance.AddCustomAttribute(new WaitUntilDisplayedElementAttribute());
-            ComponentsFactory.Instance.AddComponentClassGeneratorKey("page",
+            var container = ComponentsContainer.Instance;
+            container.AddAddin(new InputAddin());
+            container.AddAddin(new LabelAddin());
+            container.AddAddin(new ButtonAddin());
+            container.AddAddin(new ListItemAddin());
+            container.AddAddin(new SelectItemAdding());
+            container.AddCustomAttribute(new VisibleElementAttribute(container));
+            container.AddCustomAttribute(new WaitUntilDisplayedElementAttribute());
+            container.AddFileCreatorComponent("page",
                 new PageGenerator(classBuilder, new DriverFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME),
+                    container,
                     Consts.PAGES_NAMESPACE));
-            ComponentsFactory.Instance.AddComponentClassGeneratorKey("model",
+            container.AddFileCreatorComponent("model",
                 new ModelGenerator(classBuilder,
                     new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME,
-                        Consts.PARENT_ELEMENT_FIELD_NAME), Consts.COMPONENTS_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME));
-            ComponentsFactory.Instance.AddComponentClassGeneratorKey("comp",
+                        Consts.PARENT_ELEMENT_FIELD_NAME),
+                    container,
+                    Consts.COMPONENTS_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME));
+            container.AddFileCreatorComponent("comp",
             new ComponentGenerator(classBuilder,
                 new ParentElementFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME,
-                Consts.PARENT_ELEMENT_FIELD_NAME), Consts.COMPONENTS_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME), true);
-            ComponentsFactory.Instance.AddComponentTypeAppenders(new ListClassAppender());
+                Consts.PARENT_ELEMENT_FIELD_NAME),
+                container,
+                Consts.COMPONENTS_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME), true);
+            container.AddComponentTypeAppenders(new ListClassAppender(container));
         }
     }
 }
