@@ -12,7 +12,7 @@ namespace BaseComponentsAddins
 
         public string[] RequiredUsings => new string[] { };
 
-        public bool IsPropertyModifierPublic => true;
+        public bool IsPropertyModifierPublic => false;
 
         public bool IsArrayedAddin => false;
 

@@ -20,7 +20,6 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
             return new FileCreatorAddin
             {
                 AddinKey = name,
-                Type = name,
                 CtorContainsDriver = false,
                 RequiredUsings = new[] { NamespaceName }
             };

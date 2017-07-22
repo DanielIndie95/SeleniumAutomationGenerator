@@ -9,7 +9,7 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
 
         public string AddinKey { get; set; }
 
-        public string Type { get; set; }
+        public string Type => AddinKey;
 
         public string[] RequiredUsings { get; set; } = { };
 

@@ -44,7 +44,6 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
             return new FileCreatorAddin
             {
                 AddinKey = name,
-                Type = name,
                 RequiredUsings = new[] { NamespaceName }
             };
         }
