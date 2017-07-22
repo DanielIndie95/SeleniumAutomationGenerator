@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Core;
 using Core.Models;
 
 namespace SeleniumAutomationGenerator

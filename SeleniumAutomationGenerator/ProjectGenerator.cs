@@ -47,6 +47,7 @@ namespace SeleniumAutomationGenerator
         }
 
         // ReSharper disable once UnusedParameter.Local
+        // ReSharper disable once MemberCanBeMadeStatic.Local
         private void CreateSolution(string name)
         {
         }

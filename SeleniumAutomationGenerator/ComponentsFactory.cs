@@ -56,13 +56,13 @@ namespace SeleniumAutomationGenerator
             return GenerateFileCreatorOutputs(selector, keyWord, children, filteredChildren);
         }
 
-        private IEnumerable<ComponentGeneratorOutput> GenerateFileCreatorOutputs(string selector, string keyWord, AutoElementData[] children, AutoElementData[] filteredChildren)
+        private IEnumerable<ComponentGeneratorOutput> GenerateFileCreatorOutputs(string selector, string keyWord, IEnumerable<AutoElementData> children, AutoElementData[] filteredChildren)
         {
             return GenerateAppendersOutputs(keyWord, children)
                             .Concat(GenerateFileCreatorOutputs(selector, filteredChildren, keyWord));
         }
 
-        private IEnumerable<ComponentGeneratorOutput> GenerateAppendersOutputs(string keyword, AutoElementData[] elements)
+        private IEnumerable<ComponentGeneratorOutput> GenerateAppendersOutputs(string keyword, IEnumerable<AutoElementData> elements)
         {
             IComponentFileCreator parent = _fileCreatorContainer.GetFileCreator(keyword);
             IEnumerable<AutoElementData> enumerable = elements
@@ -112,12 +112,6 @@ namespace SeleniumAutomationGenerator
             return outputs;
         }
 
-        private bool IsAppenderSuitable(IComponentFileCreator parentClassCreator, string keyWord)
-        {
-            return _classAppenderContainer.ContainsAppender(keyWord)
-                && parentClassCreator != null;
-        }
-
         private void RunAppender(IComponentFileCreator parentClassCreator, string keyWord,
             AutoElementData element)
         {
@@ -125,7 +119,7 @@ namespace SeleniumAutomationGenerator
         }
 
         private IEnumerable<ComponentGeneratorOutput> GenerateFileCreatorOutputs(string selector,
-            IEnumerable<AutoElementData> children, string keyWord)
+            AutoElementData[] children, string keyWord)
         {
             ElementSelectorData[] elements = children
                             .Select(ConversionsUtils.ConvertToElementSelectorData)
