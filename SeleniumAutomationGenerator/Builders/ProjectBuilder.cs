@@ -1,5 +1,6 @@
 ﻿using Core.Models;
 using Microsoft.Build.Construction;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,7 +8,7 @@ namespace SeleniumAutomationGenerator.Builders
 {
     public class ProjectBuilder
     {
-        public void BuildProject(string projectName, IEnumerable<ComponentGeneratorOutput> files , string csprojDir , string packageConfigFilename)
+        public void BuildProject(string projectName, IEnumerable<ComponentGeneratorOutput> files, string csprojDir, string packageConfigFilename)
         {
             ProjectRootElement root = ProjectRootElement.Create();
             AddProperties(projectName, root);
@@ -23,7 +24,7 @@ namespace SeleniumAutomationGenerator.Builders
             task.SetParameter("Sources", "@(Compile)");
             task.SetParameter("OutputAssembly", $"{projectName}.dll");
             AddImports(root);
-            
+
             root.Save($"{csprojDir}\\{projectName}.csproj");
         }
 
@@ -32,6 +33,7 @@ namespace SeleniumAutomationGenerator.Builders
             ProjectPropertyGroupElement group = root.AddPropertyGroup();
             group.AddProperty("Configuration", "Debug");
             group.AddProperty("Platform", "AnyCPU");
+            group.AddProperty("ProjectGuid", Guid.NewGuid().ToString());
             group.AddProperty("OutputType", "Library");
             group.AddProperty("AppDesignerFolder", "Properties");
             group.AddProperty("RootNamespace", projectName);
@@ -57,13 +59,12 @@ namespace SeleniumAutomationGenerator.Builders
         }
 
         private static void AddItems(ProjectRootElement elem, string groupName, params string[] items)
-        {                   
+        {
             ProjectItemGroupElement group = elem.AddItemGroup();
-            foreach(string item in items)
+            foreach (string item in items)
             {
-                group.AddItem(groupName, item);                    
+                group.AddItem(groupName, item);
             }
         }
     }
 }
- 

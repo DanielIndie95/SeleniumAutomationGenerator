@@ -195,7 +195,7 @@ namespace Tests
 
             var propertyGen = new ParentElementFindElementPropertyGenerator(DRIVER_PROP_NAME, PARENT_ELEMENT_NAME);
             var property = propertyGen.CreateProperty(addin.Object, NAME, SELECTOR);
-            property.Statement.Should().Be($"protected ReadOnlyList<{TYPE}> {NAME} => {PARENT_ELEMENT_NAME}.FindElements(By.ClassName(\"{SELECTOR}\")).Select(elm=> new {TYPE}(elm));");
+            property.Statement.Should().Be($"protected {TYPE}[] {NAME} => {PARENT_ELEMENT_NAME}.FindElements(By.ClassName(\"{SELECTOR}\")).Select(elm=> new {TYPE}(elm)).ToArray();");
         }
         [TestMethod]
         public void TestMethod10()
@@ -214,7 +214,7 @@ namespace Tests
 
             var propertyGen = new ParentElementFindElementPropertyGenerator(DRIVER_PROP_NAME, PARENT_ELEMENT_NAME);
             var property = propertyGen.CreateProperty(addin.Object, NAME, SELECTOR);
-            property.Statement.Should().Be($"protected ReadOnlyList<{TYPE}> {NAME} => {PARENT_ELEMENT_NAME}.FindElements(By.ClassName(\"{SELECTOR}\")).Select(elm=> new {TYPE}({DRIVER_PROP_NAME},elm));");
+            property.Statement.Should().Be($"protected {TYPE}[] {NAME} => {PARENT_ELEMENT_NAME}.FindElements(By.ClassName(\"{SELECTOR}\")).Select(elm=> new {TYPE}({DRIVER_PROP_NAME},elm)).ToArray();");
         }
 
         [TestMethod]
@@ -234,7 +234,7 @@ namespace Tests
 
             var propertyGen = new ParentElementFindElementPropertyGenerator(DRIVER_PROP_NAME, PARENT_ELEMENT_NAME);
             var property = propertyGen.CreateProperty(addin.Object, NAME, SELECTOR);
-            property.Statement.Should().Be($"protected ReadOnlyList<{TYPE}> {NAME} => {PARENT_ELEMENT_NAME}.FindElements(By.ClassName(\"{SELECTOR}\")).Select(elm=> elm.Text);");
+            property.Statement.Should().Be($"protected {TYPE}[] {NAME} => {PARENT_ELEMENT_NAME}.FindElements(By.ClassName(\"{SELECTOR}\")).Select(elm=> elm.Text).ToArray();");
         }
 
         [TestMethod]

@@ -130,8 +130,11 @@ namespace SeleniumAutomationGenerator
             {
                 outputs = outputs.Union(CreateCsOutput(child.Selector, child, parent), new ComponentOutputComparer());
             }
-            ComponentGeneratorOutput parentOutput = parent.GenerateComponentClass(selector, childrenData);
-            outputs = outputs.Union(new[] { parentOutput }, new ComponentOutputComparer());
+            if (parent != null)
+            {
+                ComponentGeneratorOutput parentOutput = parent.GenerateComponentClass(selector, childrenData);
+                outputs = outputs.Union(new[] { parentOutput }, new ComponentOutputComparer());
+            }
             return outputs;
         }
 
