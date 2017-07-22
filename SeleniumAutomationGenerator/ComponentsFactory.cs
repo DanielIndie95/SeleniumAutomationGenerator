@@ -25,13 +25,7 @@ namespace SeleniumAutomationGenerator
         public IEnumerable<ComponentGeneratorOutput> CreateCsOutput(string body)
         {
             IEnumerable<AutoElementData> children = AutoElementFinder.GetChildren(body);
-            IEnumerable<ComponentGeneratorOutput> totalChildren = new List<ComponentGeneratorOutput>();
-            foreach (AutoElementData child in children)
-            {
-                totalChildren =
-                    totalChildren.Union(CreateCsOutput(child.Selector, child), new ComponentOutputComparer());
-            }
-            return totalChildren;
+            return GenerateClassesForElements(children);
         }
 
         private IEnumerable<ComponentGeneratorOutput> CreateCsOutput(string selector, AutoElementData current,
@@ -59,7 +53,7 @@ namespace SeleniumAutomationGenerator
         private IEnumerable<ComponentGeneratorOutput> GenerateFileCreatorOutputs(string selector, string keyWord, IEnumerable<AutoElementData> children, AutoElementData[] filteredChildren)
         {
             return GenerateAppendersOutputs(keyWord, children)
-                            .Concat(GenerateFileCreatorOutputs(selector, filteredChildren, keyWord));
+                            .Union(GenerateFileCreatorOutputs(selector, filteredChildren, keyWord), new ComponentOutputComparer());
         }
 
         private IEnumerable<ComponentGeneratorOutput> GenerateAppendersOutputs(string keyword, IEnumerable<AutoElementData> elements)
@@ -67,7 +61,7 @@ namespace SeleniumAutomationGenerator
             IComponentFileCreator parent = _fileCreatorContainer.GetFileCreator(keyword);
             IEnumerable<AutoElementData> enumerable = elements
                             .Where(IsAppenderElement);
-            return GenerateClassForElements(enumerable, parent);
+            return GenerateClassesForElements(enumerable, parent);
         }        
 
         private void HandleCustomAttributesBehavior(AutoElementData current, IComponentFileCreator parentClassCreator)
@@ -98,15 +92,15 @@ namespace SeleniumAutomationGenerator
         {
             if (parentClassCreator != null)
                 RunAppender(parentClassCreator, keyWord, current);
-            return GenerateClassForElements(filteredChildren);
+            return GenerateClassesForElements(filteredChildren);
         }
 
-        private IEnumerable<ComponentGeneratorOutput> GenerateClassForElements(IEnumerable<AutoElementData> filteredChildren, IComponentFileCreator parent = null)
+        private IEnumerable<ComponentGeneratorOutput> GenerateClassesForElements(IEnumerable<AutoElementData> children, IComponentFileCreator parent = null)
         {
             IEnumerable<ComponentGeneratorOutput> outputs = new List<ComponentGeneratorOutput>();
-            foreach (AutoElementData child in filteredChildren)
+            foreach (AutoElementData child in children)
             {
-                outputs = outputs.Concat(CreateCsOutput(child.Selector, child, parent));
+                outputs = outputs.Union(CreateCsOutput(child.Selector, child, parent) , new ComponentOutputComparer());
             }
 
             return outputs;
@@ -127,7 +121,7 @@ namespace SeleniumAutomationGenerator
                             .ToArray();
 
             IComponentFileCreator parent = _fileCreatorContainer.GetFileCreator(keyWord);
-            IEnumerable<ComponentGeneratorOutput> outputs = GenerateClassForElements(children);
+            IEnumerable<ComponentGeneratorOutput> outputs = GenerateClassesForElements(children);
 
             if (parent != null)
             {
