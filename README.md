@@ -16,3 +16,10 @@ container.AddAddin(new InputAddin());
 container.AddCustomAttribute(new VisibleElementAttribute(container));
 container.AddCustomAttribute(new WaitUntilDisplayedElementAttribute());
 ```
+
+```csharp
+container.AddFileCreatorComponent("page",
+new PageGenerator(new BasicClassBuilder(), new DriverFindElementPropertyGenerator(Consts.DRIVER_FIELD_NAME),
+                    container,
+                    Consts.PAGES_NAMESPACE));
+```
