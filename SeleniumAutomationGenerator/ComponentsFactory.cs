@@ -4,6 +4,7 @@ using Core;
 using Core.Models;
 using Core.Utils;
 using SeleniumAutomationGenerator.Utils;
+using MoreLinq;
 
 namespace SeleniumAutomationGenerator
 {
@@ -31,7 +32,7 @@ namespace SeleniumAutomationGenerator
         private IEnumerable<ComponentGeneratorOutput> CreateCsOutput(string selector, AutoElementData current,
             IComponentFileCreator parentClassCreator = null)
         {
-            HandleCustomAttributesBehavior(current, parentClassCreator);
+            RunCustomAttributesAppends(current, parentClassCreator);
 
             if (IsBasicElement(current))
                 return new List<ComponentGeneratorOutput>();
@@ -59,39 +60,23 @@ namespace SeleniumAutomationGenerator
         private IEnumerable<ComponentGeneratorOutput> GenerateAppendersOutputs(string keyword, IEnumerable<AutoElementData> elements)
         {
             IComponentFileCreator parent = _fileCreatorContainer.GetFileCreator(keyword);
-            IEnumerable<AutoElementData> enumerable = elements
+            IEnumerable<AutoElementData> appendersElements = elements
                             .Where(IsAppenderElement);
-            return GenerateClassesForElements(enumerable, parent);
-        }        
-
-        private void HandleCustomAttributesBehavior(AutoElementData current, IComponentFileCreator parentClassCreator)
-        {
-            if (ContainsCustomAttributes(current) && parentClassCreator != null)
-                RunAppendsOnParent(current, parentClassCreator);
+            return GenerateClassesForElements(appendersElements, parent);
         }
 
-        private void RunAppendsOnParent(AutoElementData current, IComponentFileCreator parentClassCreator)
+        private void RunCustomAttributesAppends(AutoElementData current, IComponentFileCreator parentClassCreator)
         {
-            IEnumerable<IElementAttribute> customAttributes = current.AutoAttributes
+            current.AutoAttributes
                 .Where(_attributesContainer.ContainsCustomAttribute)
-                .Select(att => _attributesContainer.GetElementAttribute(att));
-
-            foreach (IElementAttribute attribute in customAttributes)
-            {
-                attribute.AppendToClass(parentClassCreator, current);
-            }
-        }
-
-        private bool ContainsCustomAttributes(AutoElementData current)
-        {
-            return current.AutoAttributes.Any(_attributesContainer.ContainsCustomAttribute);
+                .Select(_attributesContainer.GetElementAttribute)
+                .ForEach(att => RunAppender(parentClassCreator, att, current));
         }
 
         private IEnumerable<ComponentGeneratorOutput> GenerateAppenderOutputs(AutoElementData current,
             IComponentFileCreator parentClassCreator, string keyWord, IEnumerable<AutoElementData> filteredChildren)
         {
-            if (parentClassCreator != null)
-                RunAppender(parentClassCreator, keyWord, current);
+            RunAppender(parentClassCreator, _classAppenderContainer.GetAppender(keyWord), current);
             return GenerateClassesForElements(filteredChildren);
         }
 
@@ -100,16 +85,17 @@ namespace SeleniumAutomationGenerator
             IEnumerable<ComponentGeneratorOutput> outputs = new List<ComponentGeneratorOutput>();
             foreach (AutoElementData child in children)
             {
-                outputs = outputs.Union(CreateCsOutput(child.Selector, child, parent) , new ComponentOutputComparer());
+                outputs = outputs.Union(CreateCsOutput(child.Selector, child, parent), new ComponentOutputComparer());
             }
 
             return outputs;
         }
 
-        private void RunAppender(IComponentFileCreator parentClassCreator, string keyWord,
+        private void RunAppender(IComponentFileCreator parentClassCreator, IComponentClassAppender appender,
             AutoElementData element)
         {
-            _classAppenderContainer.GetAppender(keyWord).AppendToClass(parentClassCreator, element);
+            if (parentClassCreator != null)
+                appender.AppendToClass(parentClassCreator, element);
         }
 
         private IEnumerable<ComponentGeneratorOutput> GenerateFileCreatorOutputs(string selector,
@@ -121,7 +107,7 @@ namespace SeleniumAutomationGenerator
                             .ToArray();
 
             IComponentFileCreator parent = _fileCreatorContainer.GetFileCreator(keyWord);
-            IEnumerable<ComponentGeneratorOutput> outputs = GenerateClassesForElements(children);
+            IEnumerable<ComponentGeneratorOutput> outputs = GenerateClassesForElements(children, parent);
 
             if (parent != null)
             {
