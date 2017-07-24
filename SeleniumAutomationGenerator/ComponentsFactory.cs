@@ -43,13 +43,9 @@ namespace SeleniumAutomationGenerator
                 .Where(step => step.ShouldInvokeStep(current, parentClassCreator))
                 .ForEach(step => step.InvokeStep(current, parentClassCreator));
 
-            foreach (var step in _creatorsSteps)
-            {
-                if (step.ShouldInvokeStep(current, parentClassCreator))
-                    return step.InvokeStep(current, parentClassCreator, this);
-            }
-
-            return new List<ComponentGeneratorOutput>();
+            var result = _creatorsSteps.FirstOrDefault(step => step.ShouldInvokeStep(current, parentClassCreator))
+                ?.InvokeStep(current, parentClassCreator, this);
+            return result ?? new List<ComponentGeneratorOutput>();
         }
 
         public bool ShouldInvokeStep(AutoElementData rootElement, IComponentFileCreator parent)
@@ -65,6 +61,6 @@ namespace SeleniumAutomationGenerator
                 outputs = outputs.Union(InvokeStep(child, parent), new ComponentOutputComparer());
             }
             return outputs;
-        }        
+        }
     }
 }
