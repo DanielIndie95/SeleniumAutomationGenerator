@@ -77,6 +77,13 @@
     <Compile Include="BaseGeneratedClasses\BasicGeneratedClasses.cs" />
     <Compile Include="Builders\BasicClassBuilder.cs" />
     <Compile Include="Builders\ProjectBuilder.cs" />
+    <Compile Include="ComponentFactorySteps\AppenderCreatorStep.cs" />
+    <Compile Include="ComponentFactorySteps\BasicElementCreatorStep.cs" />
+    <Compile Include="ComponentFactorySteps\ComponentFactoryCreatorStep.cs" />
+    <Compile Include="ComponentFactorySteps\CustomElementAttributeAppenderStep.cs" />
+    <Compile Include="ComponentFactorySteps\FileCreatorFactoryStep.cs" />
+    <Compile Include="ComponentFactorySteps\IComponentFactoryAppenderStep.cs" />
+    <Compile Include="ComponentFactorySteps\IComponentFactoryCreatorStep.cs" />
     <Compile Include="ComponentsFactory.cs" />
     <Compile Include="Generator\ClassAppenders\ListClassAppender.cs" />
     <Compile Include="Generator\ComponentsGenerators\ClassGenerator.cs" />
@@ -88,6 +95,7 @@
     <Compile Include="Generator\CustomClassAttributes\WaitUntilDisplayedElementAttribute.cs" />
     <Compile Include="Generator\PropertyGenerators\ParentElementFindElementPropertyGenerator.cs" />
     <Compile Include="HtmlFinder.cs" />
+    <Compile Include="ComponentFactorySteps\IComponentFactoryStep.cs" />
     <Compile Include="IComponentsFactory.cs" />
     <Compile Include="IHtmlFinder.cs" />
     <Compile Include="ProjectGenerator.cs" />
