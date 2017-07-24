@@ -1,18 +1,15 @@
 ﻿using Core;
 using Core.Models;
 using Core.Utils;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SeleniumAutomationGenerator.ComponentFactorySteps
 {
     public class FileCreatorFactoryStep : ComponentFactoryCreatorStep
     {
-        IFileCreatorContainer _container;
-        private IAddinContainer _addinsContainer;
+        readonly IFileCreatorContainer _container;
+        private readonly IAddinContainer _addinsContainer;
 
         public FileCreatorFactoryStep(IFileCreatorContainer container, IClassAppenderContainer appendersContainer, IAddinContainer addinsContainer) : base(appendersContainer)
         {
@@ -75,12 +72,10 @@ namespace SeleniumAutomationGenerator.ComponentFactorySteps
 
         public override IEnumerable<ComponentGeneratorOutput> InvokeStep(AutoElementData rootElement, IComponentFileCreator parent, IComponentFactoryCreatorStep next = null)
         {
-            string keyWord = SelectorUtils.GetKeyWordFromSelector(rootElement.Selector);
-            AutoElementData[] children = rootElement.InnerChildrens as AutoElementData[] ?? rootElement.InnerChildrens.ToArray();
-            AutoElementData[] filteredChildren = children
+            AutoElementData[] filteredChildren = rootElement.InnerChildrens
                 .Where(elm => !IsAppenderElement(elm))
                 .ToArray();
-            return GenerateFileCreatorOutputs(rootElement.Selector, children, filteredChildren, next);
+            return GenerateFileCreatorOutputs(rootElement.Selector, rootElement.InnerChildrens, filteredChildren, next);
         }
 
         public override bool ShouldInvokeStep(AutoElementData rootElement, IComponentFileCreator parent)

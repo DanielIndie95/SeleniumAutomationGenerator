@@ -2,10 +2,9 @@
 using System.Linq;
 using Core;
 using Core.Models;
-using Core.Utils;
 using SeleniumAutomationGenerator.Utils;
 using MoreLinq;
-using System;
+using SeleniumAutomationGenerator.ComponentFactorySteps;
 
 namespace SeleniumAutomationGenerator
 {

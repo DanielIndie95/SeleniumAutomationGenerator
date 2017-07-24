@@ -1,16 +1,16 @@
-﻿using Core;
-using Core.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Core;
+using Core.Models;
 using Core.Utils;
 
-namespace SeleniumAutomationGenerator
+namespace SeleniumAutomationGenerator.ComponentFactorySteps
 {
     public abstract class ComponentFactoryCreatorStep : IComponentFactoryCreatorStep
     {
         public IClassAppenderContainer AppendersContainer;
 
-        public ComponentFactoryCreatorStep(IClassAppenderContainer container)
+        protected ComponentFactoryCreatorStep(IClassAppenderContainer container)
         {
             AppendersContainer = container;
         }

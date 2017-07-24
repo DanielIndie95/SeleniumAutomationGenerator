@@ -1,9 +1,8 @@
-﻿using Core;
+﻿using System.Collections.Generic;
+using Core;
 using Core.Models;
-using System.Collections.Generic;
-using System;
 
-namespace SeleniumAutomationGenerator
+namespace SeleniumAutomationGenerator.ComponentFactorySteps
 {
     public interface IComponentFactoryCreatorStep : IComponentFactoryStep
     {

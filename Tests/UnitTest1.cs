@@ -5,7 +5,6 @@ using System.IO;
 using FluentAssertions;
 using SeleniumAutomationGenerator.Generator.PropertyGenerators;
 using SeleniumAutomationGenerator.Utils;
-using BaseComponentsAddins;
 using System.Collections.Generic;
 using System.Linq;
 using Core;
@@ -240,12 +239,11 @@ namespace Tests
             string file = File.ReadAllText(@"TestFiles\Test1.html");
             ComponentsFactory factory = new ComponentsFactory();
             BuiltInComponentsInserter.InsertBuiltInComponents(factory);
-            var basicComponentsContainer = ComponentsContainer.Instance;
-            
-            var files = factory.CreateCsOutput(file);
+
+            IEnumerable<ComponentGeneratorOutput> files = factory.CreateCsOutput(file);
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.PAGES_NAMESPACE));
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.COMPONENTS_NAMESPACE));
-            foreach (var innerFile in files)
+            foreach (ComponentGeneratorOutput innerFile in files)
             {
                 File.WriteAllText(innerFile.CsFilePath, innerFile.Body);
             }

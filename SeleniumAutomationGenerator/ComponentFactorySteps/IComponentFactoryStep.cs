@@ -1,7 +1,7 @@
 ﻿using Core;
 using Core.Models;
 
-namespace SeleniumAutomationGenerator
+namespace SeleniumAutomationGenerator.ComponentFactorySteps
 {
     public interface IComponentFactoryStep
     {
