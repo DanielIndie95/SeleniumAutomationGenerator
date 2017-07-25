@@ -19,19 +19,19 @@ namespace SeleniumAutomationGenerator.ComponentFactorySteps
 
         public abstract bool ShouldInvokeStep(AutoElementData rootElement, IComponentFileCreator parent);
 
-        protected IEnumerable<ComponentGeneratorOutput> GenerateClassesForElements(IEnumerable<AutoElementData> children, IComponentFileCreator parent, IComponentFactoryCreatorStep next)
+        protected IEnumerable<ComponentGeneratorOutput> GenerateClassesForElements(IEnumerable<AutoElementData> children, IComponentFileCreator parent, IComponentFactoryCreatorStep next = null)
         {
-            IEnumerable<ComponentGeneratorOutput> outputs = new List<ComponentGeneratorOutput>();
+            HashSet<ComponentGeneratorOutput> outputs = new HashSet<ComponentGeneratorOutput>(new ComponentOutputComparer());
             foreach (AutoElementData child in children)
             {
                 if (next?.ShouldInvokeStep(child, parent) ?? false)
                 {
-                    outputs = outputs.Union(next.InvokeStep(child, parent), new ComponentOutputComparer());
+                    outputs.UnionWith(next.InvokeStep(child, parent));
                 }
             }
-
             return outputs;
         }
+
         protected bool IsAppenderElement(AutoElementData childData)
         {
             string keyWord = SelectorUtils.GetKeyWordFromSelector(childData.Selector);

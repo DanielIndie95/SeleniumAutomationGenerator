@@ -29,9 +29,10 @@ namespace SeleniumAutomationGenerator.ComponentFactorySteps
             AutoElementData[] filteredChildren = rootElement.InnerChildrens
                 .Where(elm => !IsAppenderElement(elm))
                 .ToArray();
+
             string keyWord = SelectorUtils.GetKeyWordFromSelector(selector);
             return GenerateAppendersOutputs(keyWord, rootElement.InnerChildrens, next)
-                            .Union(GenerateFileCreatorOutputs(selector, filteredChildren, keyWord, next), new ComponentOutputComparer());
+                            .Union(GenerateFileCreatorOutputs(selector, filteredChildren, next), new ComponentOutputComparer());
         }
 
         private IEnumerable<ComponentGeneratorOutput> GenerateAppendersOutputs(string keyword, IEnumerable<AutoElementData> elements, IComponentFactoryCreatorStep next)
@@ -43,20 +44,20 @@ namespace SeleniumAutomationGenerator.ComponentFactorySteps
         }
 
         private IEnumerable<ComponentGeneratorOutput> GenerateFileCreatorOutputs(string selector,
-            AutoElementData[] children, string keyWord, IComponentFactoryCreatorStep next)
+            AutoElementData[] children, IComponentFactoryCreatorStep next = null)
         {
+            string keyWord = SelectorUtils.GetKeyWordFromSelector(selector);
             ElementSelectorData[] elements = children
                             .Select(ConversionsUtils.ConvertToElementSelectorData)
                             .Select(TransformFileCreatorToAddinsLike)
                             .ToArray();
 
             IComponentFileCreator current = _container.GetFileCreator(keyWord);
-            IEnumerable<ComponentGeneratorOutput> outputs = GenerateClassesForElements(children, current, next);
-
-            ComponentGeneratorOutput parentOutput = current.GenerateComponentClass(selector, elements);
-            outputs = outputs.Union(new[] { parentOutput }, new ComponentOutputComparer());
-
-            return outputs;
+            IEnumerable<ComponentGeneratorOutput> childrenOutputs = GenerateClassesForElements(children, current, next);
+            return new HashSet<ComponentGeneratorOutput>(childrenOutputs, new ComponentOutputComparer())
+            {
+                current.GenerateComponentClass(selector, elements)
+            };
         }
 
         private ElementSelectorData TransformFileCreatorToAddinsLike(ElementSelectorData child)
@@ -77,6 +78,5 @@ namespace SeleniumAutomationGenerator.ComponentFactorySteps
         {
             return _addinsContainer.ContainsAddin(childData.Type);
         }
-
     }
 }

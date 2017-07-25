@@ -45,7 +45,8 @@ namespace SeleniumAutomationGenerator
 
             var result = _creatorsSteps.FirstOrDefault(step => step.ShouldInvokeStep(current, parentClassCreator))
                 ?.InvokeStep(current, parentClassCreator, this);
-            return result ?? new List<ComponentGeneratorOutput>();
+
+            return result ?? Enumerable.Empty<ComponentGeneratorOutput>();
         }
 
         public bool ShouldInvokeStep(AutoElementData rootElement, IComponentFileCreator parent)
@@ -53,12 +54,12 @@ namespace SeleniumAutomationGenerator
             return true;
         }
 
-        private IEnumerable<ComponentGeneratorOutput> GenerateClassesForElements(IEnumerable<AutoElementData> children, IComponentFileCreator parent = null)
+        private IEnumerable<ComponentGeneratorOutput> GenerateClassesForElements(IEnumerable<AutoElementData> children)
         {
-            IEnumerable<ComponentGeneratorOutput> outputs = new List<ComponentGeneratorOutput>();
+            HashSet<ComponentGeneratorOutput> outputs = new HashSet<ComponentGeneratorOutput>(new ComponentOutputComparer());
             foreach (AutoElementData child in children)
             {
-                outputs = outputs.Union(InvokeStep(child, parent), new ComponentOutputComparer());
+                outputs.UnionWith(InvokeStep(child, null));
             }
             return outputs;
         }
