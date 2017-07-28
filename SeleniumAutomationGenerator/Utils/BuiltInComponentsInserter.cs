@@ -2,6 +2,7 @@
 using Core;
 using Core.Utils;
 using SeleniumAutomationGenerator.Builders;
+using SeleniumAutomationGenerator.ComponentFactorySteps;
 using SeleniumAutomationGenerator.Generator.ClassAppenders;
 using SeleniumAutomationGenerator.Generator.ComponentsGenerators;
 using SeleniumAutomationGenerator.Generator.CustomClassAttributes;
@@ -11,8 +12,9 @@ namespace SeleniumAutomationGenerator.Utils
 {
     public static class BuiltInComponentsInserter
     {
-        public static void InsertBuiltInComponents()
+        public static void InsertBuiltInComponents(ComponentsFactory factory)
         {
+
             var container = ComponentsContainer.Instance;
             container.AddAddin(new InputAddin());
             container.AddAddin(new LabelAddin());
@@ -38,6 +40,11 @@ namespace SeleniumAutomationGenerator.Utils
                 container,
                 Consts.COMPONENTS_NAMESPACE, Consts.PARENT_ELEMENT_FIELD_NAME), true);
             container.AddComponentTypeAppenders(new ListClassAppender(container));
+
+            factory.AddStep(new CustomElementAttributeAppenderStep(container))
+                .AddStep(new BasicElementCreatorStep())
+                .AddStep(new AppenderCreatorStep(container))
+                .AddStep(new FileCreatorFactoryStep(container, container, container));
         }
     }
 }

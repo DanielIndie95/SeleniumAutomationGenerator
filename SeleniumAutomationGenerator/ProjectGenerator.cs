@@ -6,7 +6,6 @@ using SeleniumAutomationGenerator.Builders;
 using System;
 using Core.Utils;
 using SeleniumAutomationGenerator.BaseGeneratedClasses;
-using Core;
 
 namespace SeleniumAutomationGenerator
 {
@@ -15,11 +14,10 @@ namespace SeleniumAutomationGenerator
         public void GenerateProject(string webAppBaseDirectory, string projectName, string solutionName = null,
             string distDirectory = null)
         {
-            BuiltInComponentsInserter.InsertBuiltInComponents();
             distDirectory = distDirectory ?? Environment.CurrentDirectory + "\\test";
             CreateSolution(projectName);
-            ComponentsContainer container = ComponentsContainer.Instance;
-            ComponentsFactory componentsFactory = new ComponentsFactory(container, container, container, container);
+            ComponentsFactory componentsFactory = new ComponentsFactory();
+            BuiltInComponentsInserter.InsertBuiltInComponents(componentsFactory);
             WebFolderToCsFilesConverter converter = new WebFolderToCsFilesConverter(componentsFactory, new HtmlFinder());
             List<ComponentGeneratorOutput> results = converter.GenerateClasses(webAppBaseDirectory);
             AddBaseClassesToResults(results);

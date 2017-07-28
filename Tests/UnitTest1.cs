@@ -5,7 +5,6 @@ using System.IO;
 using FluentAssertions;
 using SeleniumAutomationGenerator.Generator.PropertyGenerators;
 using SeleniumAutomationGenerator.Utils;
-using BaseComponentsAddins;
 using System.Collections.Generic;
 using System.Linq;
 using Core;
@@ -40,54 +39,9 @@ namespace Tests
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.PAGES_NAMESPACE));
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.COMPONENTS_NAMESPACE));
             File.WriteAllText(classStr.CsFilePath, classStr.Body);
-        }
-        [TestMethod]
-        public void TestMethod6()
-        {
-            string file = File.ReadAllText(@"TestFiles\Test1.html");
-            const string KEY = "button";
-            const string NAME = "Dish";
-            const string SECOND_NAME = "CompleteDish";
-            const string CLASS_NAME = "DishCreator";
-            ComponentsContainer basicComponentsContainer = ComponentsContainer.Instance;
-            ComponentsFactory factory = new ComponentsFactory(basicComponentsContainer, basicComponentsContainer, basicComponentsContainer, basicComponentsContainer);
-            Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
-            addin.Setup(add => add.AddinKey).Returns(KEY);
-            addin.Setup(add => add.GenerateHelpers(CLASS_NAME, NAME, It.IsAny<IPropertyGenerator>())).Returns(new[] { $"{CLASS_NAME} With{NAME}(string {NAME.ToLower()}){{}}" });
-            addin.Setup(add => add.GenerateHelpers(CLASS_NAME, SECOND_NAME, It.IsAny<IPropertyGenerator>())).Returns(new[] { $"{CLASS_NAME} {SECOND_NAME}(){{}}" });
-            addin.Setup(add => add.Type).Returns(Consts.WEB_ELEMENT_CLASS_NAME);
+        }      
+        
 
-            basicComponentsContainer.AddAddin(addin.Object);
-
-            var files = factory.CreateCsOutput(file);
-            Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.PAGES_NAMESPACE));
-            Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.COMPONENTS_NAMESPACE));
-            foreach (ComponentGeneratorOutput innerFile in files)
-            {
-                File.WriteAllText(innerFile.CsFilePath, innerFile.Body);
-            }
-        }
-
-        [TestMethod]
-        public void TestMethod7()
-        {
-            string file = File.ReadAllText(@"TestFiles\Test1.html");
-            const string KEY = "label";
-            Mock<IComponentAddin> addin = new Mock<IComponentAddin>();
-            addin.Setup(add => add.AddinKey).Returns(KEY);
-            addin.Setup(add => add.Type).Returns("string");
-            ComponentsContainer basicComponentsContainer = ComponentsContainer.Instance;
-            basicComponentsContainer.AddAddin(new LabelAddin());
-            basicComponentsContainer.AddAddin(new InputAddin());
-            ComponentsFactory factory = new ComponentsFactory(basicComponentsContainer, basicComponentsContainer, basicComponentsContainer, basicComponentsContainer);
-            var files = factory.CreateCsOutput(file);
-            Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.PAGES_NAMESPACE));
-            Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.COMPONENTS_NAMESPACE));
-            foreach (var innerFile in files)
-            {
-                File.WriteAllText(innerFile.CsFilePath, innerFile.Body);
-            }
-        }
 
         [TestMethod]
         public void TestMethod2()
@@ -283,13 +237,13 @@ namespace Tests
         public void TestMethod14()
         {
             string file = File.ReadAllText(@"TestFiles\Test1.html");
-            BuiltInComponentsInserter.InsertBuiltInComponents();
-            var basicComponentsContainer = ComponentsContainer.Instance;
-            ComponentsFactory factory = new ComponentsFactory(basicComponentsContainer, basicComponentsContainer, basicComponentsContainer, basicComponentsContainer);
-            var files = factory.CreateCsOutput(file);
+            ComponentsFactory factory = new ComponentsFactory();
+            BuiltInComponentsInserter.InsertBuiltInComponents(factory);
+
+            IEnumerable<ComponentGeneratorOutput> files = factory.CreateCsOutput(file);
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.PAGES_NAMESPACE));
             Directory.CreateDirectory(NamespaceFileConverter.ConvertNamespaceToFilePath(Consts.COMPONENTS_NAMESPACE));
-            foreach (var innerFile in files)
+            foreach (ComponentGeneratorOutput innerFile in files)
             {
                 File.WriteAllText(innerFile.CsFilePath, innerFile.Body);
             }

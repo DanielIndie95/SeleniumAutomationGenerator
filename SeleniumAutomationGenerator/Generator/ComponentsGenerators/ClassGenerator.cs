@@ -58,7 +58,6 @@ namespace SeleniumAutomationGenerator.Generator.ComponentsGenerators
                 .AddCtor(CreateCtor(className))
                 .SetClassName(className)
                 .SetNamesapce(NamespaceName)
-                .AddUsings(GetUsings(elements))
                 .AddProperties(GetProperties(elements))
                 .AddMethods(GetHelpers(className, elements))
                 .AddFields(GetFields())
